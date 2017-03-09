@@ -57,6 +57,8 @@ public class BaseActivity extends Activity {
     ArrayList<ActivityResultCallBack> activityResultCallBackList;
     private OrientationEventListener mScreenOrientationEventListener;
 
+
+
     public static Context getContext() throws MyException {
         return getTopActivity().getDecorView().getContext();
     }
@@ -97,8 +99,8 @@ public class BaseActivity extends Activity {
         }
     }
 
-    public static void setPopupClickListener(final View v,
-                                             final String str) {
+    public static void setClickPopupString(final View v,
+                                           final String str) {
         v.setClickable(str != null);
         v.setOnClickListener(new View.OnClickListener() {
             @Override

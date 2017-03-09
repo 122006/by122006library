@@ -18,6 +18,7 @@
    * `isWifiConnected()` 是否是WIFI连接状态
    * `haveSDCard()` 是否有SD卡
    * `goHome()` 返回桌面
+   * `setClickPopupString()`设置点击某控件显示文字
    * `getDecorView()`获得顶层`DecorView`
    * `getViewBitmapById()` 根据resid获得布局截图
    * `registerActivityResultCallBack()` 注册一个界面反馈回调器
@@ -27,6 +28,10 @@
    * `onUpdateUi()` UI界面的更新
       1. 这个方法会在`onResume()`、`onAttachedToWindow()`后自动调用一次
       2. 可以正确获得的控件的Params以进行设置大小
+
+
+
+
 
 
 
