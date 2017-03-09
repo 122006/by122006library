@@ -20,7 +20,7 @@
          CycleTask(long daleyTime, long cycleTime, int cycleNum)
    1. `daleyTime` 首次运行前延迟时间 单位ms
    2. `cycleTime` 单次间隔事件
-   3. 循环次数
+   3. `cycleNum` 循环次数
       1. 如果需要无限循环 设置为<=0的值
    4. `doCycleAction(int haveCycleCount)` 循环事件
       1. `haveCycleCount` 已经循环的次数，不包括该次
