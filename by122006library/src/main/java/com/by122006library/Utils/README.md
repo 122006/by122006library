@@ -5,6 +5,7 @@
 * 来源网上
      > 单参数的Log日志，并会给出该log所在方法和在代码中的行数，方便Log数据过多时准确定位
 1. 只有在DeBug模式下才会进行打印
+
 ##[DebugUtils 调试用工具类](DebugUtils.java)
 * `runningDurtime()` 方法性能检测埋点
      > 在代码中需要测试性能的地方调用该方法，可以检测出每个埋点之间的运行时间
@@ -36,12 +37,11 @@
 
    1.`tag`为该任务标识，用于批量移除，如不需要可以设为`null`
 * 取消注册
-   >两种注册方法：注册在内置线程或者外部线程
 
         unRegister(Object tag)
-        registerOwnThreadTask(Object tag)
+        unregister()
 
-   1.`tag`为该任务标识，用于批量移除，如不需要可以设为`null`
+   1.`tag`为该任务标识，用于批量移除
 
 * 外部线程接入
    >* 共用外部循环线程以节约线程量
@@ -53,7 +53,7 @@
 ##[ViewUtils 视图工具类](ViewUtils.java)
 * `introduceView()` 控件介绍显示方法
 
-    introduceView(View v, String str, boolean roundRect, PopupWindow.OnDismissListener onDismissLinstener)
+      introduceView(View v, String str, boolean roundRect, PopupWindow.OnDismissListener onDismissLinstener)
      > 黑色遮罩屏幕其余部分，并高亮显示一个控件的介绍界面
     1. `v` 所需要介绍的控件对象
     2. `str` 介绍文字内容
@@ -63,8 +63,8 @@
 
 * `surroundViewGroup()` 包裹控件方法
 
-     * surroundViewGroup(View v, T viewGroup)
-     * surroundViewGroup(View v, Class<T> viewGroupClassName)
+      * surroundViewGroup(View v, T viewGroup)
+      * surroundViewGroup(View v, Class<T> viewGroupClassName)
      > 使ViewGroup对象或者其class名生成一个viewGroup，并对其进行包裹
      1. `v` 所需要包裹的控件对象
      2. 新的控件会继承：原有控件的布局配置，父布局的继承关系。使前后在外观及使用上保持一致性
