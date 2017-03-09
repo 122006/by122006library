@@ -31,6 +31,12 @@ import java.util.ArrayList;
  */
 
 public class ViewUtils {
+    /**
+     * 获得ImageView的图片
+     *
+     * @param v
+     * @return
+     */
     public static Drawable loadBitmapFromView(ImageView v) {
         Drawable drawable = null;
         try {
@@ -143,10 +149,10 @@ public class ViewUtils {
      * @param v                   要展示的控件对象
      * @param str                 要显示的文字
      * @param roundRect           true:展示圆形控件框 false:矩形控件框
-     * @param onDissmissLinstener popup隐藏监听事件（用于跳转或下一个提示）
+     * @param onDismissLinstener popup隐藏监听事件（用于跳转或下一个提示）
      */
     public static PopupWindow introduceView(View v, String str, boolean roundRect, PopupWindow.OnDismissListener
-            onDissmissLinstener) {
+            onDismissLinstener) {
         final PopupWindow popupWindow = new PopupWindow();
         popupWindow.setOutsideTouchable(true);
         popupWindow.update();
@@ -213,7 +219,7 @@ public class ViewUtils {
         mask.recycle();
         bitmap2.recycle();
         popupWindow.setContentView(iv);
-        popupWindow.setOnDismissListener(onDissmissLinstener);
+        popupWindow.setOnDismissListener(onDismissLinstener);
         popupWindow.showAtLocation(v, Gravity.CENTER, 0, 0);
         return  popupWindow;
     }
