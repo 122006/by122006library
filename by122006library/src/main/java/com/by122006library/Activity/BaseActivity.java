@@ -19,6 +19,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Process;
+import android.support.annotation.IdRes;
 import android.support.annotation.UiThread;
 import android.view.Gravity;
 import android.view.OrientationEventListener;
@@ -32,6 +33,7 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import com.by122006library.MyException;
+import com.by122006library.Utils.ThreadUtils;
 import com.by122006library.Utils.ViewUtils;
 import com.by122006library.Utils.mLog;
 
@@ -118,8 +120,117 @@ public class BaseActivity extends Activity {
         } catch (Exception e) {
             throw new MyException("没有有效的活动窗口");
         }
-        if(!act.isDestroyed()&&!act.isFinishing()) throw new MyException("顶层窗口不在活动周期");
+        if (!act.isDestroyed() && !act.isFinishing()) throw new MyException("顶层窗口不在活动周期");
         return act;
+    }
+
+    /**
+     * 判断当前App处于前台还是后台状态
+     */
+    public static boolean isApplicationBackground() throws MyException {
+        ActivityManager am = (ActivityManager) getContext()
+                .getSystemService(Context.ACTIVITY_SERVICE);
+        @SuppressWarnings("deprecation")
+        List<ActivityManager.RunningTaskInfo> tasks = am.getRunningTasks(1);
+        if (!tasks.isEmpty()) {
+            ComponentName topActivity = tasks.get(0).topActivity;
+            if (!topActivity.getPackageName().equals(getTopActivity().getPackageName())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 判断当前手机是否处于锁屏(睡眠)状态
+     */
+    public static boolean isSleeping() throws MyException {
+        KeyguardManager kgMgr = (KeyguardManager) getContext()
+                .getSystemService(Context.KEYGUARD_SERVICE);
+        boolean isSleeping = kgMgr.inKeyguardRestrictedInputMode();
+        return isSleeping;
+    }
+
+    /**
+     * 判断当前是否有网络连接
+     *
+     * @return
+     */
+    public static boolean isOnline() throws MyException {
+        ConnectivityManager manager = (ConnectivityManager) getContext()
+                .getSystemService(Activity.CONNECTIVITY_SERVICE);
+        NetworkInfo info = manager.getActiveNetworkInfo();
+        if (info != null && info.isConnected()) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * 判断当前是否是WIFI连接状态
+     */
+    public static boolean isWifiConnected() throws MyException {
+        ConnectivityManager connectivityManager = (ConnectivityManager) getContext()
+                .getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo wifiNetworkInfo = connectivityManager
+                .getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+        if (wifiNetworkInfo.isConnected()) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * 是否有SD卡
+     */
+    public static boolean haveSDCard() {
+        return Environment.getExternalStorageState().equals(
+                Environment.MEDIA_MOUNTED);
+    }
+
+    /**
+     * 动态隐藏软键盘
+     */
+    @TargetApi(Build.VERSION_CODES.CUPCAKE)
+    public static void hideSoftInput(Activity activity) {
+        View view = activity.getWindow().peekDecorView();
+        if (view != null) {
+            InputMethodManager inputmanger = (InputMethodManager) activity
+                    .getSystemService(Context.INPUT_METHOD_SERVICE);
+            inputmanger.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
+    }
+
+    @TargetApi(Build.VERSION_CODES.CUPCAKE)
+    public static void hideSoftInput(Context context, EditText edit) {
+        edit.clearFocus();
+        InputMethodManager inputmanger = (InputMethodManager) context
+                .getSystemService(Context.INPUT_METHOD_SERVICE);
+        inputmanger.hideSoftInputFromWindow(edit.getWindowToken(), 0);
+    }
+
+    /**
+     * 动态显示软键盘
+     */
+    @TargetApi(Build.VERSION_CODES.CUPCAKE)
+    public static void showSoftInput(Context context, EditText edit) {
+        edit.setFocusable(true);
+        edit.setFocusableInTouchMode(true);
+        edit.requestFocus();
+        InputMethodManager inputManager = (InputMethodManager) context
+                .getSystemService(Context.INPUT_METHOD_SERVICE);
+        inputManager.showSoftInput(edit, 0);
+    }
+
+    /**
+     * 主动回到Home，后台运行
+     */
+    public static void goHome() throws MyException {
+        Intent mHomeIntent = new Intent(Intent.ACTION_MAIN);
+        mHomeIntent.addCategory(Intent.CATEGORY_HOME);
+        mHomeIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
+        getContext().startActivity(mHomeIntent);
     }
 
     @Override
@@ -221,7 +332,10 @@ public class BaseActivity extends Activity {
             mLog.w("Stop the onUpdateUi() action : isShow() = false");
             return;
         }
-
+        if (!ThreadUtils.isUIThread()) {
+            mLog.e("Stop the onUpdateUi() action : is now UI Thread");
+            return;
+        }
 
     }
 
@@ -236,7 +350,7 @@ public class BaseActivity extends Activity {
      * @return
      * @throws MyException
      */
-    public Bitmap getViewBitmapById(int resId) throws MyException {
+    public Bitmap getViewBitmapById(@IdRes int resId) throws MyException {
         return ViewUtils.getViewBitmap(resId == -1 ? findViewById(resId) : getDecorView());
     }
 
@@ -245,7 +359,7 @@ public class BaseActivity extends Activity {
         super.onActivityResult(requestCode, resultCode, data);
         if (activityResultCallBackList == null) return;
         for (ActivityResultCallBack callback : (ArrayList<ActivityResultCallBack>) activityResultCallBackList.clone()) {
-            if(callback.match(requestCode,resultCode)){
+            if (callback.match(requestCode, resultCode)) {
                 callback.callback(data);
                 activityResultCallBackList.remove(callback);
             }
@@ -254,6 +368,7 @@ public class BaseActivity extends Activity {
 
     /**
      * 注册界面回传的回调事件
+     *
      * @param activityResultCallBack
      */
     public void registerActivityResultCallBack(ActivityResultCallBack activityResultCallBack) {
@@ -275,112 +390,6 @@ public class BaseActivity extends Activity {
         boolean match(int requestCode, int resultCode);
 
         void callback(Intent data);
-    }
-    /**
-     * 判断当前App处于前台还是后台状态
-     */
-    public static boolean isApplicationBackground() throws MyException {
-        ActivityManager am = (ActivityManager) getContext()
-                .getSystemService(Context.ACTIVITY_SERVICE);
-        @SuppressWarnings("deprecation")
-        List<ActivityManager.RunningTaskInfo> tasks = am.getRunningTasks(1);
-        if (!tasks.isEmpty()) {
-            ComponentName topActivity = tasks.get(0).topActivity;
-            if (!topActivity.getPackageName().equals( getTopActivity().getPackageName())) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * 判断当前手机是否处于锁屏(睡眠)状态
-     */
-    public static boolean isSleeping() throws MyException {
-        KeyguardManager kgMgr = (KeyguardManager) getContext()
-                .getSystemService(Context.KEYGUARD_SERVICE);
-        boolean isSleeping = kgMgr.inKeyguardRestrictedInputMode();
-        return isSleeping;
-    }
-    /**
-     * 判断当前是否有网络连接
-     *
-     * @return
-     */
-    public static boolean isOnline() throws MyException {
-        ConnectivityManager manager = (ConnectivityManager) getContext()
-                .getSystemService(Activity.CONNECTIVITY_SERVICE);
-        NetworkInfo info = manager.getActiveNetworkInfo();
-        if (info != null && info.isConnected()) {
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * 判断当前是否是WIFI连接状态
-     */
-    public static boolean isWifiConnected() throws MyException {
-        ConnectivityManager connectivityManager = (ConnectivityManager)  getContext()
-                .getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo wifiNetworkInfo = connectivityManager
-                .getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-        if (wifiNetworkInfo.isConnected()) {
-            return true;
-        }
-        return false;
-    }
-    /**
-     * 是否有SD卡
-     */
-    public static boolean haveSDCard() {
-        return Environment.getExternalStorageState().equals(
-                Environment.MEDIA_MOUNTED);
-    }
-
-    /**
-     * 动态隐藏软键盘
-     */
-    @TargetApi(Build.VERSION_CODES.CUPCAKE)
-    public static void hideSoftInput(Activity activity) {
-        View view = activity.getWindow().peekDecorView();
-        if (view != null) {
-            InputMethodManager inputmanger = (InputMethodManager) activity
-                    .getSystemService(Context.INPUT_METHOD_SERVICE);
-            inputmanger.hideSoftInputFromWindow(view.getWindowToken(), 0);
-        }
-    }
-
-    @TargetApi(Build.VERSION_CODES.CUPCAKE)
-    public static void hideSoftInput(Context context, EditText edit) {
-        edit.clearFocus();
-        InputMethodManager inputmanger = (InputMethodManager) context
-                .getSystemService(Context.INPUT_METHOD_SERVICE);
-        inputmanger.hideSoftInputFromWindow(edit.getWindowToken(), 0);
-    }
-
-    /**
-     * 动态显示软键盘
-     */
-    @TargetApi(Build.VERSION_CODES.CUPCAKE)
-    public static void showSoftInput(Context context, EditText edit) {
-        edit.setFocusable(true);
-        edit.setFocusableInTouchMode(true);
-        edit.requestFocus();
-        InputMethodManager inputManager = (InputMethodManager) context
-                .getSystemService(Context.INPUT_METHOD_SERVICE);
-        inputManager.showSoftInput(edit, 0);
-    }
-
-    /**
-     * 主动回到Home，后台运行
-     */
-    public static void goHome() throws MyException {
-        Intent mHomeIntent = new Intent(Intent.ACTION_MAIN);
-        mHomeIntent.addCategory(Intent.CATEGORY_HOME);
-        mHomeIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
-                | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
-        getContext().startActivity(mHomeIntent);
     }
 
 
