@@ -327,7 +327,6 @@ public class BitmapUtils {
 
     /**
      * 相册获取照片
-     *
      */
     public static void getImageFromAlbum(BaseActivity.ActivityResultCallBack callback) throws MyException {
         Intent intent = new Intent(Intent.ACTION_PICK);
