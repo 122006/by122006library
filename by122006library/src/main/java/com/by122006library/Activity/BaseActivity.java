@@ -19,6 +19,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Process;
+import android.support.annotation.CallSuper;
 import android.support.annotation.IdRes;
 import android.support.annotation.UiThread;
 import android.view.Gravity;
@@ -329,6 +330,7 @@ public class BaseActivity extends Activity {
      * 将在控件构建之后于主线程运行<p> 运行于onAttachedToWindow()中，onResume()后<p> 可以正确测量控件数据，用于控件初始化
      */
     @UiThread
+    @CallSuper
     public void onUpdateUi() {
         if (!getDecorView().isShown()) {
             mLog.w("Stop the onUpdateUi() action : isShow() = false");

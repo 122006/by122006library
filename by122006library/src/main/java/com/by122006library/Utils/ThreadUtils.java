@@ -1,8 +1,10 @@
 package com.by122006library.Utils;
 
+import android.os.AsyncTask;
 import android.os.Looper;
 
 import com.by122006library.Activity.BaseActivity;
+import com.by122006library.Interface.ThreadStyle;
 import com.by122006library.MyException;
 
 /**
@@ -11,15 +13,23 @@ import com.by122006library.MyException;
 
 public class ThreadUtils {
     public static void runOnUiThread(Runnable runnable) throws MyException {
-        BaseActivity activity=BaseActivity.getTopActivity();
-        if (  runnable!=null&& activity!=null){
+        BaseActivity activity = BaseActivity.getTopActivity();
+        if (runnable != null && activity != null) {
             activity.runOnUiThread(runnable);
         }
+
     }
-    public static boolean isUIThread(){
+
+    public static boolean isUIThread() {
         return Looper.myLooper() == Looper.getMainLooper();
     }
-    public static boolean isBGThread(){
+
+    public static boolean isBGThread() {
         return Looper.myLooper() != Looper.getMainLooper();
     }
+
+    public static ThreadStyle.Style getThreadStytle() {
+        return isUIThread() ? ThreadStyle.Style.UI : ThreadStyle.Style.BG;
+    }
+
 }

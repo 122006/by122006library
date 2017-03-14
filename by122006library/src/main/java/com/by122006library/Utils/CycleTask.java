@@ -1,5 +1,9 @@
 package com.by122006library.Utils;
 
+import com.by122006library.Interface.BGThread;
+import com.by122006library.Interface.DefaultThread;
+import com.by122006library.Interface.ThreadStyle;
+import com.by122006library.Interface.UIThread;
 import com.by122006library.MyException;
 
 import java.lang.annotation.Annotation;
@@ -16,6 +20,7 @@ import java.util.ArrayList;
  */
 
 public abstract class CycleTask {
+
     public static ArrayList<CycleTask> list = new ArrayList<>();
     //    public static ArrayList<CycleTask> removeList = new ArrayList<>();
 //    public static ArrayList<CycleTask> addList = new ArrayList<>();
@@ -97,7 +102,7 @@ public abstract class CycleTask {
 
         if (restTime <= 0) {
             restTime = cycleTime;
-            if (runThreadStyle.equals(ThreadStyle.Style.BG) || runThreadStyle.equals(ThreadStyle.Style.IO)) {
+            if (runThreadStyle.equals(ThreadStyle.Style.BG)) {
                 if (ThreadUtils.isUIThread()) {
                     new Thread(new Runnable() {
                         @Override
@@ -165,6 +170,18 @@ public abstract class CycleTask {
                 if (a instanceof ThreadStyle) {
                     runThreadStyle = ((ThreadStyle) a).style();
                 }
+                if (a instanceof ThreadStyle) {
+                    runThreadStyle = ((ThreadStyle) a).style();
+                }
+                if (a instanceof UIThread) {
+                    runThreadStyle = ThreadStyle.Style.UI;
+                }
+                if (a instanceof BGThread) {
+                    runThreadStyle = ThreadStyle.Style.BG;
+                }
+                if (a instanceof DefaultThread) {
+                    runThreadStyle = ThreadStyle.Style.Default;
+                }
             }
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
@@ -175,13 +192,4 @@ public abstract class CycleTask {
 
     public abstract void doCycleAction(int haveCycleCount) throws MyException;
 
-    @Target(ElementType.METHOD)
-    @Retention(RetentionPolicy.RUNTIME)
-    public @interface ThreadStyle {
-        Style style() default Style.BG;
-
-        public enum Style {
-            UI, BG, IO
-        }
-    }
 }
