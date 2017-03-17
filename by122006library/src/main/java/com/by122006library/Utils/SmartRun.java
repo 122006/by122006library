@@ -16,49 +16,93 @@ import java.util.HashMap;
 /**
  * 智能运行线程
  */
-public abstract class SmartRun{
+public abstract class SmartRun {
+    static HashMap<Object, SmartRun> staticMap;
     ArrayList<Method> methodList;
     HashMap<Method, ThreadStyle.Style> changeThreadStyleMap;
     HashMap<Method, Boolean> changeThreadAsnycMap;
 
-    @ThreadStyle(style = ThreadStyle.Style.Default)
-    public abstract void action();
+    final public static <T> boolean sPrepare(T target, Object... parameter) {
+        StackTraceElement[] stackTraceElement = Thread.currentThread().getStackTrace();
 
-    final public void start() {
-        if (methodList == null) {
-            methodList = new ArrayList<>();
+        if (staticMap == null) {
+            staticMap = new HashMap<>();
+        }
+        SmartRun smartRun;
+        if (!staticMap.containsKey(target)) {
+            smartRun = new SmartRun() {
+                @Override
+                public void action() {
 
-            Class clazz = getClass();
-            Method[] methods = clazz.getMethods();
-            for (Method m : methods) {
+                }
+            };
+            staticMap.put(target, smartRun);
+        } else {
+            smartRun = staticMap.get(target);
+        }
+        if (smartRun.methodList == null) {
+            smartRun.methodList = new ArrayList<>();
+            Class clazz1 = smartRun.getClass();
+            Method[] methods1 = clazz1.getMethods();
+            for (Method m : methods1) {
 //                mLog.i("含有的方法：" + m.getName());
-                methodList.add(m);
+                smartRun.methodList.add(m);
+            }
+            Class clazz2 = target.getClass();
+            Method[] methods2 = clazz2.getMethods();
+            for (Method m : methods2) {
+                for (Method m2 : methods1) {
+                    if (!m.getName().equals(m2.getName())) continue;
+                    if (m.getParameterTypes().length != m2.getParameterTypes().length) continue;
+                    Class[] classes1 = m.getParameterTypes();
+                    Class[] classes2 = m2.getParameterTypes();
+                    boolean ifConflict = false;
+                    if (classes1.length == 0) {
+                        ifConflict = true;
+                    } else {
+                        for (int i = 0; i < classes2.length; i++) {
+                            if (classes1[i].getClass().toString().contains("java.lang.") && classes1[i].getClass()
+                                    .toString()
+                                    .toLowerCase().contains(classes2[i].toString())) {
+                                continue;
+                            }
+                            if (classes2[i].getClass().toString().contains("java.lang.") && classes2[i].getClass()
+                                    .toString()
+                                    .toLowerCase().contains(classes1[i].toString())) {
+                                continue;
+                            }
+                            if (!classes2[i].isAssignableFrom(classes1[i].getClass())) {
+                                ifConflict = true;
+
+                                break;
+                            }
+                        }
+                    }
+                    if (ifConflict)
+                        mLog.e("不确定方法警告:SmartRun所在运行类(" + target.getClass().getName() + ")含有：与SmartRun本身的同名同参数冲突方法("
+                                + m.getName() + ")，请重命名并解决冲突");
+                }
+                smartRun.methodList.add(m);
             }
         }
-        chooseThreadRun("action");
-    }
-
-
-    final public boolean prepare(Object... parameter) {
-
-        StackTraceElement[] stackTraceElement = Thread.currentThread().getStackTrace();
-        String methodName = getMethodNameFromStackTrace(stackTraceElement);
-        String lastMethodName = getLastMethodNameFromStackTrace(stackTraceElement);
+        String methodName = smartRun.getMethodNameFromStackTrace(stackTraceElement);
+        String lastMethodName = smartRun.getLastMethodNameFromStackTrace(stackTraceElement);
 //        mLog.i("lastMethodName="+lastMethodName);
-        boolean boo = !(lastMethodName.equals("chooseThreadRun")||lastMethodName.equals("invoke"));
-        methodName=(methodName.equals("chooseThreadRun")||methodName.equals("invoke"))?lastMethodName:methodName;
+        boolean boo = !(lastMethodName.equals("chooseThreadRun") || lastMethodName.equals("invoke"));
+        methodName = (methodName.equals("chooseThreadRun") || methodName.equals("invoke")) ? lastMethodName :
+                methodName;
 //        if (boo) mLog.i("=============\n正常转切换用反射打开 "+methodName+"(参数量"+parameter.length+")");
 //        else mLog.i("正在运行的是反射方法 "+methodName+"(参数量"+parameter.length+")");
 //        mLog.i("boo="+boo);
         if (boo)
-            chooseThreadRun(methodName, parameter);
+            smartRun.chooseThreadRun(methodName, parameter);
 
         return boo;
 
 
     }
 
-    final private String getMethodNameFromStackTrace( StackTraceElement[] stackTraceElement) {
+    final private String getMethodNameFromStackTrace(StackTraceElement[] stackTraceElement) {
         String methodName = "";
         for (int i = 0; i < stackTraceElement.length; i++) {
             StackTraceElement st = stackTraceElement[i];
@@ -108,6 +152,35 @@ public abstract class SmartRun{
         return lastMethodName;
     }
 
+    @ThreadStyle(style = ThreadStyle.Style.Default)
+    public abstract void action();
+
+    final public void start() {
+
+        chooseThreadRun("action");
+    }
+
+    final public boolean prepare(Object... parameter) {
+
+        StackTraceElement[] stackTraceElement = Thread.currentThread().getStackTrace();
+        String methodName = getMethodNameFromStackTrace(stackTraceElement);
+        String lastMethodName = getLastMethodNameFromStackTrace(stackTraceElement);
+//        mLog.i("lastMethodName="+lastMethodName);
+        boolean boo = !(lastMethodName.equals("chooseThreadRun") || lastMethodName.equals("invoke"));
+        methodName = (methodName.equals("chooseThreadRun") || methodName.equals("invoke")) ? lastMethodName :
+                methodName;
+//        if (boo) mLog.i("=============\n正常转切换用反射打开 "+methodName+"(参数量"+parameter.length+")");
+//        else mLog.i("正在运行的是反射方法 "+methodName+"(参数量"+parameter.length+")");
+//        mLog.i("boo="+boo);
+        if (boo)
+            chooseThreadRun(methodName, parameter);
+
+        return boo;
+
+
+    }
+
+
     final private Method getMethodByParams(String methodName, Object... parameter) {
         Method method = null;
         for (Method m : methodList) {
@@ -116,7 +189,8 @@ public abstract class SmartRun{
             if (parameterTypes.length != parameter.length) continue;
             boolean ifthis = true;
             for (int i = 0; i < parameterTypes.length; i++) {
-                if(parameter[i].getClass().toString().contains("java.lang.")&&parameter[i].getClass().toString().toLowerCase().contains(parameterTypes[i].toString())){
+                if (parameter[i].getClass().toString().contains("java.lang.") && parameter[i].getClass().toString()
+                        .toLowerCase().contains(parameterTypes[i].toString())) {
                     continue;
                 }
                 if (!parameterTypes[i].isAssignableFrom(parameter[i].getClass())) {
@@ -171,25 +245,25 @@ public abstract class SmartRun{
         Method method = getMethodByParams(methodName, parameter);
         try {
             Annotation[] annotation = method.getAnnotations();
-            if(annotation!=null)
-            for (Annotation a : annotation) {
-                if (a instanceof ThreadStyle) {
-                    actionThreadStyle = ((ThreadStyle) a).style();
+            if (annotation != null)
+                for (Annotation a : annotation) {
+                    if (a instanceof ThreadStyle) {
+                        actionThreadStyle = ((ThreadStyle) a).style();
+                    }
+                    String annotationName = a.annotationType().getSimpleName();
+                    if (a instanceof UIThread || annotationName.equals("UIThread")) {
+                        actionThreadStyle = ThreadStyle.Style.UI;
+                    }
+                    if (a instanceof BGThread || annotationName.equals("BGThread")) {
+                        actionThreadStyle = ThreadStyle.Style.BG;
+                    }
+                    if (a instanceof DefaultThread || annotationName.equals("DefaultThread")) {
+                        actionThreadStyle = ThreadStyle.Style.Default;
+                    }
+                    if (a instanceof Async) {
+                        async = true;
+                    }
                 }
-                String annotationName = a.annotationType().getSimpleName();
-                if (a instanceof UIThread || annotationName.equals("UIThread")) {
-                    actionThreadStyle = ThreadStyle.Style.UI;
-                }
-                if (a instanceof BGThread || annotationName.equals("BGThread")) {
-                    actionThreadStyle = ThreadStyle.Style.BG;
-                }
-                if (a instanceof DefaultThread || annotationName.equals("DefaultThread")) {
-                    actionThreadStyle = ThreadStyle.Style.Default;
-                }
-                if (a instanceof Async) {
-                    async = true;
-                }
-            }
         } catch (Exception e) {
             e.printStackTrace();
             mLog.e("没有发现" + methodName + "方法，请不要对SmartRun类进行混淆");
@@ -272,7 +346,7 @@ public abstract class SmartRun{
 
     final public void invoke(boolean haveException, final Method method, final Object... parameter) {
         mLog.i(ThreadUtils.getThreadStytle().toString() + "线程中运行方法：" + method.getName() + "(参数量：" + parameter.length
-                + ")"  +Thread.currentThread().toString());
+                + ")" + Thread.currentThread().toString());
         try {
             method.invoke(this, parameter);
             if (haveException) {
@@ -281,7 +355,7 @@ public abstract class SmartRun{
                 changeThreadStyleMap.put(method, ThreadUtils.getThreadStytle());
             }
             mLog.i("方法：" + method.getName() + "(参数量：" + parameter.length
-                    + ") 成功运行在"+ThreadUtils.getThreadStytle().toString() + "线程");
+                    + ") 成功运行在" + ThreadUtils.getThreadStytle().toString() + "线程");
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         } catch (InvocationTargetException e) {
@@ -319,7 +393,7 @@ public abstract class SmartRun{
                     return;
                 }
 
-            }finally {
+            } finally {
                 if (ThreadUtils.isBGThread()) Thread.currentThread().interrupt();
             }
 
