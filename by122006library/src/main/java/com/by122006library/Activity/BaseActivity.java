@@ -58,7 +58,12 @@ public class BaseActivity extends Activity {
     ArrayList<ActivityResultCallBack> activityResultCallBackList;
     private OrientationEventListener mScreenOrientationEventListener;
 
-
+    public void setFullScreen(boolean FLAG_ACT_FULLSCREEN){
+        this.FLAG_ACT_FULLSCREEN=FLAG_ACT_FULLSCREEN;
+    }
+    public void setNoTitle(boolean FLAG_ACT_NO_TITLE){
+        this.FLAG_ACT_NO_TITLE=FLAG_ACT_NO_TITLE;
+    }
 
     public static Context getContext() throws MyException {
         return getTopActivity().getDecorView().getContext();
@@ -96,7 +101,8 @@ public class BaseActivity extends Activity {
         try {
             popup.showAtLocation(BaseActivity.getTopActivity().getDecorView(), Gravity.LEFT | Gravity.TOP,
                     x, y);
-        } catch (MyException e) {
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -123,7 +129,7 @@ public class BaseActivity extends Activity {
         } catch (Exception e) {
             throw new MyException("没有有效的活动窗口");
         }
-        if (!act.isDestroyed() && !act.isFinishing()) throw new MyException("顶层窗口不在活动周期");
+        if (act.isDestroyed()) throw new MyException("顶层窗口不在活动周期");
         return act;
     }
 

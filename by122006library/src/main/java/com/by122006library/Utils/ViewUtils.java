@@ -1,6 +1,7 @@
 package com.by122006library.Utils;
 
 import android.app.Activity;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -224,6 +225,82 @@ public class ViewUtils {
         return  popupWindow;
     }
 
+    /**
+     * 控件介绍类按钮 <p>Created by 122006 <p>你需要将其运行在控件绘制后
+     *
+     * @param rect                   要展示的Rect区域
+     * @param str                 要显示的文字
+     * @param roundRect           true:展示圆形控件框 false:矩形控件框
+     * @param onDismissLinstener popup隐藏监听事件（用于跳转或下一个提示）
+     */
+    public static PopupWindow introduceView(Activity context, Rect rect, String str, boolean roundRect, PopupWindow.OnDismissListener
+            onDismissLinstener) {
+        final PopupWindow popupWindow = new PopupWindow();
+        popupWindow.setOutsideTouchable(true);
+        popupWindow.update();
+        popupWindow.setWidth(-2);
+        popupWindow.setHeight(-2);
+        popupWindow.setFocusable(true);
+        final ImageView iv = new ImageView(context);
+        int wh[] = getWindowWH((Activity)context);
+        final Bitmap rootbitmap = Bitmap.createBitmap(wh[0], wh[1], Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(rootbitmap);
+        Paint paint = new Paint();
+        paint.setStyle(Paint.Style.FILL);
+        final int r = (rect.height() + rect.width()) / 2;
+        Bitmap mask = null;
+        if (roundRect) {
+            mask = Bitmap.createBitmap(r * 2, r * 2, Bitmap.Config.ARGB_8888);
+            Canvas cc = new Canvas(mask);
+            cc.drawCircle(r, r, r, paint);
+        } else {
+            int padding = 4;
+            mask = Bitmap.createBitmap(rect.width(), rect.height(), Bitmap.Config.ARGB_8888);
+            Canvas cc = new Canvas(mask);
+            rect.set(rect.left - padding, rect.top - padding, rect.right + padding, rect.bottom + padding);
+            cc.drawRect(rect, paint);
+        }
+
+        Bitmap bitmap2 = Bitmap.createBitmap(wh[0], wh[1], Bitmap.Config.ARGB_8888);
+        Canvas cc = new Canvas(bitmap2);
+        paint.setStyle(Paint.Style.FILL);
+        paint.setColor(Color.BLACK);
+        cc.drawRect(new Rect(0, 0, wh[0], wh[1]), paint);
+        int sc = canvas.saveLayer(0, 0, wh[0], wh[1], null, Canvas.ALL_SAVE_FLAG);
+        canvas.drawBitmap(bitmap2, 0, 0, paint);
+        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_OUT));
+//        canvas.drawCircle(rect.centerX(), rect.centerY(), (rect.height() + rect.width()) / 2, paint);
+        canvas.drawBitmap(mask, rect.left + rect.width() / 2 - mask.getWidth() / 2,rect.top + rect.height() / 2 -
+                mask.getHeight() / 2, paint);
+        paint.setXfermode(null);
+        canvas.restoreToCount(sc);
+        paint = new Paint();
+        paint.setColor(Color.WHITE);
+        paint.setTextSize(50);
+        int x = (int)rect.left, y = (int) rect.top;
+        if (x + rect.width()  / 2 > wh[0] / 2) x -= 200;
+        else x += 200;
+        if (y + rect.height()/ 2 > wh[1] / 2) y -= 200;
+        else y += 200;
+        canvas.drawText(str, x, y, paint);
+        iv.setImageBitmap(rootbitmap);
+        iv.setAlpha(0.8f);
+//        iv.setBackgroundColor(Color.BLACK);
+        iv.setClickable(true);
+        iv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (rootbitmap != null && !rootbitmap.isRecycled()) rootbitmap.recycle();
+                popupWindow.dismiss();
+            }
+        });
+        mask.recycle();
+        bitmap2.recycle();
+        popupWindow.setContentView(iv);
+        popupWindow.setOnDismissListener(onDismissLinstener);
+        popupWindow.showAtLocation(context.getWindow().getDecorView(), Gravity.CENTER, 0, 0);
+        return  popupWindow;
+    }
 
     public void showAdapterViewEmptyView(AdapterView view, int imgres, String showTxt) {
         LinearLayout rootlayout = new LinearLayout(view.getContext());

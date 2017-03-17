@@ -11,55 +11,150 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * 智能运行线程
  */
-public abstract class SmartRun {
+public abstract class SmartRun{
     ArrayList<Method> methodList;
+    HashMap<Method, ThreadStyle.Style> changeThreadStyleMap;
+    HashMap<Method, Boolean> changeThreadAsnycMap;
 
     @ThreadStyle(style = ThreadStyle.Style.Default)
     public abstract void action();
 
     final public void start() {
-        choosThreadRun("action");
+        if (methodList == null) {
+            methodList = new ArrayList<>();
+
+            Class clazz = getClass();
+            Method[] methods = clazz.getMethods();
+            for (Method m : methods) {
+//                mLog.i("含有的方法：" + m.getName());
+                methodList.add(m);
+            }
+        }
+        chooseThreadRun("action");
     }
 
+
     final public boolean prepare(Object... parameter) {
+
         StackTraceElement[] stackTraceElement = Thread.currentThread().getStackTrace();
-        String methodName = "",lastMethodName="";
-        boolean getNextOne = false;
+        String methodName = getMethodNameFromStackTrace(stackTraceElement);
+        String lastMethodName = getLastMethodNameFromStackTrace(stackTraceElement);
+//        mLog.i("lastMethodName="+lastMethodName);
+        boolean boo = !(lastMethodName.equals("chooseThreadRun")||lastMethodName.equals("invoke"));
+        methodName=(methodName.equals("chooseThreadRun")||methodName.equals("invoke"))?lastMethodName:methodName;
+//        if (boo) mLog.i("=============\n正常转切换用反射打开 "+methodName+"(参数量"+parameter.length+")");
+//        else mLog.i("正在运行的是反射方法 "+methodName+"(参数量"+parameter.length+")");
+//        mLog.i("boo="+boo);
+        if (boo)
+            chooseThreadRun(methodName, parameter);
+
+        return boo;
+
+
+    }
+
+    final private String getMethodNameFromStackTrace( StackTraceElement[] stackTraceElement) {
+        String methodName = "";
         for (int i = 0; i < stackTraceElement.length; i++) {
             StackTraceElement st = stackTraceElement[i];
             if (st.isNativeMethod()) continue;
-//            if (!st.getClassName().equals(getClass().getName())) continue;
             if (st.getMethodName().contains("$")) continue;
             if (st.getMethodName().equals("prepare")) continue;
             boolean ifhave = false;
             for (Method m : methodList) {
                 if (m.getName().equals(st.getMethodName())) ifhave = true;
             }
+
+//            mLog.i("含有的方法：" + st.getMethodName() + "  have=" + ifhave);
             if (ifhave) {
-//                mLog.i("含有的方法："+st.getMethodName());
-                if (!getNextOne) {getNextOne = true;methodName = st.getMethodName();}
-                else {
+
+                methodName = st.getMethodName();
+                break;
+            }
+        }
+//        mLog.i("调用方法：" + methodName);
+        return methodName;
+    }
+
+    final private String getLastMethodNameFromStackTrace(StackTraceElement[] stackTraceElement) {
+        String lastMethodName = "";
+        boolean getNextOne = false;
+        for (int i = 0; i < stackTraceElement.length; i++) {
+            StackTraceElement st = stackTraceElement[i];
+            if (st.isNativeMethod()) continue;
+            if (st.getMethodName().contains("$")) continue;
+            if (st.getMethodName().equals("prepare")) continue;
+            boolean ifhave = false;
+            for (Method m : methodList) {
+                if (m.getName().equals(st.getMethodName())) ifhave = true;
+            }
+//            mLog.i("含有的方法：" + st.getMethodName() + "  have=" + ifhave);
+            if (ifhave) {
+                if (!getNextOne) {
+                    getNextOne = true;
+                } else {
                     lastMethodName = st.getMethodName();
                     break;
                 }
 
             }
         }
-        mLog.i("调用方法："+methodName);
-        mLog.i("上一个调用的方法："+lastMethodName);
-        boolean boo = !lastMethodName.equals("choosThreadRun");
-
-        if (boo) choosThreadRun(methodName, parameter);
-        return boo;
-
+//        mLog.i("上一个调用的方法：" + lastMethodName);
+        return lastMethodName;
     }
 
-    final public void choosThreadRun(String methodName, final Object... parameter) {
-        mLog.i(methodName+"");
+    final private Method getMethodByParams(String methodName, Object... parameter) {
+        Method method = null;
+        for (Method m : methodList) {
+            if (!m.getName().equals(methodName)) continue;
+            Class<?>[] parameterTypes = m.getParameterTypes();
+            if (parameterTypes.length != parameter.length) continue;
+            boolean ifthis = true;
+            for (int i = 0; i < parameterTypes.length; i++) {
+                if(parameter[i].getClass().toString().contains("java.lang.")&&parameter[i].getClass().toString().toLowerCase().contains(parameterTypes[i].toString())){
+                    continue;
+                }
+                if (!parameterTypes[i].isAssignableFrom(parameter[i].getClass())) {
+                    ifthis = false;
+                    break;
+                }
+
+            }
+            if (ifthis) {
+                method = m;
+                break;
+            }
+        }
+//        mLog.i("类参数量：" + parameter.length);
+        if (method == null) {
+            mLog.e("没有找到匹配的方法 " + methodName + "(" + parameter.toString() + ")");
+            return method;
+        }
+        return method;
+    }
+
+    final public void setMethodThread(ThreadStyle.Style style, Boolean asnyc, Object... parameter) {
+        StackTraceElement[] stackTraceElement = Thread.currentThread().getStackTrace();
+        String methodName = getMethodNameFromStackTrace(stackTraceElement);
+
+        Method method = getMethodByParams(methodName, parameter);
+
+//        mLog.i("调用方法：" + method.getName());
+        changeThreadStyleMap.put(method, style);
+        changeThreadAsnycMap.put(method, asnyc);
+    }
+
+    final public void chooseThreadRun(String methodName, final Object... parameter) {
+//        mLog.i("chooseThreadRun：" + parameter.length);
+        if (methodName == null || methodName.length() == 0) {
+            mLog.i("SmartRun 方法分析异常");
+            return;
+        }
         methodName = methodName.replace("(", "").replace(")", "");
         ThreadStyle.Style actionThreadStyle = ThreadStyle.Style.Default;
         boolean async = false;
@@ -69,41 +164,26 @@ public abstract class SmartRun {
             Class clazz = getClass();
             Method[] methods = clazz.getMethods();
             for (Method m : methods) {
+//                mLog.i("含有的方法：" + m.getName());
                 methodList.add(m);
             }
         }
-        Method method = null;
-        for (Method m : methodList) {
-            if (!m.getName().equals(methodName)) continue;
-            Class<?>[] parameterTypes = m.getParameterTypes();
-            if (parameterTypes.length != parameter.length) continue;
-            boolean ifthis = true;
-            for (int i = 0; i < parameterTypes.length; i++) {
-                if (!(parameter[i].getClass() == parameterTypes[i]))
-                    ifthis = false;
-            }
-            if (ifthis) {
-                method = m;
-                break;
-            }
-        }
-        if (method == null) {
-            mLog.e("没有找到匹配的类 "+methodName+"("+parameter.toString()+")");
-            return;
-        }
+        Method method = getMethodByParams(methodName, parameter);
         try {
             Annotation[] annotation = method.getAnnotations();
+            if(annotation!=null)
             for (Annotation a : annotation) {
                 if (a instanceof ThreadStyle) {
                     actionThreadStyle = ((ThreadStyle) a).style();
                 }
-                if (a instanceof UIThread) {
+                String annotationName = a.annotationType().getSimpleName();
+                if (a instanceof UIThread || annotationName.equals("UIThread")) {
                     actionThreadStyle = ThreadStyle.Style.UI;
                 }
-                if (a instanceof BGThread) {
+                if (a instanceof BGThread || annotationName.equals("BGThread")) {
                     actionThreadStyle = ThreadStyle.Style.BG;
                 }
-                if (a instanceof DefaultThread) {
+                if (a instanceof DefaultThread || annotationName.equals("DefaultThread")) {
                     actionThreadStyle = ThreadStyle.Style.Default;
                 }
                 if (a instanceof Async) {
@@ -115,7 +195,12 @@ public abstract class SmartRun {
             mLog.e("没有发现" + methodName + "方法，请不要对SmartRun类进行混淆");
             return;
         }
-
+        if (changeThreadStyleMap != null && changeThreadStyleMap.containsKey(method)) {
+            actionThreadStyle = changeThreadStyleMap.get(method);
+        }
+        if (changeThreadAsnycMap != null && changeThreadAsnycMap.containsKey(method)) {
+            async = changeThreadAsnycMap.get(method);
+        }
         final boolean finalAsync = async;
 
         if (actionThreadStyle == ThreadStyle.Style.Default) {
@@ -179,19 +264,75 @@ public abstract class SmartRun {
             }
             return;
         }
-
-
     }
 
-    final private void invoke(Method method, Object... parameter) {
-        mLog.i(ThreadUtils.getThreadStytle().toString());
+    final public void invoke(final Method method, final Object... parameter) {
+        invoke(false, method, parameter);
+    }
+
+    final public void invoke(boolean haveException, final Method method, final Object... parameter) {
+        mLog.i(ThreadUtils.getThreadStytle().toString() + "线程中运行方法：" + method.getName() + "(参数量：" + parameter.length
+                + ")"  +Thread.currentThread().toString());
         try {
             method.invoke(this, parameter);
+            if (haveException) {
+                mLog.i("(" + method.getName() + ") " + "由线程错误引发的代码错误已修复，该方法已被正确运行完成，且在该次实例中将不会再次出现。\n建议开发者进行代码修复");
+                if (changeThreadStyleMap == null) changeThreadStyleMap = new HashMap<>();
+                changeThreadStyleMap.put(method, ThreadUtils.getThreadStytle());
+            }
+            mLog.i("方法：" + method.getName() + "(参数量：" + parameter.length
+                    + ") 成功运行在"+ThreadUtils.getThreadStytle().toString() + "线程");
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         } catch (InvocationTargetException e) {
-            Throwable t = e.getTargetException();// 获取目标异常
-            t.printStackTrace();
+            try {
+                throw new Exception(e.getTargetException());// 获取目标异常
+            } catch (Exception e1) {
+                if (haveException) {
+                    mLog.e("(" + method.getName() + ") " + "代码错误：线程错误且尝试修复失败");
+                    return;
+                }
+                if (e1.getMessage().contains("CalledFromWrongThreadException")) {
+                    mLog.e("(" + method.getName() + ") " + "代码错误：不能在子线程中更新UI");
+                    mLog.e("(" + method.getName() + ") " + "正在切换线程并重启方法以尝试修复");
+                    try {
+                        ThreadUtils.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                invoke(true, method, parameter);
+                            }
+                        });
+                    } catch (MyException e2) {
+                        e2.printStackTrace();
+                    }
+                    return;
+                }
+                if (e1.getMessage().contains("NetworkOnMainThreadException")) {
+                    mLog.e("(" + method.getName() + ") " + "代码错误：不能在主线程中进行网络连接");
+                    mLog.e("(" + method.getName() + ") " + "正在切换线程并重启方法以尝试修复");
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            invoke(true, method, parameter);
+                        }
+                    }).start();
+                    return;
+                }
+
+            }finally {
+                if (ThreadUtils.isBGThread()) Thread.currentThread().interrupt();
+            }
+
         }
     }
+
+    public void sleep(long sleeptime) {
+        if (ThreadUtils.isUIThread()) mLog.e("请避免在UI线程进行sleep操作");
+        try {
+            Thread.sleep(sleeptime);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
 }

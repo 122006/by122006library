@@ -4,7 +4,7 @@ package com.by122006library.Utils;
  * Created by admin on 2017/2/16.
  */
 
-public class MathUtils {
+public class MathUtils  {
 
     /**
      * 值域映射
@@ -70,6 +70,9 @@ public class MathUtils {
         } else {
             return divisor(n,m % n);
         }
+    }
+    public static float countDistance_2(float x, float y, float f, float g) {
+        return (x - f) * (x - f) + (y - g) * (y - g);
     }
 
 
