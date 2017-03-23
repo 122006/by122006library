@@ -4,7 +4,10 @@ import android.support.annotation.CallSuper;
 import android.support.annotation.Nullable;
 
 import com.by122006library.Activity.BaseActivity;
+import com.by122006library.Interface.ThreadStyle;
 import com.by122006library.MyException;
+import com.by122006library.Utils.ThreadUtils;
+import com.by122006library.Utils.mLog;
 import com.by122006library.View.CustomDialog;
 import com.by122006library.web.Web;
 
@@ -58,7 +61,17 @@ public abstract class WEBBaseCallBack {
 
             public void action(Web.RESULTSTYLE resultstyle, @Nullable String data, @Nullable Object obj) throws
                     MyException {
-                (new CustomDialog.Builder(BaseActivity.getContext())).setMessage("网络错误请检查网络设置").setTitle("网络错误").show();
+
+                try {
+                    ThreadUtils.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            (new CustomDialog.Builder(BaseActivity.optContext())).setMessage("网络错误,请检查网络设置").setTitle("网络错误").show();
+                        }
+                    });
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
                 onError(data, resultstyle);
             }
         });

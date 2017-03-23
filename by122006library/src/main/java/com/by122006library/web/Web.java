@@ -59,6 +59,9 @@ public class Web {
         if (ThreadUtils.isUIThread()) throw new MyException("不能在UI线程中调用该方法");
         if (vs != null) vs.showLoading("正在获取中...", null);
         String str_url = requster.getUrl();
+        if (requster.getDefaultUrl() == null) throw new MyException("你需要为Url设置一个默认值");
+        if (requster.getDefaultEncode() == null) throw new MyException("你需要为编码Encode设置一个默认值");
+        if (requster.getDefaultHttpStyle() == -1) throw new MyException("你需要为HttpStyle(GET/POST)设置一个默认值");
         mLog.i("连接至网址：url=" + str_url);
         try {
             URL url = new URL(str_url);

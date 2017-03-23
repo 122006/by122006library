@@ -91,6 +91,7 @@ public class CustomDialog extends Dialog {
 		}
 
 		public CustomDialog show(){
+			if(context==null) return null;
 			if(((Activity)context).isFinishing()) return null;
 			LayoutInflater inflater = (LayoutInflater) context
 					.getSystemService(Context.LAYOUT_INFLATER_SERVICE);

@@ -85,17 +85,22 @@ public abstract class SmartRun {
                 smartRun.methodList.add(m);
             }
         }
+//        for (int i = 0; i < stackTraceElement.length; i++) {
+//            StackTraceElement st = stackTraceElement[i];
+//              mLog.i(st.getMethodName());
+//        }
         String methodName = smartRun.getMethodNameFromStackTrace(stackTraceElement);
         String lastMethodName = smartRun.getLastMethodNameFromStackTrace(stackTraceElement);
-//        mLog.i("lastMethodName="+lastMethodName);
+//        mLog.i("methodName=" + methodName);
+//        mLog.i("lastMethodName=" + lastMethodName);
         boolean boo = !(lastMethodName.equals("chooseThreadRun") || lastMethodName.equals("invoke"));
         methodName = (methodName.equals("chooseThreadRun") || methodName.equals("invoke")) ? lastMethodName :
                 methodName;
-//        if (boo) mLog.i("=============\n正常转切换用反射打开 "+methodName+"(参数量"+parameter.length+")");
-//        else mLog.i("正在运行的是反射方法 "+methodName+"(参数量"+parameter.length+")");
-//        mLog.i("boo="+boo);
+//        if (boo) mLog.i("=============\n正常转切换用反射打开 " + methodName + "(参数量" + parameter.length + ")");
+//        else mLog.i("正在运行的是反射方法 " + methodName + "(参数量" + parameter.length + ")");
+//        mLog.i("boo=" + boo);
         if (boo)
-            smartRun.chooseThreadRun(methodName, parameter);
+            smartRun.chooseThreadRun(target, methodName, parameter);
 
         return boo;
 
@@ -109,6 +114,7 @@ public abstract class SmartRun {
             if (st.isNativeMethod()) continue;
             if (st.getMethodName().contains("$")) continue;
             if (st.getMethodName().equals("prepare")) continue;
+            if (st.getMethodName().equals("sPrepare")) continue;
             boolean ifhave = false;
             for (Method m : methodList) {
                 if (m.getName().equals(st.getMethodName())) ifhave = true;
@@ -133,6 +139,7 @@ public abstract class SmartRun {
             if (st.isNativeMethod()) continue;
             if (st.getMethodName().contains("$")) continue;
             if (st.getMethodName().equals("prepare")) continue;
+            if (st.getMethodName().equals("sPrepare")) continue;
             boolean ifhave = false;
             for (Method m : methodList) {
                 if (m.getName().equals(st.getMethodName())) ifhave = true;
@@ -223,7 +230,11 @@ public abstract class SmartRun {
         changeThreadAsnycMap.put(method, asnyc);
     }
 
-    final public void chooseThreadRun(String methodName, final Object... parameter) {
+    final public <T> void chooseThreadRun(String methodName, final Object... parameter) {
+        chooseThreadRun(this, methodName, parameter);
+    }
+
+    final public <T> void chooseThreadRun(final T target, String methodName, final Object... parameter) {
 //        mLog.i("chooseThreadRun：" + parameter.length);
         if (methodName == null || methodName.length() == 0) {
             mLog.i("SmartRun 方法分析异常");
@@ -284,13 +295,13 @@ public abstract class SmartRun {
         final Method finalMethod = method;
         if (actionThreadStyle == ThreadStyle.Style.BG && ThreadUtils.isBGThread()) {
             if (!finalAsync)
-                invoke(method, parameter);
+                invoke(target, method, parameter);
 
             else {
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        invoke(finalMethod, parameter);
+                        invoke(target, finalMethod, parameter);
 
                     }
                 }).start();
@@ -299,13 +310,13 @@ public abstract class SmartRun {
         }
         if (actionThreadStyle == ThreadStyle.Style.UI && ThreadUtils.isUIThread()) {
             if (!finalAsync)
-                invoke(method, parameter);
+                invoke(target, method, parameter);
 
             else try {
                 ThreadUtils.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        invoke(finalMethod, parameter);
+                        invoke(target, finalMethod, parameter);
 
                     }
                 });
@@ -318,7 +329,7 @@ public abstract class SmartRun {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    invoke(finalMethod, parameter);
+                    invoke(target, finalMethod, parameter);
 
                 }
             }).start();
@@ -329,7 +340,7 @@ public abstract class SmartRun {
                 ThreadUtils.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        invoke(finalMethod, parameter);
+                        invoke(target, finalMethod, parameter);
 
                     }
                 });
@@ -345,10 +356,19 @@ public abstract class SmartRun {
     }
 
     final public void invoke(boolean haveException, final Method method, final Object... parameter) {
+        invoke(this, haveException, method, parameter);
+    }
+
+    final public <T> void invoke(T target, final Method method, final Object... parameter) {
+        invoke(target, false, method, parameter);
+    }
+
+    final public <T> void invoke(final T target, boolean haveException, final Method method, final Object...
+            parameter) {
         mLog.i(ThreadUtils.getThreadStytle().toString() + "线程中运行方法：" + method.getName() + "(参数量：" + parameter.length
                 + ")" + Thread.currentThread().toString());
         try {
-            method.invoke(this, parameter);
+            method.invoke(target, parameter);
             if (haveException) {
                 mLog.i("(" + method.getName() + ") " + "由线程错误引发的代码错误已修复，该方法已被正确运行完成，且在该次实例中将不会再次出现。\n建议开发者进行代码修复");
                 if (changeThreadStyleMap == null) changeThreadStyleMap = new HashMap<>();
@@ -373,7 +393,7 @@ public abstract class SmartRun {
                         ThreadUtils.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                invoke(true, method, parameter);
+                                invoke(target, true, method, parameter);
                             }
                         });
                     } catch (MyException e2) {
@@ -387,7 +407,7 @@ public abstract class SmartRun {
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
-                            invoke(true, method, parameter);
+                            invoke(target, true, method, parameter);
                         }
                     }).start();
                     return;

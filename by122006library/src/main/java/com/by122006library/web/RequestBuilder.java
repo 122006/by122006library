@@ -18,9 +18,12 @@ public class RequestBuilder {
     private static String token = null;
     public HashMap<String, String> request;
     int timeout = 20 * 1000;
-    String encode = "UTF-8";
-    private String url;
-    private int httpStyle = 1;
+    String encode = null;
+    private static String defaultEncode = "UTF-8";
+    private String url=null;
+    private static String defaultUrl;
+    private int httpStyle = -1;
+    private static int defaultHttpStyle = 1;
     private String action;
 
     public RequestBuilder() {
@@ -35,8 +38,32 @@ public class RequestBuilder {
         RequestBuilder.token = token;
     }
 
+    public static int getDefaultHttpStyle() {
+        return defaultHttpStyle;
+    }
+
+    public static void setDefaultHttpStyle(int defaultHttpStyle) {
+        RequestBuilder.defaultHttpStyle = defaultHttpStyle;
+    }
+
+    public static String getDefaultEncode() {
+        return defaultEncode;
+    }
+
+    public static void setDefaultEncode(String defaultEncode) {
+        RequestBuilder.defaultEncode = defaultEncode;
+    }
+
+    public static String getDefaultUrl() {
+        return defaultUrl;
+    }
+
+    public static void setDefaultUrl(String defaultUrl) {
+        RequestBuilder.defaultUrl = defaultUrl;
+    }
+
     public int getHttpStyle() {
-        return httpStyle;
+        return (httpStyle==-1?defaultHttpStyle:httpStyle);
     }
 
     public RequestBuilder setHttpStyle(int httpStyle) {
@@ -45,11 +72,12 @@ public class RequestBuilder {
     }
 
     public String getUrl() {
-        return url + getAction();
+        return (url==null?defaultUrl:url) + getAction();
     }
 
     public RequestBuilder setUrl(String url) {
         this.url = url;
+        if(defaultUrl==null) defaultUrl=url;
         return this;
     }
 
@@ -110,11 +138,13 @@ public class RequestBuilder {
 
     public RequestBuilder get() {
         httpStyle = RequestBuilder.GET;
+        if(defaultHttpStyle==-1) defaultHttpStyle=httpStyle;
         return this;
     }
 
     public RequestBuilder post() {
         httpStyle = RequestBuilder.POST;
+        if(defaultHttpStyle==-1) defaultHttpStyle=httpStyle;
         return this;
     }
 
@@ -128,11 +158,12 @@ public class RequestBuilder {
     }
 
     public String getEncode() {
-        return encode;
+        return (encode==null?defaultEncode:encode);
     }
 
     public RequestBuilder setEncode(String encode) {
         this.encode = encode;
+        if(defaultEncode==null) defaultEncode=encode;
         return this;
     }
 

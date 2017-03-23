@@ -11,6 +11,7 @@ import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.media.ExifInterface;
 import android.net.ConnectivityManager;
@@ -23,6 +24,7 @@ import android.support.annotation.CallSuper;
 import android.support.annotation.IdRes;
 import android.support.annotation.UiThread;
 import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.OrientationEventListener;
 import android.view.View;
 import android.view.Window;
@@ -57,16 +59,17 @@ public class BaseActivity extends Activity {
     protected int runcount = -1;
     ArrayList<ActivityResultCallBack> activityResultCallBackList;
     private OrientationEventListener mScreenOrientationEventListener;
-
-    public void setFullScreen(boolean FLAG_ACT_FULLSCREEN){
-        this.FLAG_ACT_FULLSCREEN=FLAG_ACT_FULLSCREEN;
-    }
-    public void setNoTitle(boolean FLAG_ACT_NO_TITLE){
-        this.FLAG_ACT_NO_TITLE=FLAG_ACT_NO_TITLE;
-    }
+    private ArrayList<View> needTouchView = new ArrayList<>();
 
     public static Context getContext() throws MyException {
         return getTopActivity().getDecorView().getContext();
+    }
+    public static Context optContext() {
+        try {
+            return getTopActivity().getDecorView().getContext();
+        } catch (MyException e) {
+            return null;
+        }
     }
 
     public static void showStringPopup_BottomView(String str, View v) throws MyException {
@@ -242,6 +245,14 @@ public class BaseActivity extends Activity {
         getContext().startActivity(mHomeIntent);
     }
 
+    public void setFullScreen(boolean FLAG_ACT_FULLSCREEN) {
+        this.FLAG_ACT_FULLSCREEN = FLAG_ACT_FULLSCREEN;
+    }
+
+    public void setNoTitle(boolean FLAG_ACT_NO_TITLE) {
+        this.FLAG_ACT_NO_TITLE = FLAG_ACT_NO_TITLE;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         runcount++;
@@ -251,45 +262,46 @@ public class BaseActivity extends Activity {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         super.onCreate(savedInstanceState);
+        if (canRotate) {
+            mScreenOrientationEventListener = new OrientationEventListener(this) {
+                private int mScreenExifOrientation;
 
-        mScreenOrientationEventListener = new OrientationEventListener(this) {
-            private int mScreenExifOrientation;
+                @Override
+                public void onOrientationChanged(int i) {
+                    // i的范围是0～359
+                    // 屏幕左边在顶部的时候 i = 90;
+                    // 屏幕顶部在底部的时候 i = 180;
+                    // 屏幕右边在底部的时候 i = 270;
+                    // 正常情况默认i = 0;
 
-            @Override
-            public void onOrientationChanged(int i) {
-                // i的范围是0～359
-                // 屏幕左边在顶部的时候 i = 90;
-                // 屏幕顶部在底部的时候 i = 180;
-                // 屏幕右边在底部的时候 i = 270;
-                // 正常情况默认i = 0;
-
-                if (45 <= i && i < 135) {
-                    mScreenExifOrientation = ExifInterface.ORIENTATION_ROTATE_180;
-                } else if (135 <= i && i < 225) {
-                    mScreenExifOrientation = ExifInterface.ORIENTATION_ROTATE_270;
-                } else if (225 <= i && i < 315) {
-                    mScreenExifOrientation = ExifInterface.ORIENTATION_NORMAL;
-                } else {
-                    mScreenExifOrientation = ExifInterface.ORIENTATION_ROTATE_90;
-                }
-                if (canRotate) {
-                    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
-                } else {
-                    switch (mScreenExifOrientation) {
-                        case ExifInterface.ORIENTATION_ROTATE_90:
-                            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-                            break;
-                        case ExifInterface.ORIENTATION_ROTATE_270:
-                            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
-                            break;
-                        default:
-                            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-                            break;
+                    if (45 <= i && i < 135) {
+                        mScreenExifOrientation = ExifInterface.ORIENTATION_ROTATE_180;
+                    } else if (135 <= i && i < 225) {
+                        mScreenExifOrientation = ExifInterface.ORIENTATION_ROTATE_270;
+                    } else if (225 <= i && i < 315) {
+                        mScreenExifOrientation = ExifInterface.ORIENTATION_NORMAL;
+                    } else {
+                        mScreenExifOrientation = ExifInterface.ORIENTATION_ROTATE_90;
+                    }
+                    if (canRotate) {
+                        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
+                    } else {
+                        switch (mScreenExifOrientation) {
+                            case ExifInterface.ORIENTATION_ROTATE_90:
+                                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+                                break;
+                            case ExifInterface.ORIENTATION_ROTATE_270:
+                                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
+                                break;
+                            default:
+                                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+                                break;
+                        }
                     }
                 }
-            }
-        };
-        mScreenOrientationEventListener.enable();
+            };
+            mScreenOrientationEventListener.enable();
+        }
     }
 
     @Override
@@ -307,6 +319,8 @@ public class BaseActivity extends Activity {
     public void onDestroy() {
         super.onDestroy();
         list_act.remove(this);
+        needTouchView.clear();
+        needTouchView=null;
     }
 
     /**
@@ -386,6 +400,24 @@ public class BaseActivity extends Activity {
         activityResultCallBackList.add(activityResultCallBack);
     }
 
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        if (needTouchView != null) {
+            for (View v : needTouchView) {
+                Rect rect = new Rect();
+                v.getLocalVisibleRect(rect);
+                if (v.isShown() && rect.contains((int) ev.getRawX(), (int) ev.getRawY())) v.onTouchEvent(ev);
+            }
+        }
+
+        return super.dispatchTouchEvent(ev);
+    }
+
+    public void registerNeedTouchView(View v) {
+        if (needTouchView.contains(v)) return;
+        needTouchView.add(v);
+    }
+
     /**
      * 界面回传的回调事件
      */
@@ -401,6 +433,4 @@ public class BaseActivity extends Activity {
 
         void callback(Intent data);
     }
-
-
 }

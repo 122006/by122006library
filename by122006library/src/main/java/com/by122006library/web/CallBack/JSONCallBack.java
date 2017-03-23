@@ -13,7 +13,7 @@ import org.json.JSONObject;
  */
 
 public abstract class JSONCallBack extends WEBBaseCallBack {
-    JSONCallBack(){
+    public JSONCallBack(){
         super();
 
     }
