@@ -190,12 +190,18 @@ public abstract class SmartRun {
 
     final private Method getMethodByParams(String methodName, Object... parameter) {
         Method method = null;
+        Method method_canable = null;
         for (Method m : methodList) {
             if (!m.getName().equals(methodName)) continue;
+            if (method_canable == null) method_canable = m;
             Class<?>[] parameterTypes = m.getParameterTypes();
             if (parameterTypes.length != parameter.length) continue;
             boolean ifthis = true;
             for (int i = 0; i < parameterTypes.length; i++) {
+                if (parameter[i] == null) {
+                    mLog.e("传入参数发现null，已忽略该位置匹配，可能结果会产生错误");
+                    continue;
+                }
                 if (parameter[i].getClass().toString().contains("java.lang.") && parameter[i].getClass().toString()
                         .toLowerCase().contains(parameterTypes[i].toString())) {
                     continue;
@@ -213,8 +219,13 @@ public abstract class SmartRun {
         }
 //        mLog.i("类参数量：" + parameter.length);
         if (method == null) {
-            mLog.e("没有找到匹配的方法 " + methodName + "(" + parameter.toString() + ")");
-            return method;
+            mLog.e("没有找到匹配的方法 " + methodName + "(参数数： " + parameter.length + " )");
+            if (method_canable == null) {
+                return method;
+            } else {
+                mLog.e("发现同名方法 " + method_canable.getName() + "( 参数数：" + method_canable.getParameterTypes().length + " )  是否调用时未传入方法所有参数！");
+                return method_canable;
+            }
         }
         return method;
     }
