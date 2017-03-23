@@ -143,6 +143,18 @@
     4. 错误会被记录，在该次SmartRun不会重复出现
     5. 该方法只是调试用方法，请尽量避免出现该情况
 
+* **外部线程快捷调用**
+
+    >**实验中功能，不保证稳定性**任何地方确保某方法运行在指定的线程
+
+          @UIThread
+            public void showThisFunction() {
+                if(SmartRun.sPrepare(this)) return;
+            }
+
+    1. 在任意实体类的任意方法的方法开头调用`if(SmartRun.sPrepare(this)) return;`
+    2. 为该方法增加注释定义所运行的线程。例如`@ThreadStyle(style = ThreadStyle.Style.Default)`
+    3. 暂时不支持静态方法
 
 
 * 注意
