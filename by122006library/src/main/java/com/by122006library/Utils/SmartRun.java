@@ -20,7 +20,7 @@ import java.util.HashMap;
  */
 public abstract class SmartRun {
     final static String[] ignoreMethods = new String[]{
-            "toString","wait","getClass","hashCode","notify","notifyAll"
+            "toString", "wait", "getClass", "hashCode", "notify", "notifyAll"
     };
     static HashMap<Object, SmartRun> staticMap;
     ArrayList<Method> methodList;
@@ -86,7 +86,8 @@ public abstract class SmartRun {
                         for (Method m3 : Object.class.getMethods()) {
                             if (!m.getName().equals(m3.getName())) continue;
                             if (m.getParameterTypes().length != m3.getParameterTypes().length) continue;
-                            ifConflict=false; break;
+                            ifConflict = false;
+                            break;
                         }
                     } else {
                         for (int i = 0; i < classes2.length; i++) {
@@ -111,7 +112,7 @@ public abstract class SmartRun {
                                     } else {
                                         for (int j = 0; j < classes3.length; j++) {
                                             if (classes2[i].getClass().equals(classes3[j].getClass())) {
-                                                ifConflict=false;
+                                                ifConflict = false;
                                                 continue;
                                             }
                                         }
