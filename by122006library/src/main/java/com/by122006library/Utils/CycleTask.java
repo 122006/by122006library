@@ -42,7 +42,7 @@ public abstract class CycleTask {
         }
     });
     static long lasttime = 0;
-    static long durtime = 0;
+    public static long durtime = 0;
     public Object tag;
     public long daleyTime;
     public long cycleTime;
@@ -63,7 +63,8 @@ public abstract class CycleTask {
         lasttime = System.currentTimeMillis();
 
     }
-
+    final public static int ImmediatelyRun=-1;
+    final public static int CircleForever=-1;
     /**
      * @param daleyTime 首次延迟时间
      * @param cycleTime 没次循环时间
@@ -71,6 +72,7 @@ public abstract class CycleTask {
      */
     public CycleTask(long daleyTime, long cycleTime, int cycleNum) {
         this.daleyTime = daleyTime;
+        if(daleyTime==-1) this.daleyTime=-cycleTime;
         this.cycleTime = cycleTime;
         this.cycleNum = cycleNum;
     }
@@ -138,7 +140,7 @@ public abstract class CycleTask {
     public void registerOwnThreadTask(Object tag) {
         if (!isRunning) {
             isRunning = true;
-            thread.run();
+            thread.start();
         }
         try {
             Thread.sleep(1);

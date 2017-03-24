@@ -1,5 +1,7 @@
 package com.by122006library.Utils;
 
+import android.support.annotation.Nullable;
+
 import com.by122006library.Interface.Async;
 import com.by122006library.Interface.BGThread;
 import com.by122006library.Interface.DefaultThread;
@@ -17,12 +19,25 @@ import java.util.HashMap;
  * 智能运行线程
  */
 public abstract class SmartRun {
+    final static String[] ignoreMethods = new String[]{
+            "toString","wait","getClass","hashCode","notify","notifyAll"
+    };
     static HashMap<Object, SmartRun> staticMap;
     ArrayList<Method> methodList;
     HashMap<Method, ThreadStyle.Style> changeThreadStyleMap;
     HashMap<Method, Boolean> changeThreadAsnycMap;
 
-    final public static <T> boolean sPrepare(T target, Object... parameter) {
+    final public static <T> void removeCache(T target) {
+        if (staticMap == null) {
+            staticMap = new HashMap<>();
+        }
+        if (staticMap.containsKey(target)) {
+            staticMap.remove(target);
+        }
+    }
+
+    final public static <T> boolean sPrepare(@Nullable T target, @Nullable Object... parameter) {
+
         StackTraceElement[] stackTraceElement = Thread.currentThread().getStackTrace();
 
         if (staticMap == null) {
@@ -46,11 +61,20 @@ public abstract class SmartRun {
             Method[] methods1 = clazz1.getMethods();
             for (Method m : methods1) {
 //                mLog.i("含有的方法：" + m.getName());
-                smartRun.methodList.add(m);
+                boolean ifIgnore = false;
+                for (String ignore : ignoreMethods) {
+                    if (ignore.equals(m.getName())) {
+                        ifIgnore = true;
+                        break;
+                    }
+                }
+                if (!ifIgnore)
+                    smartRun.methodList.add(m);
             }
             Class clazz2 = target.getClass();
             Method[] methods2 = clazz2.getMethods();
             for (Method m : methods2) {
+                if (m.getName().contains("$")) continue;
                 for (Method m2 : methods1) {
                     if (!m.getName().equals(m2.getName())) continue;
                     if (m.getParameterTypes().length != m2.getParameterTypes().length) continue;
@@ -59,6 +83,11 @@ public abstract class SmartRun {
                     boolean ifConflict = false;
                     if (classes1.length == 0) {
                         ifConflict = true;
+                        for (Method m3 : Object.class.getMethods()) {
+                            if (!m.getName().equals(m3.getName())) continue;
+                            if (m.getParameterTypes().length != m3.getParameterTypes().length) continue;
+                            ifConflict=false; break;
+                        }
                     } else {
                         for (int i = 0; i < classes2.length; i++) {
                             if (classes1[i].getClass().toString().contains("java.lang.") && classes1[i].getClass()
@@ -73,8 +102,23 @@ public abstract class SmartRun {
                             }
                             if (!classes2[i].isAssignableFrom(classes1[i].getClass())) {
                                 ifConflict = true;
-
-                                break;
+                                for (Method m3 : Object.class.getMethods()) {
+                                    Class[] classes3 = m3.getParameterTypes();
+                                    if (!m.getName().equals(m3.getName())) continue;
+                                    if (m.getParameterTypes().length != m3.getParameterTypes().length) continue;
+                                    if (classes1.length == 0) {
+                                        ifConflict = false;
+                                    } else {
+                                        for (int j = 0; j < classes3.length; j++) {
+                                            if (classes2[i].getClass().equals(classes3[j].getClass())) {
+                                                ifConflict=false;
+                                                continue;
+                                            }
+                                        }
+                                    }
+                                    if (!ifConflict) break;
+                                }
+                                if (ifConflict) break;
                             }
                         }
                     }
@@ -223,7 +267,8 @@ public abstract class SmartRun {
             if (method_canable == null) {
                 return method;
             } else {
-                mLog.e("发现同名方法 " + method_canable.getName() + "( 参数数：" + method_canable.getParameterTypes().length + " )  是否调用时未传入方法所有参数！");
+                mLog.e("发现同名方法 " + method_canable.getName() + "( 参数数：" + method_canable.getParameterTypes().length +
+                        " )  是否调用时未传入方法所有参数！");
                 return method_canable;
             }
         }
@@ -273,13 +318,14 @@ public abstract class SmartRun {
                         actionThreadStyle = ((ThreadStyle) a).style();
                     }
                     String annotationName = a.annotationType().getSimpleName();
-                    if (a instanceof UIThread || annotationName.equals("UIThread")) {
+                    if (a instanceof UIThread || annotationName.toLowerCase().equals("UIThread".toLowerCase())) {
                         actionThreadStyle = ThreadStyle.Style.UI;
                     }
-                    if (a instanceof BGThread || annotationName.equals("BGThread")) {
+                    if (a instanceof BGThread || annotationName.toLowerCase().equals("BGThread".toLowerCase())) {
                         actionThreadStyle = ThreadStyle.Style.BG;
                     }
-                    if (a instanceof DefaultThread || annotationName.equals("DefaultThread")) {
+                    if (a instanceof DefaultThread || annotationName.toLowerCase().equals("DefaultThread".toLowerCase
+                            ())) {
                         actionThreadStyle = ThreadStyle.Style.Default;
                     }
                     if (a instanceof Async) {
@@ -370,11 +416,11 @@ public abstract class SmartRun {
         invoke(this, haveException, method, parameter);
     }
 
-    final public <T> void invoke(T target, final Method method, final Object... parameter) {
+    final public <T> void invoke(@Nullable T target, final Method method, final Object... parameter) {
         invoke(target, false, method, parameter);
     }
 
-    final public <T> void invoke(final T target, boolean haveException, final Method method, final Object...
+    final public <T> void invoke(@Nullable final T target, boolean haveException, final Method method, final Object...
             parameter) {
         mLog.i(ThreadUtils.getThreadStytle().toString() + "线程中运行方法：" + method.getName() + "(参数量：" + parameter.length
                 + ")" + Thread.currentThread().toString());

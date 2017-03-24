@@ -148,13 +148,13 @@
     >**实验中功能，不保证稳定性**任何地方确保某方法运行在指定的线程
 
           @UIThread
-            public void showThisFunction() {
-                if(SmartRun.sPrepare(this)) return;
+            public void 任意方法名(参数) {
+                if(SmartRun.sPrepare(this(,参数))) return;
             }
 
     1. 在任意实体类的任意方法的方法开头调用`if(SmartRun.sPrepare(this)) return;`
     2. 为该方法增加注释定义所运行的线程。例如`@ThreadStyle(style = ThreadStyle.Style.Default)`
-    3. 暂时不支持静态方法
+
 
 
 * 注意
@@ -163,3 +163,8 @@
     3. 如果未调用`start()`或者自定开始任务，任务不会被运行
     4. 如果方法中需要含有参数，请在`prepare()`传入该方法所有的参数
     5. 任务反射消耗时间：1ms-2ms。请考虑性能因素
+    6. 暂时不支持静态方法
+    7. 暂时不支持返回数据
+        >* 不同线程不应该使用同步的返回，应该线性进行相关方法调用；
+       >* 相同线程不需要使用线程控制，可以直接调用方法得到返回。
+    8. 基础类型和其封装器视为相同参数，注意方法重复问题

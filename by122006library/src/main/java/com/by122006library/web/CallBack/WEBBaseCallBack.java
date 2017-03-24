@@ -46,20 +46,20 @@ public abstract class WEBBaseCallBack {
     @CallSuper
     public void init() {
         registerDefaultMatchCheck(new MatchCheck() {
-            public boolean match(Web.RESULTSTYLE resultstyle, @Nullable String data, @Nullable Object obj) {
+            public boolean match(WEBBaseCallBack clazz,Web.RESULTSTYLE resultstyle, @Nullable String data, @Nullable Object obj) {
                 return resultstyle == Web.RESULTSTYLE.Success;
             }
 
-            public void action(Web.RESULTSTYLE resultstyle, @Nullable String data, @Nullable Object obj) {
-                onSuccess(data);
+            public void action(WEBBaseCallBack clazz,Web.RESULTSTYLE resultstyle, @Nullable String data, @Nullable Object obj) {
+                clazz.onSuccess(data);
             }
         });
         registerDefaultMatchCheck(new MatchCheck() {
-            public boolean match(Web.RESULTSTYLE resultstyle, @Nullable String data, @Nullable Object obj) {
+            public boolean match(WEBBaseCallBack clazz,Web.RESULTSTYLE resultstyle, @Nullable String data, @Nullable Object obj) {
                 return resultstyle == Web.RESULTSTYLE.Fail_WebException;
             }
 
-            public void action(Web.RESULTSTYLE resultstyle, @Nullable String data, @Nullable Object obj) throws
+            public void action(WEBBaseCallBack clazz,Web.RESULTSTYLE resultstyle, @Nullable String data, @Nullable Object obj) throws
                     MyException {
 
                 try {
@@ -72,28 +72,28 @@ public abstract class WEBBaseCallBack {
                 }catch (Exception e){
                     e.printStackTrace();
                 }
-                onError(data, resultstyle);
+                clazz.onError(data, resultstyle);
             }
         });
         registerDefaultMatchCheck(new MatchCheck() {
-            public boolean match(Web.RESULTSTYLE resultstyle, @Nullable String data, @Nullable Object obj) {
+            public boolean match(WEBBaseCallBack clazz,Web.RESULTSTYLE resultstyle, @Nullable String data, @Nullable Object obj) {
                 return resultstyle == Web.RESULTSTYLE.Fail_NotFound;
             }
 
-            public void action(Web.RESULTSTYLE resultstyle, @Nullable String data, @Nullable Object obj) throws
+            public void action(WEBBaseCallBack clazz,Web.RESULTSTYLE resultstyle, @Nullable String data, @Nullable Object obj) throws
                     MyException {
                 (new CustomDialog.Builder(BaseActivity.getContext())).setMessage("链接不正确或服务器异常").setTitle("网络错误").show();
-                onError(data, resultstyle);
+                clazz.onError(data, resultstyle);
             }
         });
         registerDefaultMatchCheck(new MatchCheck() {
-            public boolean match(Web.RESULTSTYLE resultstyle, @Nullable String data, @Nullable Object obj) {
+            public boolean match(WEBBaseCallBack clazz,Web.RESULTSTYLE resultstyle, @Nullable String data, @Nullable Object obj) {
                 return resultstyle == Web.RESULTSTYLE.Fail_ServiceRefuse;
             }
 
-            public void action(Web.RESULTSTYLE resultstyle, @Nullable String data, @Nullable Object obj) throws
+            public void action(WEBBaseCallBack clazz,Web.RESULTSTYLE resultstyle, @Nullable String data, @Nullable Object obj) throws
                     MyException {
-                onFail(data);
+                clazz.onFail(data);
             }
         });
     }
@@ -109,16 +109,16 @@ public abstract class WEBBaseCallBack {
     public void analyseBack(Web.RESULTSTYLE resultstyle, String data, Object obj) throws MyException {
         if (currentMatchCheckList != null) {
             for (MatchCheck matchCheck : (ArrayList<MatchCheck>) currentMatchCheckList.clone()) {
-                if (matchCheck.match(resultstyle, data, obj)) {
-                    matchCheck.action(resultstyle, data, obj);
+                if (matchCheck.match(this,resultstyle, data, obj)) {
+                    matchCheck.action(this,resultstyle, data, obj);
                     return;
                 }
             }
         } else {
             if (defaultMatchCheckList == null) return;
             for (MatchCheck matchCheck : (ArrayList<MatchCheck>) defaultMatchCheckList.clone()) {
-                if (matchCheck.match(resultstyle, data, obj)) {
-                    matchCheck.action(resultstyle, data, obj);
+                if (matchCheck.match(this,resultstyle, data, obj)) {
+                    matchCheck.action(this,resultstyle, data, obj);
                     return;
                 }
             }
@@ -152,9 +152,9 @@ public abstract class WEBBaseCallBack {
      * 规则匹配类
      */
     public abstract class MatchCheck {
-        public abstract boolean match(Web.RESULTSTYLE resultstyle, @Nullable String data, @Nullable Object obj);
+        public abstract boolean match(WEBBaseCallBack clazz,Web.RESULTSTYLE resultstyle, @Nullable String data, @Nullable Object obj);
 
-        public abstract void action(Web.RESULTSTYLE resultstyle, @Nullable String data, @Nullable Object obj) throws
+        public abstract void action(WEBBaseCallBack clazz,Web.RESULTSTYLE resultstyle, @Nullable String data, @Nullable Object obj) throws
                 MyException;
 
         public int getCode(@Nullable JSONObject json) {
