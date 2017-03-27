@@ -22,20 +22,24 @@ import android.os.Environment;
 import android.os.Process;
 import android.support.annotation.CallSuper;
 import android.support.annotation.IdRes;
+import android.support.annotation.LayoutRes;
 import android.support.annotation.UiThread;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.OrientationEventListener;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import com.by122006library.MyException;
+import com.by122006library.R;
 import com.by122006library.Utils.ThreadUtils;
 import com.by122006library.Utils.ViewUtils;
 import com.by122006library.Utils.mLog;
@@ -302,14 +306,23 @@ public class BaseActivity extends Activity {
             };
             mScreenOrientationEventListener.enable();
         }
+        super.setContentView(R.layout.activity_base);
     }
-
+    @Override
+    public void setContentView(@LayoutRes int layoutres){
+        ((ViewGroup)findViewById(R.id.content)).addView(getLayoutInflater().inflate(layoutres,null));
+    }
+    @Override
+    public void setContentView(View layout){
+        ((ViewGroup)findViewById(R.id.content)).addView(layout);
+    }
     @Override
     public void onAttachedToWindow() {
         super.onAttachedToWindow();
         onUpdateUi();
-
     }
+
+
 
     public View getDecorView() {
         return getWindow().getDecorView();
