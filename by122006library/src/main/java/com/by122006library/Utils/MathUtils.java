@@ -75,5 +75,38 @@ public class MathUtils  {
         return (x - f) * (x - f) + (y - g) * (y - g);
     }
 
+    /**
+     *
+     * 判断一个概率为per的时间是否会发生
+     * </p></>以per为参数（0-100），<per 返回true视为发生。
+     *
+     * @param per
+     * @return
+     */
+    public static boolean randomHappened(int per){
+        return Math.random()*100<per;
+    }
 
+    /**
+     * 返回onum与addnum之和，保证返回的数据在maxnum和minnum之间（maxnum 和 minnum自动识别判断大小）
+     *
+     *
+     *
+     * @param onum
+     * @param addnum
+     * @param maxnum
+     * @param minnum
+     * @return
+     */
+    public static int safeChangeNum(int onum,int addnum,int maxnum,int minnum){
+        onum+=addnum;
+        if(maxnum<minnum) {
+            int x=minnum;
+            minnum=maxnum;
+            maxnum=x;
+        }
+        if (onum>maxnum) return maxnum;
+        if (onum<minnum) return minnum;
+        return onum;
+    }
 }
