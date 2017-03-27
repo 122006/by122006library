@@ -28,11 +28,10 @@ public class Web {
 
     /**
      * 根据请求进行异步网络通讯
-     *
-     * @param requster 请求包装类
+     *  @param requster 请求包装类
      * @param callback 回调类 为空不回调
      */
-    public static void doAsnyHttp(final RequestBuilder requster, @Nullable final WEBBaseCallBack callback, @Nullable
+    public static JSONObject doAsnyHttp(final RequestBuilder requster, @Nullable final WEBBaseCallBack callback, @Nullable
     final ViewShow vs) {
         new Thread(new Runnable() {
             @Override
@@ -44,6 +43,7 @@ public class Web {
                 }
             }
         }).start();
+        return null;
     }
 
     /**
@@ -97,6 +97,13 @@ public class Web {
                 }
                 is.close();
                 String out = new String(bos.toByteArray());
+                if (requster.getAnalysisOut()!=null){
+                    JSONObject jsonObject=requster.getAnalysisOut().analysis(out);
+                    if (jsonObject!=null) return jsonObject;
+                }
+
+
+
                 int bodystartindex = out.indexOf("<body>");
                 if (bodystartindex != -1) {
                     int bodyendindex = out.indexOf("</body>");

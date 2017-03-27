@@ -24,7 +24,7 @@ public class RequestBuilder {
     private static String defaultUrl;
     private int httpStyle = -1;
     private static int defaultHttpStyle = 1;
-    private String action;
+    private String action="";
 
     public RequestBuilder() {
         request = new HashMap<>();
@@ -171,5 +171,20 @@ public class RequestBuilder {
     @Retention(RetentionPolicy.SOURCE)
     public @interface HTTP_STYLE {
     }
+
+    public AnalysisOut getAnalysisOut() {
+        return analysisOut;
+    }
+
+    public void setAnalysisOut(AnalysisOut analysisOut) {
+        this.analysisOut = analysisOut;
+    }
+
+    public AnalysisOut analysisOut;
+
+    public static abstract class AnalysisOut{
+        public abstract JSONObject analysis(String out);
+    }
+
 
 }
