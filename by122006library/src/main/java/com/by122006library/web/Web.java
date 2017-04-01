@@ -28,10 +28,12 @@ public class Web {
 
     /**
      * 根据请求进行异步网络通讯
-     *  @param requster 请求包装类
+     *
+     * @param requster 请求包装类
      * @param callback 回调类 为空不回调
      */
-    public static JSONObject doAsnyHttp(final RequestBuilder requster, @Nullable final WEBBaseCallBack callback, @Nullable
+    public static JSONObject doAsnyHttp(final RequestBuilder requster, @Nullable final WEBBaseCallBack callback,
+                                        @Nullable
     final ViewShow vs) {
         new Thread(new Runnable() {
             @Override
@@ -70,20 +72,24 @@ public class Web {
 
             httpConn.setRequestMethod(requster.getHttpStyle() == RequestBuilder.GET ? "GET" : "POST");
             // post方式不能使用缓存
-            httpConn.setUseCaches(requster.getHttpStyle() == RequestBuilder.GET);
-            httpConn.setInstanceFollowRedirects(true);
+//            httpConn.setUseCaches(requster.getHttpStyle() == RequestBuilder.GET);
+
             // 设置连接超时时间
             httpConn.setConnectTimeout(requster.getTimeout());
             httpConn.setReadTimeout(requster.getTimeout());
-            httpConn.setRequestProperty("Content-Type",
-                    "application/x-www-form-urlencoded");
-            httpConn.setRequestProperty("Charset", requster.getEncode());
-            mLog.i("action=\"" + requster.getAction() + "\"");
+
             mLog.i("post数据=\"" + requster.getData() + "\"");
-            byte[] requestStringBytes = requster.getData().getBytes(requster.getEncode());
-            OutputStream outputStream = httpConn.getOutputStream();
-            outputStream.write(requestStringBytes);
-            outputStream.close();
+            if (requster.getHttpStyle() == RequestBuilder.POST) {
+                httpConn.setInstanceFollowRedirects(true);
+                httpConn.setRequestProperty("Content-Type",
+                        "application/x-www-form-urlencoded");
+                httpConn.setRequestProperty("Charset", requster.getEncode());
+                mLog.i("action=\"" + requster.getAction() + "\"");
+                byte[] requestStringBytes = requster.getData().getBytes(requster.getEncode());
+                OutputStream outputStream = httpConn.getOutputStream();
+                outputStream.write(requestStringBytes);
+                outputStream.close();
+            }
             mLog.i("StatusCode=" + httpConn.getResponseCode());
             if (httpConn.getResponseCode() == 200) {
                 byte[] buffer = new byte[1024];
@@ -95,12 +101,10 @@ public class Web {
                 }
                 is.close();
                 String out = new String(bos.toByteArray());
-                if (requster.getAnalysisOut()!=null){
-                    JSONObject jsonObject=requster.getAnalysisOut().analysis(out);
-                    if (jsonObject!=null) return jsonObject;
+                if (requster.getAnalysisOut() != null) {
+                    JSONObject jsonObject = requster.getAnalysisOut().analysis(out);
+                    if (jsonObject != null) return jsonObject;
                 }
-
-
 
                 int bodystartindex = out.indexOf("<body>");
                 if (bodystartindex != -1) {

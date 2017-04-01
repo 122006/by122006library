@@ -9,7 +9,7 @@ public class TimeUtils {
 
         StringBuffer sb = new StringBuffer();
 
-        long time = System.currentTimeMillis();
+        long time = System.currentTimeMillis()-t;
         long mill = (long) Math.ceil(time /1000);//秒前
 
         long minute = (long) Math.ceil(time/60/1000.0f);// 分钟前
