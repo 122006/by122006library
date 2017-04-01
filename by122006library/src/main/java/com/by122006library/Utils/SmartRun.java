@@ -244,7 +244,7 @@ public abstract class SmartRun {
             boolean ifthis = true;
             for (int i = 0; i < parameterTypes.length; i++) {
                 if (parameter[i] == null) {
-                    mLog.e("传入参数发现null，已忽略该位置匹配，可能结果会产生错误");
+//                    mLog.e("传入参数发现null，已忽略该位置匹配，可能结果会产生错误");
                     continue;
                 }
                 if (parameter[i].getClass().toString().contains("java.lang.") && parameter[i].getClass().toString()
@@ -423,8 +423,8 @@ public abstract class SmartRun {
 
     final public <T> void invoke(@Nullable final T target, boolean haveException, final Method method, final Object...
             parameter) {
-        mLog.i(ThreadUtils.getThreadStytle().toString() + "线程中运行方法：" + method.getName() + "(参数量：" + parameter.length
-                + ")" + Thread.currentThread().toString());
+//        mLog.i(ThreadUtils.getThreadStytle().toString() + "线程中运行方法：" + method.getName() + "(参数量：" + parameter.length
+//                + ")" + Thread.currentThread().toString());
         try {
             method.invoke(target, parameter);
             if (haveException) {
@@ -432,8 +432,8 @@ public abstract class SmartRun {
                 if (changeThreadStyleMap == null) changeThreadStyleMap = new HashMap<>();
                 changeThreadStyleMap.put(method, ThreadUtils.getThreadStytle());
             }
-            mLog.i("方法：" + method.getName() + "(参数量：" + parameter.length
-                    + ") 成功运行在" + ThreadUtils.getThreadStytle().toString() + "线程");
+//            mLog.i("方法：" + method.getName() + "(参数量：" + parameter.length
+//                    + ") 成功运行在" + ThreadUtils.getThreadStytle().toString() + "线程");
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         } catch (InvocationTargetException e) {

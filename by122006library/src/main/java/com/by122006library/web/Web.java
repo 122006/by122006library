@@ -67,9 +67,7 @@ public class Web {
             URL url = new URL(str_url);
             HttpURLConnection httpConn = (HttpURLConnection) url
                     .openConnection();
-            // 设置提交方式
-            httpConn.setDoOutput(true);
-            httpConn.setDoInput(true);
+
             httpConn.setRequestMethod(requster.getHttpStyle() == RequestBuilder.GET ? "GET" : "POST");
             // post方式不能使用缓存
             httpConn.setUseCaches(requster.getHttpStyle() == RequestBuilder.GET);
