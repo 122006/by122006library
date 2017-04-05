@@ -9,3 +9,5 @@
 * [app](/app) 测试用的库(没啥用)
 
 就是这样~~
+
+[![](https://jitpack.io/v/122006/by122006library.svg)](https://jitpack.io/#122006/by122006library)
