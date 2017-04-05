@@ -15,16 +15,17 @@ import java.util.HashMap;
  */
 public class RequestBuilder {
     static final public int GET = 0, POST = 1;
-    private static String token = null;
+    public static String token = null;
+    private static String defaultEncode = "UTF-8";
+    private static String defaultUrl;
+    private static int defaultHttpStyle = 1;
     public HashMap<String, String> request;
+    public AnalysisOut analysisOut;
     int timeout = 20 * 1000;
     String encode = null;
-    private static String defaultEncode = "UTF-8";
-    private String url=null;
-    private static String defaultUrl;
+    private String url = null;
     private int httpStyle = -1;
-    private static int defaultHttpStyle = 1;
-    private String action="";
+    private String action = "";
 
     public RequestBuilder() {
         request = new HashMap<>();
@@ -63,7 +64,7 @@ public class RequestBuilder {
     }
 
     public int getHttpStyle() {
-        return (httpStyle==-1?defaultHttpStyle:httpStyle);
+        return (httpStyle == -1 ? defaultHttpStyle : httpStyle);
     }
 
     public RequestBuilder setHttpStyle(int httpStyle) {
@@ -72,12 +73,12 @@ public class RequestBuilder {
     }
 
     public String getUrl() {
-        return (url==null?defaultUrl:url) + getAction();
+        return (url == null ? defaultUrl : url) + getAction();
     }
 
     public RequestBuilder setUrl(String url) {
         this.url = url;
-        if(defaultUrl==null) defaultUrl=url;
+        if (defaultUrl == null) defaultUrl = url;
         return this;
     }
 
@@ -126,6 +127,11 @@ public class RequestBuilder {
 
     public JSONObject getJSONData() {
         JSONObject json = new JSONObject();
+        if (token != null) try {
+            json.put("token", token);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
         for (String key : request.keySet()) {
             String value = request.get(key);
             try {
@@ -138,13 +144,13 @@ public class RequestBuilder {
 
     public RequestBuilder get() {
         httpStyle = RequestBuilder.GET;
-        if(defaultHttpStyle==-1) defaultHttpStyle=httpStyle;
+        if (defaultHttpStyle == -1) defaultHttpStyle = httpStyle;
         return this;
     }
 
     public RequestBuilder post() {
         httpStyle = RequestBuilder.POST;
-        if(defaultHttpStyle==-1) defaultHttpStyle=httpStyle;
+        if (defaultHttpStyle == -1) defaultHttpStyle = httpStyle;
         return this;
     }
 
@@ -158,18 +164,13 @@ public class RequestBuilder {
     }
 
     public String getEncode() {
-        return (encode==null?defaultEncode:encode);
+        return (encode == null ? defaultEncode : encode);
     }
 
     public RequestBuilder setEncode(String encode) {
         this.encode = encode;
-        if(defaultEncode==null) defaultEncode=encode;
+        if (defaultEncode == null) defaultEncode = encode;
         return this;
-    }
-
-    @IntDef({GET, POST})
-    @Retention(RetentionPolicy.SOURCE)
-    public @interface HTTP_STYLE {
     }
 
     public AnalysisOut getAnalysisOut() {
@@ -180,9 +181,12 @@ public class RequestBuilder {
         this.analysisOut = analysisOut;
     }
 
-    public AnalysisOut analysisOut;
+    @IntDef({GET, POST})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface HTTP_STYLE {
+    }
 
-    public static abstract class AnalysisOut{
+    public static abstract class AnalysisOut {
         public abstract JSONObject analysis(String out);
     }
 

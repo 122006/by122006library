@@ -56,14 +56,21 @@ public class Web {
      * @return 返回的正确数据，如果错误返回null
      */
     @Nullable
-    public static JSONObject doSynchroHttp(RequestBuilder requster, @Nullable WEBBaseCallBack callback, @Nullable
-            ViewShow vs) throws MyException {
+    public static JSONObject doSynchroHttp(RequestBuilder requster, @Nullable WEBBaseCallBack callback, @Nullable final
+    ViewShow vs) throws MyException {
         if (ThreadUtils.isUIThread()) throw new MyException("不能在UI线程中调用该方法");
-        if (vs != null) vs.showLoading("正在获取中...", null);
+        if (vs != null) ThreadUtils.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                vs.showLoading("正在获取中...", null);
+            }
+        });
         String str_url = requster.getUrl();
-        if (requster.getDefaultUrl() == null) throw new MyException("你需要为Url设置一个默认值");
-        if (requster.getDefaultEncode() == null) throw new MyException("你需要为编码Encode设置一个默认值");
-        if (requster.getDefaultHttpStyle() == -1) throw new MyException("你需要为HttpStyle(GET/POST)设置一个默认值");
+        if (RequestBuilder.getDefaultUrl() == null) throw new MyException("你需要为Url设置一个默认值");
+        if (RequestBuilder.getDefaultEncode() == null) throw new MyException("你需要为编码Encode设置一个默认值");
+        if (RequestBuilder.getDefaultHttpStyle() == -1) throw new MyException("你需要为HttpStyle(GET/POST)设置一个默认值");
+
+        if(requster.getHttpStyle()== RequestBuilder.GET)str_url+=requster.getData();
         mLog.i("连接至网址：url=" + str_url);
         try {
             URL url = new URL(str_url);
@@ -78,14 +85,14 @@ public class Web {
             httpConn.setConnectTimeout(requster.getTimeout());
             httpConn.setReadTimeout(requster.getTimeout());
 
-            mLog.i("post数据=\"" + requster.getData() + "\"");
             if (requster.getHttpStyle() == RequestBuilder.POST) {
+                mLog.i("post数据=\"" + requster.getJSONData() + "\"");
                 httpConn.setInstanceFollowRedirects(true);
                 httpConn.setRequestProperty("Content-Type",
                         "application/x-www-form-urlencoded");
                 httpConn.setRequestProperty("Charset", requster.getEncode());
                 mLog.i("action=\"" + requster.getAction() + "\"");
-                byte[] requestStringBytes = requster.getData().getBytes(requster.getEncode());
+                byte[] requestStringBytes = requster.getJSONData().toString().getBytes(requster.getEncode());
                 OutputStream outputStream = httpConn.getOutputStream();
                 outputStream.write(requestStringBytes);
                 outputStream.close();
@@ -115,18 +122,35 @@ public class Web {
                                 bodyendindex).trim();
                         mLog.i("返回<body>数据：" + data1);
                         if (callback != null) callback.analyseBack(RESULTSTYLE.Success, out, null);
-                        if (vs != null) vs.dismiss();
+                        if (vs != null) ThreadUtils.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                vs.dismiss();
+                            }
+                        });
                         return new JSONObject(data1);
                     } else {
                         mLog.e("<body>标签不完整,全部数据如下：" + out);
                         if (callback != null) callback.analyseBack(RESULTSTYLE.Fail_WebException, out, null);
-                        if (vs != null) vs.showError("返回数据格式错误", null);
+                        if (vs != null){
+                            ThreadUtils.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    vs.showError("返回数据格式错误", null);
+                                }
+                            });
+                        }
                         return null;
                     }
                 } else {
                     mLog.i("返回数据：" + out);
                     if (callback != null) callback.analyseBack(RESULTSTYLE.Success, out, null);
-                    if (vs != null) vs.dismiss();
+                    if (vs != null)  ThreadUtils.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            vs.dismiss();
+                        }
+                    });
                     try {
                         return new JSONObject(out);
                     } catch (JSONException e) {

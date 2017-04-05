@@ -10,6 +10,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.by122006library.Interface.UIThread;
+import com.by122006library.Utils.SmartRun;
 import com.by122006library.item.ColorStyle;
 import com.by122006library.View.CustomPopWindow;
 import com.by122006library.R;
@@ -29,12 +31,12 @@ public class NoClickablePopup implements com.by122006library.web.ViewShow.ViewSh
     private View merror_v;
     private Context context;
 
-    NoClickablePopup(Activity act) {
+    public NoClickablePopup(Activity act) {
         if (act != null) v = act.getWindow().getDecorView();
         context = v.getContext();
     }
 
-    NoClickablePopup(@NonNull View v) {
+    public NoClickablePopup(@NonNull View v) {
         this.v = v;
         context = v.getContext();
     }
@@ -85,7 +87,9 @@ public class NoClickablePopup implements com.by122006library.web.ViewShow.ViewSh
      */
     @Deprecated
     @Override
+    @UIThread
     public void showError(String error, ColorStyle style) {
+        if (SmartRun.sPrepare(error,style)) return;
         dismiss();
 //        if (v == null) return;
 //        if (!v.isShown()) return;
