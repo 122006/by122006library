@@ -294,7 +294,13 @@ public abstract class SmartRun {
     final public <T> void chooseThreadRun(final T target, String methodName, final Object... parameter) {
 //        mLog.i("chooseThreadRun：" + parameter.length);
         if (methodName == null || methodName.length() == 0) {
-            mLog.i("SmartRun 方法分析异常");
+            mLog.e("SmartRun 方法分析异常   "+target.getClass().toString());
+            try {
+                mLog.e(StringUtils.getStringFromArray(Thread.currentThread().getStackTrace()));
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+
             return;
         }
         methodName = methodName.replace("(", "").replace(")", "");
@@ -335,7 +341,7 @@ public abstract class SmartRun {
                 }
         } catch (Exception e) {
             e.printStackTrace();
-            mLog.e("没有发现" + methodName + "方法，请不要对SmartRun类进行混淆");
+            mLog.e("没有发现" + methodName + "方法，请不要对SmartRun类进行混或需要检查是否已传递该方法所有参数");
             return;
         }
         if (changeThreadStyleMap != null && changeThreadStyleMap.containsKey(method)) {

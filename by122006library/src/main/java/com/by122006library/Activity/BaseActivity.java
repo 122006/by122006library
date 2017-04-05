@@ -33,7 +33,6 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
@@ -68,6 +67,7 @@ public class BaseActivity extends Activity {
     public static Context getContext() throws MyException {
         return getTopActivity().getDecorView().getContext();
     }
+
     public static Context optContext() {
         try {
             return getTopActivity().getDecorView().getContext();
@@ -257,11 +257,12 @@ public class BaseActivity extends Activity {
         this.FLAG_ACT_NO_TITLE = FLAG_ACT_NO_TITLE;
     }
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         runcount++;
         list_act.add(this);
-        if (FLAG_ACT_NO_TITLE) requestWindowFeature(Window.FEATURE_NO_TITLE);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
         if (FLAG_ACT_FULLSCREEN) getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
@@ -306,22 +307,39 @@ public class BaseActivity extends Activity {
             };
             mScreenOrientationEventListener.enable();
         }
-        super.setContentView(R.layout.activity_base);
+        if (!FLAG_ACT_NO_TITLE) {super.setContentView(R.layout.activity_base);findViewById(R.id.titlebar).setVisibility(View.VISIBLE);}
     }
+
+    public void setRightButton(String text, View.OnClickListener onClickListener) {
+        if (FLAG_ACT_NO_TITLE) return;
+        ((TextView) findViewById(R.id.rightbutton)).setText(text);
+        ((TextView) findViewById(R.id.rightbutton)).setVisibility(View.VISIBLE);
+        ((TextView) findViewById(R.id.rightbutton)).setOnClickListener(onClickListener);
+    }
+
+    public void setTitle(CharSequence title) {
+        if (FLAG_ACT_NO_TITLE) return;
+        ((TextView) findViewById(R.id.title)).setText(title);
+    }
+
     @Override
-    public void setContentView(@LayoutRes int layoutres){
-        ((ViewGroup)findViewById(R.id.content)).addView(getLayoutInflater().inflate(layoutres,null));
+    public void setContentView(@LayoutRes int layoutres) {
+        if (!FLAG_ACT_NO_TITLE)
+            ((ViewGroup) findViewById(R.id.content)).addView(getLayoutInflater().inflate(layoutres, null));
+        else super.setContentView(layoutres);
     }
+
     @Override
-    public void setContentView(View layout){
-        ((ViewGroup)findViewById(R.id.content)).addView(layout);
+    public void setContentView(View layout) {
+        if (!FLAG_ACT_NO_TITLE) ((ViewGroup) findViewById(R.id.content)).addView(layout);
+        else super.setContentView(layout);
     }
+
     @Override
     public void onAttachedToWindow() {
         super.onAttachedToWindow();
         onUpdateUi();
     }
-
 
 
     public View getDecorView() {
@@ -333,7 +351,7 @@ public class BaseActivity extends Activity {
         super.onDestroy();
         list_act.remove(this);
         needTouchView.clear();
-        needTouchView=null;
+        needTouchView = null;
     }
 
     /**

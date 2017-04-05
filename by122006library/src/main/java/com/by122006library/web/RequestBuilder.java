@@ -92,7 +92,7 @@ public class RequestBuilder {
     }
 
     public RequestBuilder addAtt(String key, Object value) {
-        request.put(key, value.toString());
+        request.put(key, value==null?"null":value.toString());
         return this;
     }
 
@@ -113,7 +113,7 @@ public class RequestBuilder {
 
     public String getData() {
         String data = "";
-        if (token != null) data +=
+        if (token != null&&!request.keySet().contains("token")) data +=
                 "token" + "=" + token;
         for (String key : request.keySet()) {
             String value = request.get(key);
@@ -127,7 +127,7 @@ public class RequestBuilder {
 
     public JSONObject getJSONData() {
         JSONObject json = new JSONObject();
-        if (token != null) try {
+        if (token != null&&!request.keySet().contains("token")) try {
             json.put("token", token);
         } catch (JSONException e) {
             e.printStackTrace();

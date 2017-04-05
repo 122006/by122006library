@@ -23,7 +23,16 @@
             android:onClick="back"
             android:text="返回"
             android:textColor="#fff"/>
-
+        <TextView
+            android:id="@+id/rightbutton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right|center_vertical"
+            android:layout_marginRight="10dp"
+            android:clickable="true"
+            android:visibility="gone"
+            android:gravity="right"
+            android:textColor="#fff"/>
         <TextView
             android:id="@+id/title"
             android:layout_width="wrap_content"

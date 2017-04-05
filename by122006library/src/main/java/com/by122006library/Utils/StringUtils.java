@@ -56,4 +56,12 @@ public class StringUtils {
         return a;
     }
 
+    public static String getStringFromArray(Object[] array){
+        String s="";
+        for (Object o:array){
+            String str=o==null?"null":o.toString();
+            str+=","+(str.length()>10?"\n":"");}
+        return s;
+    }
+
 }

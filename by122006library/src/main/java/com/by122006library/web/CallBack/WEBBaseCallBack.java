@@ -151,7 +151,7 @@ public abstract class WEBBaseCallBack {
     /**
      * 规则匹配类
      */
-    public abstract class MatchCheck {
+    public abstract static class MatchCheck {
         public abstract boolean match(WEBBaseCallBack clazz,Web.RESULTSTYLE resultstyle, @Nullable String data, @Nullable Object obj);
 
         public abstract void action(WEBBaseCallBack clazz,Web.RESULTSTYLE resultstyle, @Nullable String data, @Nullable Object obj) throws
