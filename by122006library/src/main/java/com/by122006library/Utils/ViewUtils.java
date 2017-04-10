@@ -366,4 +366,11 @@ public class ViewUtils {
       return ((LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(res,null);
   }
 
+
+    public static <T extends View>  T removeViewFromParents(T view){
+        if (view.getParent() != null && ((ViewGroup) view.getParent()).indexOfChild(view) > 0)
+            ((ViewGroup) view.getParent()).removeView(view);
+        return view;
+    }
+
 }

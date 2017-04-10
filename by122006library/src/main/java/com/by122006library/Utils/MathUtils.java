@@ -1,5 +1,8 @@
 package com.by122006library.Utils;
 
+import java.util.ArrayList;
+import java.util.StringTokenizer;
+
 /**
  * Created by admin on 2017/2/16.
  */
@@ -108,5 +111,13 @@ public class MathUtils  {
         if (onum>maxnum) return maxnum;
         if (onum<minnum) return minnum;
         return onum;
+    }
+
+
+    public static <T> T randomArrayData(T... data){
+        return data[(int) (Math.random()*data.length)];
+    }
+    public static <T> T randomArrayData(ArrayList<T> data){
+        return data.get((int) (Math.random()*data.size()));
     }
 }
