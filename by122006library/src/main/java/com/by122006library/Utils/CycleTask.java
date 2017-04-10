@@ -7,10 +7,6 @@ import com.by122006library.Interface.UIThread;
 import com.by122006library.MyException;
 
 import java.lang.annotation.Annotation;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
 import java.util.ArrayList;
 
 /**
@@ -21,11 +17,22 @@ import java.util.ArrayList;
 
 public abstract class CycleTask {
 
+    final public static int ImmediatelyRun = -1;
+    final public static int CircleForever = -1;
     public static ArrayList<CycleTask> list = new ArrayList<>();
     //    public static ArrayList<CycleTask> removeList = new ArrayList<>();
 //    public static ArrayList<CycleTask> addList = new ArrayList<>();
     public static boolean isRunning = false;
+    public static long durtime = 0;
+    static long lasttime = 0;
 
+    public static Thread getThread() {
+        return thread;
+    }
+
+    public static void setThread(Thread thread) {
+        CycleTask.thread = thread;
+    }
 
     public static Thread thread = new Thread(new Runnable() {
 
@@ -41,14 +48,25 @@ public abstract class CycleTask {
             }
         }
     });
-    static long lasttime = 0;
-    public static long durtime = 0;
     public Object tag;
     public long daleyTime;
     public long cycleTime;
     public int cycleCount, cycleNum = 1;
     public long restTime;
     public ThreadStyle.Style runThreadStyle;
+
+    /**
+     * @param daleyTime 首次延迟时间
+     * @param cycleTime 每次循环时间
+     * @param cycleNum  循环次数 <=0时为无限循环
+     */
+    public CycleTask(long daleyTime, long cycleTime, int cycleNum) {
+        this.daleyTime = daleyTime;
+        if (daleyTime == ImmediatelyRun) this.daleyTime = -cycleTime;
+        this.cycleTime = cycleTime;
+        this.cycleNum = cycleNum;
+
+    }
 
     public static void threadWhileRun() {
         durtime = System.currentTimeMillis() - lasttime;
@@ -63,31 +81,20 @@ public abstract class CycleTask {
         lasttime = System.currentTimeMillis();
 
     }
-    final public static int ImmediatelyRun=-1;
-    final public static int CircleForever=-1;
-    /**
-     * @param daleyTime 首次延迟时间
-     * @param cycleTime 没次循环时间
-     * @param cycleNum  循环次数 <=0时为无限循环
-     */
-    public CycleTask(long daleyTime, long cycleTime, int cycleNum) {
-        this.daleyTime = daleyTime;
-        if(daleyTime==-1) this.daleyTime=-cycleTime;
-        this.cycleTime = cycleTime;
-        this.cycleNum = cycleNum;
-    }
 
     /**
      * 根据tag注销所有有关的定时器
      *
      * @param tag
      */
-    public static void unregister(Object tag) {
+    public static void unRegister(Object tag) {
+        if (tag==null) return;
         for (CycleTask item : (ArrayList<CycleTask>) list.clone()) {
-//            if (item.tag == tag && !removeList.contains(item)) {
-//                removeList.add(item);
-//            }
-            list.remove(item);
+            if(item.tag==null) continue;
+            if (item.tag == tag) {
+                list.remove(item);
+            }
+
         }
     }
 
@@ -96,7 +103,7 @@ public abstract class CycleTask {
     }
 
     public void run(long durtime) throws MyException {
-        if (cycleTime == 0) return;
+        if (cycleNum == 0) return;
         if (daleyTime > 0) daleyTime -= durtime;
         if (daleyTime > 0) return;
 
@@ -112,13 +119,18 @@ public abstract class CycleTask {
                             try {
                                 doCycleAction(cycleCount);
                             } catch (MyException e) {
-
+                                e.printStackTrace();
                             }
                         }
-                    }).run();
+                    }).start();
                 } else
-                    doCycleAction(cycleCount);
-            } else if (runThreadStyle.equals(ThreadStyle.Style.UI))
+                    try {
+                        doCycleAction(cycleCount);
+                    } catch (MyException e) {
+                        e.printStackTrace();
+                    }
+            } else if (runThreadStyle.equals(ThreadStyle.Style.UI)) {
+
                 ThreadUtils.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -129,31 +141,19 @@ public abstract class CycleTask {
                         }
                     }
                 });
+            }
             cycleCount++;
-            if (cycleCount >= cycleNum && cycleNum > 0) unregister();
+            if (cycleCount >= cycleNum && cycleNum > 0) unRegister();
         }
     }
 
-    /**
-     * 注册并运行在内部线程中
-     */
-    public void registerOwnThreadTask(Object tag) {
-        if (!isRunning) {
-            isRunning = true;
-            thread.start();
-        }
-        try {
-            Thread.sleep(1);
-        } catch (InterruptedException e) {
-        }
-        register(tag);
-    }
 
     /**
      * 注销该定时器
      */
-    public void unregister() {
+    public void unRegister() {
         if (list.contains(this)) list.remove(this);
+        if(list.size()==0) destroyTaskThread();
     }
 
     /**
@@ -162,6 +162,17 @@ public abstract class CycleTask {
      * @param tag 定时器的依附对象
      */
     public void register(Object tag) {
+        if (!isRunning) {
+            isRunning = true;
+            thread.start();
+            try {
+                Thread.sleep(1);
+            } catch (InterruptedException e) {
+            }
+        }
+        StackTraceElement stackTraceElement=mLog.getCallerStackTraceElement();
+       mLog.i("注册CycleTask 注册代码位置：" + mLog.generateTag(stackTraceElement));
+
         this.tag = tag;
 
         Class clazz = this.getClass();
@@ -169,9 +180,6 @@ public abstract class CycleTask {
             runThreadStyle = ThreadStyle.Style.BG;
             Annotation[] annotation = clazz.getMethod("doCycleAction", int.class).getAnnotations();
             for (Annotation a : annotation) {
-                if (a instanceof ThreadStyle) {
-                    runThreadStyle = ((ThreadStyle) a).style();
-                }
                 if (a instanceof ThreadStyle) {
                     runThreadStyle = ((ThreadStyle) a).style();
                 }

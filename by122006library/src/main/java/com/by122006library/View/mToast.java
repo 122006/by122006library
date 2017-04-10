@@ -332,7 +332,7 @@ public class mToast {
     @UIThread
     public final void show(final View v, Long duration, Animation startAnim,
                            final Animation endAnim) {
-        if (SmartRun.sPrepare(v,duration,startAnim,endAnim))return;
+        if (SmartRun.sPrepare(this,v,duration,startAnim,endAnim))return;
         // 反射过程异常时则使用源生Toast
         if (hasReflectException) {
             Toast t = new Toast(mContext);

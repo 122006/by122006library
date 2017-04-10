@@ -39,6 +39,7 @@ import android.widget.TextView;
 
 import com.by122006library.MyException;
 import com.by122006library.R;
+import com.by122006library.Utils.CycleTask;
 import com.by122006library.Utils.ThreadUtils;
 import com.by122006library.Utils.ViewUtils;
 import com.by122006library.Utils.mLog;
@@ -352,6 +353,7 @@ public class BaseActivity extends Activity {
         list_act.remove(this);
         needTouchView.clear();
         needTouchView = null;
+        CycleTask.unRegister(this);
     }
 
     /**
