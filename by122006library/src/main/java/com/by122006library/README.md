@@ -1,4 +1,4 @@
-122006的通用库
+122006的通用库 [![](https://jitpack.io/v/122006/by122006library.svg)](https://jitpack.io/#122006/by122006library)
 ===============
 1. [Utils 常用工具类](Utils/README.md)
 2. [Web 网络相关类](web/README.md)
@@ -30,3 +30,24 @@
 
 
 #### 更多便捷原创内容欢迎大家发掘~
+
+
+
+## 如何在项目中使用
+##### 第一步：在你的根 build.gradle 中添加:
+
+	allprojects {
+		repositories {
+			...
+			maven { url 'https://jitpack.io' }
+		}
+	}Copy
+##### 第二步：增加依赖库
+
+	dependencies {
+	        compile 'com.github.122006:by122006library:最新版本'
+	}
+
+>“最新版本”请替换为最新的版本号，最新版本号参见下方标牌绿色部分，如"v0.8"
+
+[![](https://jitpack.io/v/122006/by122006library.svg)](https://jitpack.io/#122006/by122006library)
