@@ -45,7 +45,7 @@
 			...
 			maven { url 'https://jitpack.io' }
 		}
-	}Copy
+	}
 ##### 第二步：增加依赖库
 
 	dependencies {
