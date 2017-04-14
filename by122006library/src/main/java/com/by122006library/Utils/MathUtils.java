@@ -86,7 +86,7 @@ public class MathUtils  {
      * @param per
      * @return
      */
-    public static boolean randomHappened(int per){
+    public static boolean randomHappened(float per){
         return Math.random()*100<per;
     }
 

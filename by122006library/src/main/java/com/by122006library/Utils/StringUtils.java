@@ -1,5 +1,9 @@
 package com.by122006library.Utils;
 
+import android.graphics.Paint;
+import android.graphics.Rect;
+import android.support.annotation.Nullable;
+
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -63,5 +67,12 @@ public class StringUtils {
             str+=","+(str.length()>10?"\n":"");}
         return s;
     }
-
+    public static int[] getWH(String str, @Nullable Paint paint) {
+        Rect rect = new Rect();
+        if (paint == null) {
+            paint = new Paint();
+        }
+        paint.getTextBounds(str, 0, str.length(), rect);
+        return new int[]{rect.width(), rect.height()};
+    }
 }

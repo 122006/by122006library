@@ -1,12 +1,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.by122006library">
 
-    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <!--<uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />-->
     <application>
 
-        <service
-            android:name=".Service.PopupTaskControlService"
-            ></service>
     </application>
 
 </manifest>
