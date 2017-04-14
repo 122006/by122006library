@@ -14,21 +14,21 @@
 ******
   >标题指向代码文件，具体使用方法见相关文件夹内Md文件
 
-1. [SmartRun 智能线程](Utils/SmartRun.java) （推荐级数：★★★★★）
+1. [SmartRun 智能线程](/by122006library/src/main/java/com/by122006library/Utils/SmartRun.java) （推荐级数：★★★★★）
 
     依赖注入框架，可以便捷地指定方法所运行的线程(后台，UI)，优化代码层次节省开发时间使开发者更加专注于逻辑层次
 
     ps:与AndroidAnnotations的no magic特性不同，利用堆栈进行方法退栈调用以达到转化线程类型的原理。
 
-2. [CycleTask 循环任务](Utils/CycleTask.java) &
-   [DelayTask 延迟任务](Utils/DelayTask.java)（推荐级数：★★★★★）
+2. [CycleTask 循环任务](/by122006library/src/main/java/com/by122006library/Utils/CycleTask.java) &
+   [DelayTask 延迟任务](/by122006library/src/main/java/com/by122006library/Utils/DelayTask.java)（推荐级数：★★★★★）
 
 
    以单个线程进行循环事件维护，告别画面卡顿和多线程频繁注册带来的混乱，事件支持注解设定线程
 
    tag标志批量管理事件生命周期，及时释放资源，管理多任务
 
-3. [Web 网络连接](web/Web.java) （推荐级数：★★☆☆☆）
+3. [Web 网络连接](/by122006library/src/main/java/com/by122006library/web/Web.java) （推荐级数：★★☆☆☆）
 
     拥有自定义规则拦截派发，自定义解析，进度View绑定，多种Json自解析等功能。同时创建代码清晰易读易维护
 
