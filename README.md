@@ -20,9 +20,7 @@
 
     ps:与AndroidAnnotations的no magic特性不同，利用堆栈进行方法退栈调用以达到转化线程类型的原理。
 
-2. [CycleTask 循环任务](Utils/CycleTask.java)
-
-
+2. [CycleTask 循环任务](Utils/CycleTask.java) &
    [DelayTask 延迟任务](Utils/DelayTask.java)（推荐级数：★★★★★）
 
 
