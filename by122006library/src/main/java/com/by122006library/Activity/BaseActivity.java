@@ -24,6 +24,7 @@ import android.support.annotation.CallSuper;
 import android.support.annotation.IdRes;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.UiThread;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.OrientationEventListener;
@@ -37,9 +38,12 @@ import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
+import com.by122006library.Interface.UIThread;
 import com.by122006library.MyException;
 import com.by122006library.R;
 import com.by122006library.Utils.CycleTask;
+import com.by122006library.Utils.DebugUtils;
+import com.by122006library.Utils.SmartRun;
 import com.by122006library.Utils.ThreadUtils;
 import com.by122006library.Utils.ViewUtils;
 import com.by122006library.Utils.mLog;
@@ -339,8 +343,11 @@ public class BaseActivity extends Activity {
     @Override
     public void onAttachedToWindow() {
         super.onAttachedToWindow();
+
         onUpdateUi();
+
     }
+
 
 
     public View getDecorView() {
@@ -382,7 +389,6 @@ public class BaseActivity extends Activity {
     /**
      * 将在控件构建之后于主线程运行<p> 运行于onAttachedToWindow()中，onResume()后<p> 可以正确测量控件数据，用于控件初始化
      */
-    @UiThread
     @CallSuper
     public void onUpdateUi() {
         if (!getDecorView().isShown()) {
@@ -465,5 +471,16 @@ public class BaseActivity extends Activity {
         boolean match(int requestCode, int resultCode);
 
         void callback(Intent data);
+    }
+
+    public TextView findTextView(@IdRes int id){
+        return (TextView) findViewById(id);
+    }
+    @UIThread
+    public TextView setTextView(@IdRes int id,String str){
+        if(SmartRun.sPrepare(this,id,str)) return null;
+        TextView tv=findTextView(id);
+        tv.setText(str);
+        return tv;
     }
 }

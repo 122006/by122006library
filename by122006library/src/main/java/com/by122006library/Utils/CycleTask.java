@@ -133,7 +133,7 @@ public abstract class CycleTask {
                         public void run() {
                             try {
                                 doCycleAction(cycleCount);
-                            } catch (MyException e) {
+                            } catch (Exception e) {
                                 e.printStackTrace();
                             }
                         }
@@ -141,7 +141,7 @@ public abstract class CycleTask {
                 } else
                     try {
                         doCycleAction(cycleCount);
-                    } catch (MyException e) {
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
             } else if (runThreadStyle.equals(ThreadStyle.Style.UI)) {
@@ -151,7 +151,7 @@ public abstract class CycleTask {
                     public void run() {
                         try {
                             doCycleAction(cycleCount);
-                        } catch (MyException e) {
+                        } catch (Exception e) {
                             e.printStackTrace();
                         }
                     }

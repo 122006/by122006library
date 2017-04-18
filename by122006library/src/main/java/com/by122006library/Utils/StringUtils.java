@@ -75,4 +75,6 @@ public class StringUtils {
         paint.getTextBounds(str, 0, str.length(), rect);
         return new int[]{rect.width(), rect.height()};
     }
+
+
 }

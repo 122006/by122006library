@@ -85,8 +85,17 @@
 
 
 
+##[PeriodConstant 周期变量类](PeriodConstant.java)
 
+你需要在初始化阶段通过构造器新建一个PeriodConstant对象
 
+     (new PeriodConstant.Builder_Add(周期开始值,周期结束值,周期时间)).builder();
+
+`Builder_Add`为递增周期函数构造器，你也可以继承`PeriodConstant.Builder`类、并重写`formula(int constant, long thisTime)`方法以新建适用的适配器
+
+在循环部分你可以通过`getDouble()`或者`getInt()`以获取对应格式的值
+
+1. 该类不依赖于线程，不会造成额外的系统开销
 
 
 ##[SmartRun 智能运行线程类](SmartRun.java)

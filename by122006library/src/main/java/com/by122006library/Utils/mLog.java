@@ -42,13 +42,18 @@ public class mLog {
     }
 
     public static String generateTag(StackTraceElement caller) {
-        String tag = "%s.%s(Line:%d)"; // 占位符
+        String tag = "%s| %s"; // 占位符
         String callerClazzName = caller.getClassName(); // 获取到类名
         callerClazzName = callerClazzName.substring(callerClazzName.lastIndexOf(".") + 1);
-        tag = String.format(tag, callerClazzName, caller.getMethodName(), caller.getLineNumber()); // 替换
+        String str=String.format("%-28s", String.format("(%s:%d)",  caller.getFileName(), caller.getLineNumber()));
+        String str2=String.format("%-38s", String.format("%s.%s()",  callerClazzName, caller.getMethodName()));
+        str=str.replace(" ", "\b");
+        str2=str2.replace(" ", "\b");
+        tag = String.format(tag,str ,str2); // 替换
         tag = TextUtils.isEmpty(customTagPrefix) ? tag : customTagPrefix + ":" + tag;
         return tag;
     }
+
 
     public static void d(String content) {
         if (!BuildConfig.DEBUG) {
