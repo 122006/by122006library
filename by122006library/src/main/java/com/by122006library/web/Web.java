@@ -16,6 +16,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Set;
 
 /**
  * Created by admin on 2016/12/15.
@@ -34,7 +35,7 @@ public class Web {
      */
     public static JSONObject doAsnyHttp(final RequestBuilder requster, @Nullable final WEBBaseCallBack callback,
                                         @Nullable
-    final ViewShow vs) {
+                                        final ViewShow vs) {
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -69,8 +70,8 @@ public class Web {
         if (RequestBuilder.getDefaultUrl() == null) throw new MyException("你需要为Url设置一个默认值");
         if (RequestBuilder.getDefaultEncode() == null) throw new MyException("你需要为编码Encode设置一个默认值");
         if (RequestBuilder.getDefaultHttpStyle() == -1) throw new MyException("你需要为HttpStyle(GET/POST)设置一个默认值");
-        if (requster.getAction() == null||requster.getAction() .length()==0) mLog.e("action真的应该为null么");
-        if(requster.getHttpStyle()== RequestBuilder.GET)str_url+="?"+requster.getData();
+        if (requster.getAction() == null || requster.getAction().length() == 0) mLog.e("action真的应该为null么");
+        if (requster.getHttpStyle() == RequestBuilder.GET) str_url += "?" + requster.getData();
         mLog.i("连接至网址：url=" + str_url);
         try {
             URL url = new URL(str_url);
@@ -91,6 +92,16 @@ public class Web {
                 httpConn.setRequestProperty("Content-Type",
                         "application/x-www-form-urlencoded");
                 httpConn.setRequestProperty("Charset", requster.getEncode());
+                if (RequestBuilder.getDefaultHead() != null)
+                    for (String key : (Set<String>) RequestBuilder.getDefaultHead().keySet()) {
+                        String value = RequestBuilder.getDefaultHead().get(key);
+                        httpConn.setRequestProperty(key, value);
+                    }
+                if (requster.getHead() != null)
+                    for (String key : (Set<String>) requster.getHead().keySet()) {
+                        String value = requster.getHead().get(key);
+                        httpConn.setRequestProperty(key, value);
+                    }
                 mLog.i("action=\"" + requster.getAction() + "\"");
                 byte[] requestStringBytes = requster.getJSONData().toString().getBytes(requster.getEncode());
                 OutputStream outputStream = httpConn.getOutputStream();
@@ -131,7 +142,7 @@ public class Web {
                     } else {
                         mLog.e("<body>标签不完整,全部数据如下：" + out);
                         if (callback != null) callback.analyseBack(RESULTSTYLE.Fail_WebException, out, null);
-                        if (vs != null){
+                        if (vs != null) {
                             ThreadUtils.runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
@@ -144,7 +155,7 @@ public class Web {
                 } else {
                     mLog.i("返回数据：" + out);
                     if (callback != null) callback.analyseBack(RESULTSTYLE.Success, out, null);
-                    if (vs != null)  ThreadUtils.runOnUiThread(new Runnable() {
+                    if (vs != null) ThreadUtils.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             vs.dismiss();

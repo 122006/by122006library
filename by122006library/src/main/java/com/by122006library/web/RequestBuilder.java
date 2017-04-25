@@ -8,6 +8,7 @@ import org.json.JSONObject;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -26,6 +27,28 @@ public class RequestBuilder {
     private String url = null;
     private int httpStyle = -1;
     private String action = "";
+
+    public static HashMap<String, String> getDefaultHead() {
+        return defaultHead;
+    }
+
+    public HashMap<String, String> getHead() {
+        return head;
+    }
+
+    private static HashMap<String, String> defaultHead;
+
+    private HashMap<String, String> head;
+
+    public void addHead(String key,String value){
+        if(head==null) head=new HashMap<>();
+        head.put(key,value);
+    }
+    public static void addDefaultHead(String key,String value){
+        if(defaultHead==null) defaultHead=new HashMap<>();
+        defaultHead.put(key,value);
+    }
+
 
     public RequestBuilder() {
         request = new HashMap<>();

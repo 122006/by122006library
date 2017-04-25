@@ -240,7 +240,13 @@ public abstract class CycleTask {
 
         if (!list.contains(this)) list.add(this);
     }
-
+    /**
+     * 本次循环结束后立刻进行下次任务，同时可运行回合数+1(额外运行，不占用原本次数)<p>用于出错后重试<p>必须等待本次循环结束之后才会进行重试</p>
+     */
+    public void again(){
+        restTime=0;
+        if(cycleNum>0)cycleNum++;
+    }
     public abstract void doCycleAction(int haveCycleCount) throws MyException;
 
 }
