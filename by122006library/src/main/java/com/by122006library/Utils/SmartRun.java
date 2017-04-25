@@ -341,7 +341,7 @@ public abstract class SmartRun {
                 }
         } catch (Exception e) {
             e.printStackTrace();
-            mLog.e("没有发现" + methodName + "方法，请不要对SmartRun类进行混或需要检查是否已传递该方法所有参数");
+            mLog.e("没有发现" + methodName + "方法，请不要对SmartRun类进行混淆或需要检查是否已传递该方法所有参数");
             return;
         }
         if (changeThreadStyleMap != null && changeThreadStyleMap.containsKey(method)) {
