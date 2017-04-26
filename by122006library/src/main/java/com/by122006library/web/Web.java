@@ -72,7 +72,14 @@ public class Web {
         if (RequestBuilder.getDefaultHttpStyle() == -1) throw new MyException("你需要为HttpStyle(GET/POST)设置一个默认值");
         if (requster.getAction() == null || requster.getAction().length() == 0) mLog.e("action真的应该为null么");
         if (requster.getHttpStyle() == RequestBuilder.GET) str_url += "?" + requster.getData();
+
+
+        if(requster.getHttpStyle() == RequestBuilder.POST&& RequestBuilder.isUrlToken()){
+            str_url += "?token=" + RequestBuilder.getToken();
+        }
+
         mLog.i("连接至网址：url=" + str_url);
+
         try {
             URL url = new URL(str_url);
             HttpURLConnection httpConn = (HttpURLConnection) url

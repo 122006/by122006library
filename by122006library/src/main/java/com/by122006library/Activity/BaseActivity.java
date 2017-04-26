@@ -3,6 +3,7 @@ package com.by122006library.Activity;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.ActivityManager;
+import android.app.Application;
 import android.app.KeyguardManager;
 import android.content.ComponentName;
 import android.content.Context;
@@ -23,8 +24,6 @@ import android.os.Process;
 import android.support.annotation.CallSuper;
 import android.support.annotation.IdRes;
 import android.support.annotation.LayoutRes;
-import android.support.annotation.UiThread;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.OrientationEventListener;
@@ -33,6 +32,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
@@ -42,7 +42,6 @@ import com.by122006library.Interface.UIThread;
 import com.by122006library.MyException;
 import com.by122006library.R;
 import com.by122006library.Utils.CycleTask;
-import com.by122006library.Utils.DebugUtils;
 import com.by122006library.Utils.SmartRun;
 import com.by122006library.Utils.ThreadUtils;
 import com.by122006library.Utils.ViewUtils;
@@ -57,6 +56,7 @@ import java.util.List;
 
 public class BaseActivity extends Activity {
     public static ArrayList<BaseActivity> list_act = new ArrayList<BaseActivity>();
+    private static ArrayList<Activity> act_out_list;
     public boolean canRotate;
     protected boolean FLAG_ACT_NO_TITLE = true;
     protected boolean FLAG_ACT_FULLSCREEN = true;
@@ -70,11 +70,15 @@ public class BaseActivity extends Activity {
     private ArrayList<View> needTouchView = new ArrayList<>();
 
     public static Context getContext() throws MyException {
+        BaseActivity baseActivity=getTopActivity();
+        if(baseActivity==null) return BaseActivity.getOutTopActivity();
         return getTopActivity().getDecorView().getContext();
     }
 
     public static Context optContext() {
         try {
+            BaseActivity baseActivity=getTopActivity();
+            if(baseActivity==null) return BaseActivity.getOutTopActivity();
             return getTopActivity().getDecorView().getContext();
         } catch (MyException e) {
             return null;
@@ -144,7 +148,26 @@ public class BaseActivity extends Activity {
         if (act.isDestroyed()) throw new MyException("顶层窗口不在活动周期");
         return act;
     }
-
+    public static Activity getTopOutActivity() throws MyException {
+        BaseActivity act = null;
+        try {
+            act = list_act.get(list_act.size() - 1);
+        } catch (Exception e) {
+            throw new MyException("没有有效的活动窗口");
+        }
+        if (act.isDestroyed()) throw new MyException("顶层窗口不在活动周期");
+        return act;
+    }
+    public static Activity getOutTopActivity() throws MyException {
+        Activity act = null;
+        try {
+            act = act_out_list.get(act_out_list.size() - 1);
+        } catch (Exception e) {
+            throw new MyException("没有有效的活动窗口");
+        }
+        if (act.isDestroyed()) throw new MyException("顶层窗口不在活动周期");
+        return act;
+    }
     /**
      * 判断当前App处于前台还是后台状态
      */
@@ -254,6 +277,46 @@ public class BaseActivity extends Activity {
         getContext().startActivity(mHomeIntent);
     }
 
+    public static void bindActList(Application application) {
+        act_out_list = new ArrayList<>();
+        application.registerActivityLifecycleCallbacks(new Application.ActivityLifecycleCallbacks() {
+            @Override
+            public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
+
+            }
+
+            @Override
+            public void onActivityStarted(Activity activity) {
+
+            }
+
+            @Override
+            public void onActivityResumed(Activity activity) {
+                act_out_list.add(activity);
+            }
+
+            @Override
+            public void onActivityPaused(Activity activity) {
+                act_out_list.remove(activity);
+            }
+
+            @Override
+            public void onActivityStopped(Activity activity) {
+
+            }
+
+            @Override
+            public void onActivitySaveInstanceState(Activity activity, Bundle outState) {
+
+            }
+
+            @Override
+            public void onActivityDestroyed(Activity activity) {
+
+            }
+        });
+    }
+
     public void setFullScreen(boolean FLAG_ACT_FULLSCREEN) {
         this.FLAG_ACT_FULLSCREEN = FLAG_ACT_FULLSCREEN;
     }
@@ -261,7 +324,6 @@ public class BaseActivity extends Activity {
     public void setNoTitle(boolean FLAG_ACT_NO_TITLE) {
         this.FLAG_ACT_NO_TITLE = FLAG_ACT_NO_TITLE;
     }
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -312,7 +374,10 @@ public class BaseActivity extends Activity {
             };
             mScreenOrientationEventListener.enable();
         }
-        if (!FLAG_ACT_NO_TITLE) {super.setContentView(R.layout.activity_base);findViewById(R.id.titlebar).setVisibility(View.VISIBLE);}
+        if (!FLAG_ACT_NO_TITLE) {
+            super.setContentView(R.layout.activity_base);
+            findViewById(R.id.titlebar).setVisibility(View.VISIBLE);
+        }
     }
 
     public void setRightButton(String text, View.OnClickListener onClickListener) {
@@ -347,8 +412,6 @@ public class BaseActivity extends Activity {
         onUpdateUi();
 
     }
-
-
 
     public View getDecorView() {
         return getWindow().getDecorView();
@@ -457,6 +520,18 @@ public class BaseActivity extends Activity {
         needTouchView.add(v);
     }
 
+    public TextView findTextView(@IdRes int id) {
+        return (TextView) findViewById(id);
+    }
+
+    @UIThread
+    public TextView setTextView(@IdRes int id, String str) {
+        if (SmartRun.sPrepare(this, id, str)) return null;
+        TextView tv = findTextView(id);
+        tv.setText(str);
+        return tv;
+    }
+
     /**
      * 界面回传的回调事件
      */
@@ -471,16 +546,5 @@ public class BaseActivity extends Activity {
         boolean match(int requestCode, int resultCode);
 
         void callback(Intent data);
-    }
-
-    public TextView findTextView(@IdRes int id){
-        return (TextView) findViewById(id);
-    }
-    @UIThread
-    public TextView setTextView(@IdRes int id,String str){
-        if(SmartRun.sPrepare(this,id,str)) return null;
-        TextView tv=findTextView(id);
-        tv.setText(str);
-        return tv;
     }
 }

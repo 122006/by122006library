@@ -49,6 +49,17 @@ public class RequestBuilder {
         defaultHead.put(key,value);
     }
 
+    public static boolean isUrlToken() {
+        return urlToken;
+    }
+
+    private static boolean urlToken=false;
+
+    public static void useUrlToken(){
+        urlToken=true;
+    }
+
+
 
     public RequestBuilder() {
         request = new HashMap<>();
