@@ -113,7 +113,7 @@ public class PopupTaskControlService extends Service {
         }
         BaseActivity topActivity = null;
         try {
-            topActivity = BaseActivity.getTopActivity();
+            topActivity = BaseActivity.getTopBaseActivity();
         } catch (MyException e) {
             Toast.makeText(getApplicationContext(), "获取主界面失败！", Toast.LENGTH_SHORT).show();
             return;

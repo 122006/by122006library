@@ -32,7 +32,6 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
@@ -70,16 +69,14 @@ public class BaseActivity extends Activity {
     private ArrayList<View> needTouchView = new ArrayList<>();
 
     public static Context getContext() throws MyException {
-        BaseActivity baseActivity=getTopActivity();
-        if(baseActivity==null) return BaseActivity.getOutTopActivity();
-        return getTopActivity().getDecorView().getContext();
+        Activity baseActivity = getTopActivity();
+        return baseActivity;
     }
 
     public static Context optContext() {
         try {
-            BaseActivity baseActivity=getTopActivity();
-            if(baseActivity==null) return BaseActivity.getOutTopActivity();
-            return getTopActivity().getDecorView().getContext();
+            Activity baseActivity = getTopActivity();
+            return baseActivity;
         } catch (MyException e) {
             return null;
         }
@@ -115,7 +112,7 @@ public class BaseActivity extends Activity {
         popup.setFocusable(false);
         popup.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
         try {
-            popup.showAtLocation(BaseActivity.getTopActivity().getDecorView(), Gravity.LEFT | Gravity.TOP,
+            popup.showAtLocation(BaseActivity.getTopBaseActivity().getDecorView(), Gravity.LEFT | Gravity.TOP,
                     x, y);
         } catch (Exception e) {
             e.printStackTrace();
@@ -138,7 +135,14 @@ public class BaseActivity extends Activity {
 
     }
 
-    public static BaseActivity getTopActivity() throws MyException {
+    public static Activity getTopActivity() throws MyException {
+        BaseActivity act = getTopBaseActivity();
+        if (act == null) return getTopOutActivity();
+        else
+            return act;
+    }
+
+    public static BaseActivity getTopBaseActivity() throws MyException {
         BaseActivity act = null;
         try {
             act = list_act.get(list_act.size() - 1);
@@ -148,17 +152,8 @@ public class BaseActivity extends Activity {
         if (act.isDestroyed()) throw new MyException("顶层窗口不在活动周期");
         return act;
     }
+
     public static Activity getTopOutActivity() throws MyException {
-        BaseActivity act = null;
-        try {
-            act = list_act.get(list_act.size() - 1);
-        } catch (Exception e) {
-            throw new MyException("没有有效的活动窗口");
-        }
-        if (act.isDestroyed()) throw new MyException("顶层窗口不在活动周期");
-        return act;
-    }
-    public static Activity getOutTopActivity() throws MyException {
         Activity act = null;
         try {
             act = act_out_list.get(act_out_list.size() - 1);
@@ -168,6 +163,7 @@ public class BaseActivity extends Activity {
         if (act.isDestroyed()) throw new MyException("顶层窗口不在活动周期");
         return act;
     }
+
     /**
      * 判断当前App处于前台还是后台状态
      */

@@ -356,7 +356,7 @@ public class ViewUtils {
      */
     public boolean isActivityFinished(){
         try {
-            return BaseActivity.getTopActivity().getDecorView().getWidth()!=0;
+            return BaseActivity.getTopBaseActivity().getDecorView().getWidth()!=0;
         } catch (MyException e) {
             mLog.i("获取decor界面失败");
             return false;

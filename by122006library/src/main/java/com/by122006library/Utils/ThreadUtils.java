@@ -1,6 +1,6 @@
 package com.by122006library.Utils;
 
-import android.os.AsyncTask;
+import android.app.Activity;
 import android.os.Looper;
 
 import com.by122006library.Activity.BaseActivity;
@@ -13,7 +13,8 @@ import com.by122006library.MyException;
 
 public class ThreadUtils {
     public static void runOnUiThread(Runnable runnable) throws MyException {
-        BaseActivity activity = BaseActivity.getTopActivity();
+        Activity activity = BaseActivity.getTopActivity();
+        if(activity==null) activity=BaseActivity.getTopOutActivity();
         if (runnable != null && activity != null) {
             activity.runOnUiThread(runnable);
         }

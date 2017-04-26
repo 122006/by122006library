@@ -332,7 +332,7 @@ public class BitmapUtils {
         Intent intent = new Intent(Intent.ACTION_PICK);
         intent.setType("image/*");//相片类型
         BaseActivity.getTopActivity().startActivityForResult(intent, REQUEST_CODE_PICK_IMAGE);
-        BaseActivity.getTopActivity().registerActivityResultCallBack(callback);
+        BaseActivity.getTopBaseActivity().registerActivityResultCallBack(callback);
     }
 
     /**
@@ -343,7 +343,7 @@ public class BitmapUtils {
         if (state.equals(Environment.MEDIA_MOUNTED)) {
             Intent getImageByCamera = new Intent("android.media.action.IMAGE_CAPTURE");
             BaseActivity.getTopActivity().startActivityForResult(getImageByCamera, REQUEST_CODE_CAPTURE_CAMERA);
-            BaseActivity.getTopActivity().registerActivityResultCallBack(callback);
+            BaseActivity.getTopBaseActivity().registerActivityResultCallBack(callback);
         } else {
             mToast.getInstance(activity).show("请确认已经插入SD卡");
         }
