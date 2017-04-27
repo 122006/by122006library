@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">by122006Library</string>
+    <item name="tag_1" type="id">
+    </item>
+    <item name="tag_2" type="id">
+    </item>
 </resources>

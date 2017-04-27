@@ -1,7 +1,9 @@
 #Activity 页面类
 
 ##[BaseActivity 根页面类](BaseActivity.java)
-   > 自定义的根页面类。提供常用方法，提供工具类所需元素，建议**所有界面**继承该类
+   > * 自定义的根页面类。提供常用方法，提供工具类所需元素，建议**所有界面**继承该类
+   > * 如果项目不继承该类，且需要使用该类方法及相关功能，请在Application内容类中注册`registerActivityResultCallBack(ActivityResultCallBack)`方法
+
 
 ####需要在`super.onCreate()`前设置内容
 
@@ -10,7 +12,7 @@
    * `FLAG_ACT_FULLSCREEN` 页面是否全屏
 
 ####常用方法及常量
-   * `getTopActivity()` 获得顶层界面对象
+   * `getTopActivity()` 获得顶层界面对象(优先获得外置界面数据)
 
    * `getContext()` 获得顶层activity的上下文
    * `showStringPopup_BottomView()` 在某控件下显示文本
@@ -23,6 +25,7 @@
    * `getViewBitmapById()` 根据resid获得布局截图
    * `registerActivityResultCallBack()` 注册一个界面反馈回调器
    * `exit()` 安全退出整个程序
+
 
 ####需要继承方法
    * `onUpdateUi()` UI界面的更新
