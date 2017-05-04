@@ -28,7 +28,13 @@
 
    tag标志批量管理事件生命周期，及时释放资源，管理多任务
 
-3. [Web 网络连接](/by122006library/src/main/java/com/by122006library/web/Web.java) （推荐级数：★★☆☆☆）
+4. [mLog 精准日志](/by122006library/src/main/java/com/by122006library/Utils/mLog.java) （推荐级数：★★★★★）
+
+   拒绝TAG，拒绝logcat上密密麻麻不知所措的条目，从使用mLog开始
+
+   同系统Log的使用，自动标记所在类名方法位置、Release自动隐藏、格式化显示格式
+
+4. [Web 网络连接](/by122006library/src/main/java/com/by122006library/web/Web.java) （推荐级数：★★☆☆☆）
 
     拥有自定义规则拦截派发，自定义解析，进度View绑定，多种Json自解析等功能。同时创建代码清晰易读易维护
 

@@ -318,6 +318,20 @@ public class mLog {
         }
     }
 
+    /**
+     * 获得调用方法所被调用的父方法的数据
+     *
+     * @return
+     */
+    public static String from() {
+        StackTraceElement stackTraceElement= Thread.currentThread().getStackTrace()[4];
+        String className=stackTraceElement.getClassName();
+        String methodName=stackTraceElement.getMethodName();
+        int line=stackTraceElement.getLineNumber();
+        return String.format("(%s.%s:%d)",className, methodName,line);
+    }
+
+
     public static StackTraceElement getCallerStackTraceElement() {
         return Thread.currentThread().getStackTrace()[4];
     }
