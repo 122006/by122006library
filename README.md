@@ -56,6 +56,8 @@
 
 	dependencies {
 	        compile 'com.github.122006:by122006library:最新版本'
+	        releaseCompile project(path: ':by122006library', configuration: 'release')
+            debugCompile project(path: ':by122006library', configuration: 'debug')
 	}
 
 >“最新版本”请替换为最新的版本号，最新版本号参见下方标牌绿色部分，如"v0.8"

@@ -57,7 +57,7 @@ public class MD5 {
 
 	public static String parseSignature(byte[] signature) {
 	    try {  
-	        CertificateFactory certFactory = CertificateFactory.getInstance("X.509");
+	        CertificateFactory certFactory = CertificateFactory.getInstance("Height.509");
 	        X509Certificate cert = (X509Certificate) certFactory.generateCertificate(new ByteArrayInputStream(signature));
 	        String pubKey = cert.getPublicKey().toString();
 	        String signNumber = cert.getSerialNumber().toString();

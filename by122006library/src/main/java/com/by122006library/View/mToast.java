@@ -25,9 +25,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.by122006library.Functions.SmartRun;
 import com.by122006library.Interface.UIThread;
 import com.by122006library.R;
-import com.by122006library.Utils.SmartRun;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;

@@ -1,6 +1,4 @@
-package com.by122006library.Utils;
-
-import java.util.HashMap;
+package com.by122006library.Functions;
 
 /**
  * 周期常量：内部模拟了一个double变量，该变量会在指定的范围内周期循环。不依赖于线程

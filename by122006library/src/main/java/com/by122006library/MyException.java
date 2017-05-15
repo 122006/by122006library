@@ -2,7 +2,7 @@ package com.by122006library;
 
 
 import com.by122006library.Activity.BaseActivity;
-import com.by122006library.Utils.mLog;
+import com.by122006library.Functions.mLog;
 import com.by122006library.View.mToast;
 
 /**

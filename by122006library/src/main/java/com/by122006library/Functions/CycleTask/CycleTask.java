@@ -1,10 +1,12 @@
-package com.by122006library.Utils;
+package com.by122006library.Functions.CycleTask;
 
+import com.by122006library.Functions.mLog;
 import com.by122006library.Interface.BGThread;
 import com.by122006library.Interface.DefaultThread;
 import com.by122006library.Interface.ThreadStyle;
 import com.by122006library.Interface.UIThread;
 import com.by122006library.MyException;
+import com.by122006library.Utils.ThreadUtils;
 
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
@@ -53,6 +55,8 @@ public abstract class CycleTask {
     public int cycleCount, cycleNum = 1;
     public long restTime;
     public ThreadStyle.Style runThreadStyle;
+    public long mLastTime;
+    public long mCurDurtime;
 
     /**
      * @param daleyTime 首次延迟时间
@@ -105,10 +109,6 @@ public abstract class CycleTask {
         }
     }
 
-    public long mLastTime;
-
-    public long mCurDurtime;
-
     public static void destroyTaskThread() {
         isRunning = false;
     }
@@ -122,8 +122,7 @@ public abstract class CycleTask {
 
         if (restTime <= 0) {
 
-            mCurDurtime=System.currentTimeMillis()-mLastTime;
-
+            mCurDurtime = System.currentTimeMillis() - mLastTime;
 
             restTime = cycleTime;
             if (runThreadStyle.equals(ThreadStyle.Style.BG)) {
@@ -158,7 +157,7 @@ public abstract class CycleTask {
                 });
             }
             cycleCount++;
-            mLastTime=System.currentTimeMillis();
+            mLastTime = System.currentTimeMillis();
             if (cycleCount >= cycleNum && cycleNum > 0) unRegister();
         }
     }
@@ -167,7 +166,14 @@ public abstract class CycleTask {
      * 注销该定时器
      */
     public void unRegister() {
-        if (list.contains(this)) list.remove(this);
+        if (list.contains(this)) {
+            try {
+                endCycleAction();
+            } catch (MyException e) {
+                e.printStackTrace();
+            }
+            list.remove(this);
+        }
         if (list.size() == 0) destroyTaskThread();
     }
 
@@ -176,8 +182,9 @@ public abstract class CycleTask {
      *
      * @param tag 定时器的依附对象
      */
-    public void register(Object tag) {
+    public CycleTask register(Object tag) {
         register(tag, 0);
+        return this;
     }
 
     /**
@@ -185,7 +192,7 @@ public abstract class CycleTask {
      *
      * @param tag 定时器的依附对象
      */
-    public void register(Object tag, int flag) {
+    public CycleTask register(Object tag, int flag) {
         if (flag == SINGLETASK || flag == SINGLETASK_COVER) {
             boolean ifhave = false;
             for (CycleTask cycleTask : (ArrayList<CycleTask>) CycleTask.list.clone()) {
@@ -193,7 +200,7 @@ public abstract class CycleTask {
             }
 
             if (ifhave) {
-                if (flag == SINGLETASK) return;
+                if (flag == SINGLETASK) return this;
                 else {
                     for (CycleTask cycleTask : (ArrayList<CycleTask>) CycleTask.list.clone()) {
                         list.remove(cycleTask);
@@ -209,7 +216,7 @@ public abstract class CycleTask {
             } catch (InterruptedException e) {
             }
         }
-        mLastTime=System.currentTimeMillis();
+        mLastTime = System.currentTimeMillis();
         StackTraceElement stackTraceElement = mLog.getCallerStackTraceElement();
         mLog.i("注册CycleTask 注册代码位置：" + mLog.generateTag(stackTraceElement));
         mLog.i("重复次数：" + (cycleNum == ImmediatelyRun ? "n+" : cycleNum) + " 次   ;循环周期：" + cycleTime + "ms   ;首次延迟时间："
@@ -239,14 +246,22 @@ public abstract class CycleTask {
         }
 
         if (!list.contains(this)) list.add(this);
+        return this;
     }
+
     /**
      * 本次循环结束后立刻进行下次任务，同时可运行回合数+1(额外运行，不占用原本次数)<p>用于出错后重试<p>必须等待本次循环结束之后才会进行重试</p>
      */
-    public void again(){
-        restTime=0;
-        if(cycleNum>0)cycleNum++;
+    public void again() {
+        restTime = 0;
+        if (cycleNum > 0) cycleNum++;
     }
+
     public abstract void doCycleAction(int haveCycleCount) throws MyException;
 
+    public void endCycleAction() throws MyException {
+
+    }
+
+    ;
 }

@@ -10,11 +10,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.by122006library.Functions.SmartRun;
 import com.by122006library.Interface.UIThread;
-import com.by122006library.Utils.SmartRun;
-import com.by122006library.item.ColorStyle;
-import com.by122006library.View.CustomPopWindow;
 import com.by122006library.R;
+import com.by122006library.View.CustomPopWindow;
+import com.by122006library.item.ColorStyle;
 
 /**
  * Created by admin on 2016/12/20.

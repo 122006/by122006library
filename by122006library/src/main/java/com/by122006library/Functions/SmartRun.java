@@ -1,4 +1,4 @@
-package com.by122006library.Utils;
+package com.by122006library.Functions;
 
 import android.support.annotation.Nullable;
 
@@ -8,6 +8,8 @@ import com.by122006library.Interface.DefaultThread;
 import com.by122006library.Interface.ThreadStyle;
 import com.by122006library.Interface.UIThread;
 import com.by122006library.MyException;
+import com.by122006library.Utils.StringUtils;
+import com.by122006library.Utils.ThreadUtils;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;

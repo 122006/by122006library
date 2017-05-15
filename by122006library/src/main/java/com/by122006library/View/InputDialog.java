@@ -2,7 +2,6 @@ package com.by122006library.View;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Looper;
@@ -13,8 +12,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -22,7 +19,6 @@ import com.by122006library.Activity.BaseActivity;
 import com.by122006library.MyException;
 import com.by122006library.R;
 import com.by122006library.Utils.ViewUtils;
-import com.by122006library.Utils.mLog;
 
 import java.util.ArrayList;
 

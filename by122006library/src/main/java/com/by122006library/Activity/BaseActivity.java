@@ -37,14 +37,14 @@ import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
+import com.by122006library.Functions.CycleTask.CycleTask;
+import com.by122006library.Functions.SmartRun;
+import com.by122006library.Functions.mLog;
 import com.by122006library.Interface.UIThread;
 import com.by122006library.MyException;
 import com.by122006library.R;
-import com.by122006library.Utils.CycleTask;
-import com.by122006library.Utils.SmartRun;
 import com.by122006library.Utils.ThreadUtils;
 import com.by122006library.Utils.ViewUtils;
-import com.by122006library.Utils.mLog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -275,42 +275,46 @@ public class BaseActivity extends Activity {
 
     public static void bindActList(Application application) {
         act_out_list = new ArrayList<>();
-        application.registerActivityLifecycleCallbacks(new Application.ActivityLifecycleCallbacks() {
-            @Override
-            public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+            application.registerActivityLifecycleCallbacks(new Application.ActivityLifecycleCallbacks() {
+                @Override
+                public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
 
-            }
+                }
 
-            @Override
-            public void onActivityStarted(Activity activity) {
+                @Override
+                public void onActivityStarted(Activity activity) {
 
-            }
+                }
 
-            @Override
-            public void onActivityResumed(Activity activity) {
-                act_out_list.add(activity);
-            }
+                @Override
+                public void onActivityResumed(Activity activity) {
+                    act_out_list.add(activity);
+                }
 
-            @Override
-            public void onActivityPaused(Activity activity) {
-                act_out_list.remove(activity);
-            }
+                @Override
+                public void onActivityPaused(Activity activity) {
+                    act_out_list.remove(activity);
+                }
 
-            @Override
-            public void onActivityStopped(Activity activity) {
+                @Override
+                public void onActivityStopped(Activity activity) {
 
-            }
+                }
 
-            @Override
-            public void onActivitySaveInstanceState(Activity activity, Bundle outState) {
+                @Override
+                public void onActivitySaveInstanceState(Activity activity, Bundle outState) {
 
-            }
+                }
 
-            @Override
-            public void onActivityDestroyed(Activity activity) {
+                @Override
+                public void onActivityDestroyed(Activity activity) {
 
-            }
-        });
+                }
+            });
+        }else{
+            mLog.e("无法兼容Api11以下版本");
+        }
     }
 
     public void setFullScreen(boolean FLAG_ACT_FULLSCREEN) {

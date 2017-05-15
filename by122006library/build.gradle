@@ -22,14 +22,13 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-    defaultPublishConfig "debug"
+    publishNonDefault true
 }
 task clearJar(type: Delete) {
     delete 'libs/sdk.jar' // sdk是你自己jar包的名字，随便命名
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
