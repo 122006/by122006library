@@ -14,25 +14,31 @@
 ******
   >标题指向代码文件，具体使用方法见相关文件夹内Md文件
 
-1. [SmartRun 智能线程](/by122006library/src/main/java/com/by122006library/Utils/SmartRun.java) （推荐级数：★★★★★）
+1. [SmartRun 智能线程](/by122006library/src/main/java/com/by122006library/Functions/SmartRun.java) （推荐级数：★★★★★）
 
     依赖注入框架，可以便捷地指定方法所运行的线程(后台，UI)，优化代码层次节省开发时间使开发者更加专注于逻辑层次
 
     ps:与AndroidAnnotations的no magic特性不同，利用堆栈进行方法退栈调用以达到转化线程类型的原理。
 
-2. [CycleTask 循环任务](/by122006library/src/main/java/com/by122006library/Utils/CycleTask.java) &
-   [DelayTask 延迟任务](/by122006library/src/main/java/com/by122006library/Utils/DelayTask.java)（推荐级数：★★★★★）
+2. [CycleTask 循环任务](/by122006library/src/main/java/com/by122006library/Functions/CycleTask/CycleTask.java) &
+   [DelayTask 延迟任务](/by122006library/src/main/java/com/by122006library/Functions/CycleTask/DelayTask.java)（推荐级数：★★★★★）
 
 
    以单个线程进行循环事件维护，告别画面卡顿和多线程频繁注册带来的混乱，事件支持注解设定线程
 
    tag标志批量管理事件生命周期，及时释放资源，管理多任务
 
-4. [mLog 精准日志](/by122006library/src/main/java/com/by122006library/Utils/mLog.java) （推荐级数：★★★★★）
+3. [mLog 精准日志](/by122006library/src/main/java/com/by122006library/Functions/mLog.java) （推荐级数：★★★★★）
 
    拒绝TAG，拒绝logcat上密密麻麻不知所措的条目，从使用mLog开始
 
    同系统Log的使用，自动标记所在类名方法位置、Release自动隐藏、格式化显示格式
+
+4. [AttBinder 关联型属性变量类](/by122006library/src/main/java/com/by122006library/Functions/AttBinder.java) （推荐级数：★★★★★）
+
+    牵一发而动全身。
+
+    App控件动画，属性级联，简洁明了。
 
 4. [Web 网络连接](/by122006library/src/main/java/com/by122006library/web/Web.java) （推荐级数：★★☆☆☆）
 
