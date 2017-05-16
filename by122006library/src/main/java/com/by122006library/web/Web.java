@@ -59,6 +59,7 @@ public class Web {
     @Nullable
     public static JSONObject doSynchroHttp(RequestBuilder requster, @Nullable WEBBaseCallBack callback, @Nullable final
     ViewShow vs) throws MyException {
+        mLog.i("网络请求："+mLog.getCallerLocation());
         if (ThreadUtils.isUIThread()) throw new MyException("不能在UI线程中调用该方法");
         if (vs != null) ThreadUtils.runOnUiThread(new Runnable() {
             @Override
