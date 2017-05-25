@@ -7,6 +7,8 @@ import android.support.annotation.Nullable;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by admin on 2017/2/21.
@@ -76,5 +78,42 @@ public class StringUtils {
         return new int[]{rect.width(), rect.height()};
     }
 
-
+    private static boolean isNumeric(String tag, int startIndex) {
+        int length = tag.length();
+        if (length == startIndex) {
+            return false; // no numerals
+        }
+        for (int i = startIndex; i < length; i++) {
+            if (!Character.isDigit(tag.charAt(i))) {
+                return false;
+            }
+        }
+        return true;
+    }
+    /**
+     * @param regex
+     * 正则表达式字符串
+     * @param str
+     * 要匹配的字符串
+     * @return 如果str 符合 regex的正则表达式格式,返回true, 否则返回 false;
+     */
+    public static boolean match(String regex, String str) {
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(str);
+        return matcher.matches();
+    }
+    /**
+     * 正则部分匹配
+     *
+     * @param regex
+     * 正则表达式字符串
+     * @param str
+     * 要匹配的字符串
+     * @return 如果str 符合 regex的正则表达式格式,返回true, 否则返回 false;
+     */
+    public static boolean matchPart(String regex, String str) {
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(str);
+        return matcher.find();
+    }
 }

@@ -1,13 +1,9 @@
 package com.by122006library.Functions.AttBinder;
 
-import android.support.annotation.FloatRange;
-import android.support.annotation.IntDef;
-
-import com.by122006library.Utils.RunLogicUtils;
-
 import java.util.ArrayList;
 
 /**
+ * 主类 用于存放其绑定的属性值
  * Created by admin on 2017/5/15.
  */
 
@@ -36,7 +32,7 @@ public class AttBinder {
             if(per<0) per=0;
             double p=att.transform(per);
             att.setPer(p);
-            att.attNum=att.min+p*(att.max-att.min);
+            att.attNum=att.min +p*(att.max -att.min);
         }
     }
 
@@ -51,7 +47,7 @@ public class AttBinder {
             if(per<0) per=0;
             double p=att.transform(per);
             att.setPer(p);
-            att.attNum=att.min+p*(att.max-att.min);
+            att.attNum=att.min +p*(att.max -att.min);
         }
     }
 

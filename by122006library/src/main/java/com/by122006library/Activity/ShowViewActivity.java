@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 
 /**
+ * Activity->View所必须要继承的类
  * Created by zwh on 2017/4/28.
  */
 

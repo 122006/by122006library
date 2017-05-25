@@ -27,7 +27,7 @@ public class TimeAtt extends Att{
 
     @Override
     public double measureAtt() {
-        return cycleTask==null?0:((double) (cycleTask.cycleCount*cycleTask.cycleTime))/max;
+        return cycleTask==null?0:((double) (cycleTask.cycleCount*cycleTask.cycleTime))/ max;
     }
 
     @Override

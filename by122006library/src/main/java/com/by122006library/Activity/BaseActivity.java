@@ -9,6 +9,8 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.databinding.DataBindingUtil;
+import android.databinding.ViewDataBinding;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -24,6 +26,10 @@ import android.os.Process;
 import android.support.annotation.CallSuper;
 import android.support.annotation.IdRes;
 import android.support.annotation.LayoutRes;
+import android.support.annotation.Nullable;
+import android.support.v4.view.LayoutInflaterCompat;
+import android.support.v4.view.LayoutInflaterFactory;
+import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.OrientationEventListener;
@@ -43,18 +49,24 @@ import com.by122006library.Functions.mLog;
 import com.by122006library.Interface.UIThread;
 import com.by122006library.MyException;
 import com.by122006library.R;
+import com.by122006library.Utils.ReflectionUtils;
 import com.by122006library.Utils.ThreadUtils;
 import com.by122006library.Utils.ViewUtils;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+
+import me.grantland.widget.AutofitTextView;
 
 /**
  * Created by admin on 2016/12/8.
  */
 
-public class BaseActivity extends Activity {
+public abstract class BaseActivity extends Activity {
     public static ArrayList<BaseActivity> list_act = new ArrayList<BaseActivity>();
+    public static HashMap<String, CustomView> customViewHashMap = new HashMap<>();
     private static ArrayList<Activity> act_out_list;
     public boolean canRotate;
     protected boolean FLAG_ACT_NO_TITLE = true;
@@ -65,6 +77,11 @@ public class BaseActivity extends Activity {
      */
     protected int runcount = -1;
     ArrayList<ActivityResultCallBack> activityResultCallBackList;
+    /**
+     * 存放代码化属性所依赖的实体对象
+     */
+    HashMap<String, Object> xmlAttDataHashMap = new HashMap<>();
+    private boolean useBindingContentView = false;
     private OrientationEventListener mScreenOrientationEventListener;
     private ArrayList<View> needTouchView = new ArrayList<>();
 
@@ -149,7 +166,9 @@ public class BaseActivity extends Activity {
         } catch (Exception e) {
             throw new MyException("没有有效的活动窗口");
         }
-        if (act.isDestroyed()) throw new MyException("顶层窗口不在活动周期");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            if (act.isDestroyed()) throw new MyException("顶层窗口不在活动周期");
+        }
         return act;
     }
 
@@ -160,7 +179,9 @@ public class BaseActivity extends Activity {
         } catch (Exception e) {
             throw new MyException("没有有效的活动窗口");
         }
-        if (act.isDestroyed()) throw new MyException("顶层窗口不在活动周期");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            if (act.isDestroyed()) throw new MyException("顶层窗口不在活动周期");
+        }
         return act;
     }
 
@@ -312,9 +333,41 @@ public class BaseActivity extends Activity {
 
                 }
             });
-        }else{
+        } else {
             mLog.e("无法兼容Api11以下版本");
         }
+    }
+
+    public static void addCustomView(String name, CustomView customView) {
+        if (customViewHashMap.containsKey(name)) {
+            mLog.w(String.format("自定义View替换规则冲突：%s->%s 被覆盖为 %s->%s", customViewHashMap.get(name).aClass.getName(),
+                    name, customView.aClass.getName(), name));
+        }
+        customViewHashMap.put(name, customView);
+    }
+
+    public static void addCustomView(CustomView customView) {
+        addCustomView(customView.aClass.getSuperclass().getSimpleName(), customView);
+    }
+
+    /**
+     * 初始化默认的自定义View替换规则集
+     */
+    public static void initCustomView() {
+        addCustomView("TextView", new CustomView(AutofitTextView.class) {
+            @Override
+            View onCreate(View parent, String name, Context context, AttributeSet attrs) {
+                AutofitTextView tv = new AutofitTextView(context, attrs);
+                return tv;
+            }
+        });
+        addCustomView("TextView", new CustomView(AutofitTextView.class) {
+            @Override
+            View onCreate(View parent, String name, Context context, AttributeSet attrs) {
+                AutofitTextView tv = new AutofitTextView(context, attrs);
+                return tv;
+            }
+        });
     }
 
     public void setFullScreen(boolean FLAG_ACT_FULLSCREEN) {
@@ -329,10 +382,12 @@ public class BaseActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         runcount++;
         list_act.add(this);
+
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         if (FLAG_ACT_FULLSCREEN) getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
+        LayoutInflaterCompat.setFactory(getLayoutInflater(), new MyLayoutFactory());
         super.onCreate(savedInstanceState);
         if (canRotate) {
             mScreenOrientationEventListener = new OrientationEventListener(this) {
@@ -374,10 +429,7 @@ public class BaseActivity extends Activity {
             };
             mScreenOrientationEventListener.enable();
         }
-        if (!FLAG_ACT_NO_TITLE) {
-            super.setContentView(R.layout.activity_base);
-            findViewById(R.id.titlebar).setVisibility(View.VISIBLE);
-        }
+
     }
 
     public void setRightButton(String text, View.OnClickListener onClickListener) {
@@ -394,15 +446,56 @@ public class BaseActivity extends Activity {
 
     @Override
     public void setContentView(@LayoutRes int layoutres) {
-        if (!FLAG_ACT_NO_TITLE)
-            ((ViewGroup) findViewById(R.id.content)).addView(getLayoutInflater().inflate(layoutres, null));
-        else super.setContentView(layoutres);
+        mLog.i(ifHaveBinding()+"");
+        if (ifHaveBinding()) {
+            if(useBindingContentView){
+                super.setContentView(layoutres);
+            }else{
+                DataBinding_SetContentView(layoutres);
+            }
+
+        } else {
+            if (!FLAG_ACT_NO_TITLE) {
+                super.setContentView(R.layout.activity_base);
+                findViewById(R.id.titlebar).setVisibility(View.VISIBLE);
+                ((ViewGroup) findViewById(R.id.content)).addView(getLayoutInflater().inflate(layoutres, null));
+            } else {
+                super.setContentView(layoutres);
+            }
+        }
+
+
+    }
+
+    /**
+     * 封装super.setContentView(layout);以提供其他BaseActivity的继承覆盖
+     */
+    public void DataBinding_SetContentView(View layout) {
+        if (ifHaveBinding()) mLog.e("错误：DataBinding不支持通过View实体进行setContentView()操作");
+        else
+            super.setContentView(layout);
+    }
+
+    /**
+     * 封装super.setContentView(layout);以提供其他BaseActivity的继承覆盖
+     */
+    public void DataBinding_SetContentView(@LayoutRes int layoutres) {
+        if (ifHaveBinding()) {
+            useBindingContentView = true;
+            ViewDataBinding bind = DataBindingUtil.setContentView(this, layoutres);
+            try {
+                ReflectionUtils.setFieldValue(this, "binding", bind);
+            } catch (NoSuchFieldException e) {
+                mLog.e("DataBindingBaseActivity中必须定义变量 binding");
+            }
+        } else
+            super.setContentView(layoutres);
     }
 
     @Override
     public void setContentView(View layout) {
         if (!FLAG_ACT_NO_TITLE) ((ViewGroup) findViewById(R.id.content)).addView(layout);
-        else super.setContentView(layout);
+        else DataBinding_SetContentView(layout);
     }
 
     @Override
@@ -502,6 +595,8 @@ public class BaseActivity extends Activity {
         activityResultCallBackList.add(activityResultCallBack);
     }
 
+    ;
+
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
         if (needTouchView != null) {
@@ -514,6 +609,8 @@ public class BaseActivity extends Activity {
 
         return super.dispatchTouchEvent(ev);
     }
+
+    ;
 
     public void registerNeedTouchView(View v) {
         if (needTouchView.contains(v)) return;
@@ -532,6 +629,83 @@ public class BaseActivity extends Activity {
         return tv;
     }
 
+    @Override
+    public View onCreateView(View parent, String name, Context context, AttributeSet attrs) {
+        return null;
+    }
+
+    /**
+     * 修改即将被显示的View属性
+     *
+     * @param thisView   即将显示的view
+     * @param parentView 父view
+     * @param orlName    View的原始类名
+     * @param context    上下文
+     * @param attrs      属性
+     */
+    @CallSuper
+    public void specialView(View thisView, View parentView, String orlName, Context context, AttributeSet attrs) {
+        if (orlName.equals("TextView")){
+            for (int i = 0; i < attrs.getAttributeCount(); i++) {
+                String key = attrs.getAttributeName(i);
+                String value = attrs.getAttributeValue(i);
+                try {
+                    for(Method method:ReflectionUtils.getMethodArray(attrs)){
+                        mLog.i(method.getName());
+                    }
+                } catch (NoSuchFieldException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+
+
+
+    }
+
+    /**
+     * 增加代码化属性所依赖的实体对象，引用名为该类Class简写名
+     */
+    public void addXmlAttData(@Nullable Object xmlAttData) {
+        xmlAttDataHashMap.put(xmlAttData.getClass().getSimpleName(), xmlAttData);
+    }
+
+    /**
+     * 增加代码化属性所依赖的实体对象，自定义名
+     */
+    public void addXmlAttData(String name, @Nullable Object xmlAttData) {
+        xmlAttDataHashMap.put(name, xmlAttData);
+    }
+
+    public ViewDataBinding getBinding() throws NoSuchFieldException {
+        try {
+            return ReflectionUtils.getFieldValue(this, "binding", ViewDataBinding.class);
+        } catch (NoSuchFieldException e) {
+            mLog.e("DataBindingBaseActivity中必须定义变量 binding");
+            throw new NoSuchFieldException();
+        }
+    }
+
+    public boolean ifHaveBinding() {
+        try {
+            ReflectionUtils.getFieldValue(this, "binding", ViewDataBinding.class);
+            return true;
+        } catch (NoSuchFieldException e) {
+            return false;
+        }
+    }
+
+
+    public ViewDataBinding optBinding() {
+        try {
+            return ReflectionUtils.getFieldValue(this, "binding", ViewDataBinding.class);
+        } catch (NoSuchFieldException e) {
+            return null;
+        }
+    }
+
+
     /**
      * 界面回传的回调事件
      */
@@ -547,4 +721,32 @@ public class BaseActivity extends Activity {
 
         void callback(Intent data);
     }
+
+    public abstract static class CustomView {
+        Class<? extends View> aClass;
+
+        CustomView(Class<? extends View> aClass) {
+            this.aClass = aClass;
+        }
+
+        abstract View onCreate(View parent, String name, Context context, AttributeSet attrs);
+    }
+
+    private class MyLayoutFactory implements LayoutInflaterFactory {
+        @Override
+        public View onCreateView(View parent, String name, Context context, AttributeSet attrs) {
+            View v = null;
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.HONEYCOMB) {
+                v = getAct().onCreateView(parent, name, context, attrs);
+            }
+            if (v == null) {
+                CustomView customView = customViewHashMap.get(name);
+                if (customView != null) v = customView.onCreate(parent, name, context, attrs);
+            }
+            specialView(v, parent, name, context, attrs);
+            return v;
+        }
+    }
+
+
 }

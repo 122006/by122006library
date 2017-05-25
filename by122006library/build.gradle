@@ -22,7 +22,19 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    dataBinding {
+        enabled = true
+    }
+    productFlavors {
+        create('all') {
+
+        }
+    }
     publishNonDefault true
+}
+configurations {
+    allDebug
+    allRelease
 }
 task clearJar(type: Delete) {
     delete 'libs/sdk.jar' // sdk是你自己jar包的名字，随便命名
@@ -36,4 +48,5 @@ dependencies {
     testCompile 'junit:junit:4.12'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.5.1'
     compile 'com.github.dcendents:android-maven-gradle-plugin:1.5'
+    compile 'me.grantland:autofittextview:0.2.+'
 }

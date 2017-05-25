@@ -17,8 +17,10 @@ public abstract class Att {
 
 
     /**
+     * Max\min的数据顺序会被自动纠正和忽略。<br> 如果该属性是反向变化,你需要在transform(per)方法里返回1-per<br> 在这里，Listner也会被初始化。
+     *
      * @param max 最大范围， >=max的事件不会被运行
-     * @param min 最小范围， <min的事件不会被运行
+     * @param min 最小范围， &lt;min的事件不会被运行<br>
      */
     public Att(double max, double min) {
         this.max = Math.max(max, min);
@@ -63,7 +65,7 @@ public abstract class Att {
     }
 
     /**
-     * 对百分比数据值进行特征转化，默认返回per即可
+     * 对百分比数据值进行特征转化，默认返回per即可<br> per范围为0-1
      *
      * @param per 原始的百分比
      * @return 转化后的百分比
@@ -90,9 +92,10 @@ public abstract class Att {
         attNum = num;
         if (num < min || num >= max) {
             if (RunLogicUtils.getHereRunTimes(500) <= 1) {
-                if(num < min &&useMinBorder()) num=min;else
-                if(num >= max &&useMaxBorder()) num=max;else
-                return;
+                if (num < min && useMinBorder()) num = min;
+                else if (num >= max && useMaxBorder()) num = max;
+                else
+                    return;
             } else
                 return;
         }
@@ -101,17 +104,23 @@ public abstract class Att {
         }
     }
 
+    /**
+     * 子类需要重写该方法<p> 以确定是否在超过Max越界时使用Max界限数据而不是直接抛弃
+     */
     public boolean useMaxBorder() {
         return true;
     }
 
+    /**
+     * 子类需要重写该方法<p> 以确定是否在超过Min越界时使用Min界限数据而不是直接抛弃
+     */
     public boolean useMinBorder() {
         return false;
     }
 
     @CallSuper
-    public void remove(){
-        for(AttBinder binder:(ArrayList<AttBinder>)binders){
+    public void remove() {
+        for (AttBinder binder : (ArrayList<AttBinder>) binders) {
             binder.atts.remove(this);
         }
     }
