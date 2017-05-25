@@ -12,7 +12,10 @@
 
 ### 值得一试的核心原创功能
 ******
-  >标题指向代码文件，具体使用方法见相关文件夹内Md文件
+  > 标题指向代码文件，具体使用方法见Md文件
+
+
+  仅列举少量重要独立功能，更多工具类、细节功能请自行尝试或查阅相关MD文件
 
 1. [SmartRun 智能线程](/by122006library/src/main/java/com/by122006library/Functions/SmartRun.java) （推荐级数：★★★★★）    [ReadMe.md]((/by122006library/src/main/java/com/by122006library/Functions/README.md))
 
