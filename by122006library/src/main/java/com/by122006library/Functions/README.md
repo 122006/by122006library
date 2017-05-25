@@ -1,10 +1,10 @@
-#Functions 功能类
+# Functions 功能类
 
 
 
 
 
-##[mLog Log日志类](mLog.java)
+## [mLog Log日志类](mLog.java)
 
 * 快捷的自定义Log类
 * 来源网上
@@ -14,7 +14,7 @@
 1. 只有在DeBug模式下才会进行打印
 
 
-##[CycleTask 异步循环任务类](CycleTask/CycleTask.java)
+## [CycleTask 异步循环任务类](CycleTask/CycleTask.java)
     适用于大批量不同任务定时循环的工具类
 * 创建新任务
    >实例化该类并重写`doCycleAction()`方法以创建一个任务
@@ -57,7 +57,7 @@
 
 
 
-##[PeriodConstant 周期变量类](PeriodConstant.java)
+## [PeriodConstant 周期变量类](PeriodConstant.java)
 
 你需要在初始化阶段通过构造器新建一个PeriodConstant对象
 
@@ -70,7 +70,7 @@
 1. 该类不依赖于线程，不会造成额外的系统开销
 
 
-##[SmartRun 智能运行线程类](SmartRun.java)
+## [SmartRun 智能运行线程类](SmartRun.java)
 > * 甚至比`AsyncTask`更小的学习成本，更简洁直观的代码结构，0回调，需要关心的只有逻辑
 
 * 基础使用方法
@@ -149,7 +149,7 @@
     8. 基础类型和其封装器视为相同参数，注意方法重复问题
 
 
-##[AttBinder 关联型属性变量类](AttBinder/AttBinder.java)
+## [AttBinder 关联型属性变量类](AttBinder/AttBinder.java)
 
 ### 使用步骤：
 1. 初始化一个`AttBinder`对象
