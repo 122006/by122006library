@@ -61,7 +61,7 @@ import java.util.List;
 import me.grantland.widget.AutofitTextView;
 
 /**
- * Created by admin on 2016/12/8.
+ * Created by 122006 on 2016/12/8.
  */
 
 public abstract class BaseActivity extends Activity {

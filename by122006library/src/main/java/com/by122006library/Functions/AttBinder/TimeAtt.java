@@ -5,7 +5,7 @@ import com.by122006library.Interface.UIThread;
 import com.by122006library.MyException;
 
 /**
- * Created by admin on 2017/5/15.
+ * Created by 122006 on 2017/5/15.
  */
 
 public class TimeAtt extends Att{

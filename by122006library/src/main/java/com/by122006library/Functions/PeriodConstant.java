@@ -3,7 +3,7 @@ package com.by122006library.Functions;
 /**
  * 周期常量：内部模拟了一个double变量，该变量会在指定的范围内周期循环。不依赖于线程
  * <p>
- * Created by admin on 2017/4/18.
+ * Created by 122006 on 2017/4/18.
  */
 
 public class PeriodConstant {
@@ -32,6 +32,9 @@ public class PeriodConstant {
         return str;
     }
 
+    /**
+     * 递增-递减-递增 循环变量
+     */
     public static class Builder_Add extends Builder {
 
         public Builder_Add(int start, int end, long cycleTime) {
