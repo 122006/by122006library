@@ -2,13 +2,16 @@ package com.by122006library.web;
 
 import android.support.annotation.Nullable;
 
-import com.by122006library.MyException;
-import com.by122006library.Utils.ThreadUtils;
 import com.by122006library.Functions.mLog;
+import com.by122006library.MyException;
+import com.by122006library.Utils.RunLogicUtils;
+import com.by122006library.Utils.ThreadUtils;
+import com.by122006library.item.ColorStyle;
+import com.by122006library.web.AnalysisOut.AnalysisOut;
+import com.by122006library.web.AnalysisOut.JSONAnalysisOut;
 import com.by122006library.web.CallBack.WEBBaseCallBack;
-import com.by122006library.web.ViewShow.ViewShow;
+import com.by122006library.web.WebViewShow.WebViewShow;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
@@ -35,7 +38,7 @@ public class Web {
      */
     public static JSONObject doAsnyHttp(final RequestBuilder requster, @Nullable final WEBBaseCallBack callback,
                                         @Nullable
-                                        final ViewShow vs) {
+                                        final WebViewShow vs) {
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -54,12 +57,14 @@ public class Web {
      *
      * @param requster 请求包装类
      * @param callback 回调类 为空不回调
+     * @param vs       显示的控件类，该控件需要使用WebViewShow接口
      * @return 返回的正确数据，如果错误返回null
+     * @throws MyException
      */
     @Nullable
     public static JSONObject doSynchroHttp(RequestBuilder requster, @Nullable WEBBaseCallBack callback, @Nullable final
-    ViewShow vs) throws MyException {
-        mLog.i("网络请求："+mLog.getCallerLocation());
+    WebViewShow vs) throws MyException {
+        mLog.i("网络请求：" + mLog.getCallerLocation());
         if (ThreadUtils.isUIThread()) throw new MyException("不能在UI线程中调用该方法");
         if (vs != null) ThreadUtils.runOnUiThread(new Runnable() {
             @Override
@@ -74,8 +79,7 @@ public class Web {
         if (requster.getAction() == null || requster.getAction().length() == 0) mLog.e("action真的应该为null么");
         if (requster.getHttpStyle() == RequestBuilder.GET) str_url += "?" + requster.getData();
 
-
-        if(requster.getHttpStyle() == RequestBuilder.POST&& RequestBuilder.isUrlToken()){
+        if (requster.getHttpStyle() == RequestBuilder.POST && RequestBuilder.isUrlToken()) {
             str_url += "?token=" + RequestBuilder.getToken();
         }
 
@@ -126,69 +130,59 @@ public class Web {
                 }
                 is.close();
                 String out = new String(bos.toByteArray());
-                if (requster.getAnalysisOut() != null) {
-                    JSONObject jsonObject = requster.getAnalysisOut().analysis(out);
-                    if (jsonObject != null) return jsonObject;
-                }
-
-                int bodystartindex = out.indexOf("<body>");
-                if (bodystartindex != -1) {
-                    int bodyendindex = out.indexOf("</body>");
-                    String data1 = "";
-                    if (bodyendindex != -1) {
-                        data1 = out.substring(out.indexOf("<body>") + 7,
-                                bodyendindex).trim();
-                        mLog.i("返回<body>数据：" + data1);
-                        if (callback != null) callback.analyseBack(RESULTSTYLE.Success, out, null);
-                        if (vs != null) ThreadUtils.runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                vs.dismiss();
-                            }
-                        });
-                        return new JSONObject(data1);
-                    } else {
-                        mLog.e("<body>标签不完整,全部数据如下：" + out);
-                        if (callback != null) callback.analyseBack(RESULTSTYLE.Fail_WebException, out, null);
-                        if (vs != null) {
-                            ThreadUtils.runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    vs.showError("返回数据格式错误", null);
-                                }
-                            });
-                        }
-                        return null;
-                    }
-                } else {
-                    mLog.i("返回数据：" + out);
-                    if (callback != null) callback.analyseBack(RESULTSTYLE.Success, out, null);
+                AnalysisOut analysisOut = null;
+                if (requster.getDefaultAnalysisOut() != null || requster.getAnalysisOut() != null) {
+                    analysisOut = requster.getAnalysisOut() != null ? requster.getAnalysisOut() : requster
+                            .getDefaultAnalysisOut();
+                } else analysisOut = new JSONAnalysisOut();
+                JSONObject jsonObject = null;
+                try {
+                    jsonObject = analysisOut.analysis(callback, out);
+                    if (vs != null) vs.dismiss();
+                } catch (final MyException e) {
                     if (vs != null) ThreadUtils.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            vs.dismiss();
+                            vs.showError(e.getMessage(), ColorStyle.getInitData());
                         }
                     });
-                    try {
-                        return new JSONObject(out);
-                    } catch (JSONException e) {
-                        mLog.e("网络出错：JSON解析出错");
-                        return null;
-                    }
                 }
+
+                return jsonObject;
+
+
             }
             mLog.e("网络出错：状态码=" + httpConn.getResponseCode());
+
+            if (RunLogicUtils.getHereRunTimes(10*1000) <= requster.getReStartMaxTimes()) {
+                return doSynchroHttp(requster, callback, vs);
+            }
             callback.analyseBack(httpConn.getResponseCode() == 404 ? RESULTSTYLE.Fail_NotFound : RESULTSTYLE
                     .Fail_WebException, null, null);
+            if (vs != null) ThreadUtils.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    vs.showError("网络出错且多次尝试重连无效" , ColorStyle.getInitData());
+                }
+            });
             return null;
 
-        } catch (Exception e) {
+        } catch (final Exception e) {
             mLog.e("网络出错：" + String.valueOf(e));
+            if (RunLogicUtils.getHereRunTimes(10*1000) <=  requster.getReStartMaxTimes()) {
+                return doSynchroHttp(requster, callback, vs);
+            }
             if (callback != null) try {
                 callback.analyseBack(RESULTSTYLE.Fail_WebException, null, e);
             } catch (Exception e1) {
                 e1.printStackTrace();
             }
+            if (vs != null) ThreadUtils.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    vs.showError("网络出错：" + String.valueOf(e), ColorStyle.getInitData());
+                }
+            });
         }
         return null;
     }

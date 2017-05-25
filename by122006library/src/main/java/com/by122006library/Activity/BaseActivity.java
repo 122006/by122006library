@@ -649,13 +649,7 @@ public abstract class BaseActivity extends Activity {
             for (int i = 0; i < attrs.getAttributeCount(); i++) {
                 String key = attrs.getAttributeName(i);
                 String value = attrs.getAttributeValue(i);
-                try {
-                    for(Method method:ReflectionUtils.getMethodArray(attrs)){
-                        mLog.i(method.getName());
-                    }
-                } catch (NoSuchFieldException e) {
-                    e.printStackTrace();
-                }
+
             }
         }
 

@@ -164,5 +164,5 @@
 4. 如果含有特殊对象，你需要重写`remove()`方法释放。同样，在属性变化结束之后，建议调用`AttBinder`对象的`destroy()`方法进行资源的回收
 
 ### 常用子类
-1.[ViewAtt 控件属性类](AttBinder/ViewAtt.java) 方便对控件的属性进行定义
-2.[TimeAtt 定时控件修改类](AttBinder/TimeAtt.java) 以60帧左右的速度刷新制定时间的控件
+1. [ViewAtt 控件属性类](AttBinder/ViewAtt.java) 方便对控件的属性进行定义
+2. [TimeAtt 定时控件修改类](AttBinder/TimeAtt.java) 以60帧左右的速度刷新制定时间的控件

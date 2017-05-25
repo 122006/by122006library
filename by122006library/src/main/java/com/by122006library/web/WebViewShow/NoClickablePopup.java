@@ -1,4 +1,4 @@
-package com.by122006library.web.ViewShow;
+package com.by122006library.web.WebViewShow;
 
 import android.app.Activity;
 import android.content.Context;
@@ -22,7 +22,7 @@ import com.by122006library.item.ColorStyle;
  * 不会响应触摸状态的覆盖提示类
  */
 
-public class NoClickablePopup implements com.by122006library.web.ViewShow.ViewShow {
+public class NoClickablePopup implements WebViewShow {
     @Nullable
     CustomPopWindow popup;
     @Nullable

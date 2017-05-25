@@ -30,3 +30,6 @@
     > 封装了网络线程，通常用于不需要返回数据的网络请求
 
         doAsnyHttp(RequestBuilder requster, @Nullable WEBBaseCallBack callback, @Nullable ViewShow vs)
+* default全局默认值设定
+    大部分属性都支持设定全局默认值。你可以在软件初始化的时候设定它们（方法名中含有default）。当一个网络连接被调用时，如果没有设置该属性，会使用开始设定的默认值
+    * 支持的方法: `setDefaultUrl()`、`setDefaultEncode()`、`setDefaultHttpStyle()`、`addDefaultHead(String,String)`、

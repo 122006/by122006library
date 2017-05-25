@@ -2,6 +2,11 @@ package com.by122006library.web;
 
 
 import android.support.annotation.IntDef;
+import android.view.SurfaceHolder;
+
+import com.by122006library.MyException;
+import com.by122006library.web.AnalysisOut.AnalysisOut;
+import com.by122006library.web.CallBack.WEBBaseCallBack;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -22,11 +27,16 @@ public class RequestBuilder {
     private static int defaultHttpStyle = 1;
     public HashMap<String, String> request;
     public AnalysisOut analysisOut;
+    public AnalysisOut defaultAnalysisOut;
     int timeout = 20 * 1000;
     String encode = null;
     private String url = null;
     private int httpStyle = -1;
     private String action = "";
+    /**
+     * 连接失败时最大重试次数
+     */
+    private int reStartMaxTimes=3;
 
     public static HashMap<String, String> getDefaultHead() {
         return defaultHead;
@@ -215,14 +225,28 @@ public class RequestBuilder {
         this.analysisOut = analysisOut;
     }
 
+    public AnalysisOut getDefaultAnalysisOut() {
+        return analysisOut;
+    }
+
+    public void setDefaultAnalysisOut(AnalysisOut analysisOut) {
+        this.defaultAnalysisOut = analysisOut;
+    }
+
+    public int getReStartMaxTimes() {
+        return reStartMaxTimes;
+    }
+
+    public void setReStartMaxTimes(int reStartMaxTimes) {
+        this.reStartMaxTimes = reStartMaxTimes;
+    }
+
     @IntDef({GET, POST})
     @Retention(RetentionPolicy.SOURCE)
     public @interface HTTP_STYLE {
     }
 
-    public static abstract class AnalysisOut {
-        public abstract JSONObject analysis(String out);
-    }
+
 
 
 }
