@@ -13,9 +13,16 @@
     1. 设置请求的内容
         1. `setToken()` 连接令牌，只需设置一次
         2. `setUrl()` 设置地址，只需要设置一次
+            `setDefaultUrl()` 默认值方法
         3. `addAtt()` 增加键值对参数
         4. `setAction()` 设置请求action
         5. `get()` / `post()` 设置get或者post发送(默认为post)
+            `setDefaultHttpStyle()` 默认值方法
+        6. `setReStartMaxTimes()` 设置最大请求次数
+        7. `setAnalysisOut()` 设置当前解析方法
+            `setDefaultAnalysisOut()` 默认值方法
+        8. `setHead()` 设置当前请求头属性
+            `addDefaultHead()` 默认值方法
 * [WEBBaseCallBack](CallBack/WEBBaseCallBack.java) 结果回调
     1. 你必须重写 `onSuccess()`,`onFail()`,`onError()` 方法处理对应事件
         1. `onSuccess()`：成功
@@ -31,5 +38,7 @@
 
         doAsnyHttp(RequestBuilder requster, @Nullable WEBBaseCallBack callback, @Nullable ViewShow vs)
 * default全局默认值设定
-    大部分属性都支持设定全局默认值。你可以在软件初始化的时候设定它们（方法名中含有default）。当一个网络连接被调用时，如果没有设置该属性，会使用开始设定的默认值
-    * 支持的方法: `setDefaultUrl()`、`setDefaultEncode()`、`setDefaultHttpStyle()`、`addDefaultHead(String,String)`、
+
+    >  大部分属性都支持设定全局默认值。你可以在软件初始化的时候设定它们（方法名中含有default）。当一个网络连接被调用时，如果没有设置该属性，会使用开始设定的默认值
+
+    * 支持的方法: `setDefaultUrl()`、`setDefaultEncode()`、`setDefaultHttpStyle()`、`addDefaultHead()`、`setDefaultAnalysisOut()`
