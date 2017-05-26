@@ -53,7 +53,7 @@ import com.by122006library.Utils.ReflectionUtils;
 import com.by122006library.Utils.ThreadUtils;
 import com.by122006library.Utils.ViewUtils;
 
-import java.lang.reflect.Method;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -361,13 +361,7 @@ public abstract class BaseActivity extends Activity {
                 return tv;
             }
         });
-        addCustomView("TextView", new CustomView(AutofitTextView.class) {
-            @Override
-            View onCreate(View parent, String name, Context context, AttributeSet attrs) {
-                AutofitTextView tv = new AutofitTextView(context, attrs);
-                return tv;
-            }
-        });
+
     }
 
     public void setFullScreen(boolean FLAG_ACT_FULLSCREEN) {
@@ -446,11 +440,12 @@ public abstract class BaseActivity extends Activity {
 
     @Override
     public void setContentView(@LayoutRes int layoutres) {
-        mLog.i(ifHaveBinding()+"");
+        mLog.i(ifHaveBinding() + "");
         if (ifHaveBinding()) {
-            if(useBindingContentView){
+            if (useBindingContentView) {
                 super.setContentView(layoutres);
-            }else{
+            } else {
+                mLog.i("DataBinding_SetContentView");
                 DataBinding_SetContentView(layoutres);
             }
 
@@ -484,9 +479,11 @@ public abstract class BaseActivity extends Activity {
             useBindingContentView = true;
             ViewDataBinding bind = DataBindingUtil.setContentView(this, layoutres);
             try {
-                ReflectionUtils.setFieldValue(this, "binding", bind);
+                getBindingField().set(this,bind);
             } catch (NoSuchFieldException e) {
-                mLog.e("DataBindingBaseActivity中必须定义变量 binding");
+                mLog.e("DataBindingBaseActivity中必须定义变量 xml");
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
             }
         } else
             super.setContentView(layoutres);
@@ -543,18 +540,15 @@ public abstract class BaseActivity extends Activity {
     }
 
     /**
-     * 将在控件构建之后于主线程运行<p> 运行于onAttachedToWindow()中，onResume()后<p> 可以正确测量控件数据，用于控件初始化
+     * 将在控件构建之后于主线程运行<p> 运行于onAttachedToWindow()中，onResume()后<p> 可以正确获得控件params
      */
-    @CallSuper
+    @UIThread
     public void onUpdateUi() {
         if (!getDecorView().isShown()) {
             mLog.w("Stop the onUpdateUi() action : isShow() = false");
             return;
         }
-        if (!ThreadUtils.isUIThread()) {
-            mLog.e("Stop the onUpdateUi() action : is now UI Thread");
-            return;
-        }
+        if(SmartRun.sPrepare(this)) return;
 
     }
 
@@ -645,15 +639,13 @@ public abstract class BaseActivity extends Activity {
      */
     @CallSuper
     public void specialView(View thisView, View parentView, String orlName, Context context, AttributeSet attrs) {
-        if (orlName.equals("TextView")){
+        if (orlName.equals("TextView")) {
             for (int i = 0; i < attrs.getAttributeCount(); i++) {
                 String key = attrs.getAttributeName(i);
                 String value = attrs.getAttributeValue(i);
 
             }
         }
-
-
 
 
     }
@@ -672,31 +664,45 @@ public abstract class BaseActivity extends Activity {
         xmlAttDataHashMap.put(name, xmlAttData);
     }
 
-    public ViewDataBinding getBinding() throws NoSuchFieldException {
+    public ViewDataBinding getBinding() throws MyException {
         try {
-            return ReflectionUtils.getFieldValue(this, "binding", ViewDataBinding.class);
-        } catch (NoSuchFieldException e) {
-            mLog.e("DataBindingBaseActivity中必须定义变量 binding");
-            throw new NoSuchFieldException();
+            return (ViewDataBinding) getBindingField().get(this);
+        } catch (Exception e) {
+            throw new MyException("你必须在Activity里声明一个ViewDataBinding子类变量");
         }
     }
 
     public boolean ifHaveBinding() {
         try {
-            ReflectionUtils.getFieldValue(this, "binding", ViewDataBinding.class);
-            return true;
+            return getBindingField()!=null;
         } catch (NoSuchFieldException e) {
-            return false;
+            e.printStackTrace();
         }
+        return false;
     }
 
 
     public ViewDataBinding optBinding() {
         try {
-            return ReflectionUtils.getFieldValue(this, "binding", ViewDataBinding.class);
+            return (ViewDataBinding) getBindingField().get(this);
         } catch (NoSuchFieldException e) {
-            return null;
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (NullPointerException e) {
+            e.printStackTrace();
         }
+        return null;
+    }
+
+    private Field getBindingField() throws NoSuchFieldException {
+        for (Field field : ReflectionUtils.getFieldArray(this)) {
+            if (ViewDataBinding.class.isAssignableFrom(field.getType())) {
+                return field;
+            }
+
+        }
+        return null;
     }
 
 
@@ -733,6 +739,7 @@ public abstract class BaseActivity extends Activity {
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.HONEYCOMB) {
                 v = getAct().onCreateView(parent, name, context, attrs);
             }
+
             if (v == null) {
                 CustomView customView = customViewHashMap.get(name);
                 if (customView != null) v = customView.onCreate(parent, name, context, attrs);
