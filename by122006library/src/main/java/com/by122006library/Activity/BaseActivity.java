@@ -443,7 +443,13 @@ public abstract class BaseActivity extends Activity {
         mLog.i(ifHaveBinding() + "");
         if (ifHaveBinding()) {
             if (useBindingContentView) {
-                super.setContentView(layoutres);
+                if (!FLAG_ACT_NO_TITLE) {
+                    super.setContentView(R.layout.activity_base);
+                    findViewById(R.id.titlebar).setVisibility(View.VISIBLE);
+                    ((ViewGroup) findViewById(R.id.content)).addView(getLayoutInflater().inflate(layoutres, null));
+                } else {
+                    super.setContentView(layoutres);
+                }
             } else {
                 mLog.i("DataBinding_SetContentView");
                 DataBinding_SetContentView(layoutres);
@@ -465,7 +471,7 @@ public abstract class BaseActivity extends Activity {
     /**
      * 封装super.setContentView(layout);以提供其他BaseActivity的继承覆盖
      */
-    public void DataBinding_SetContentView(View layout) {
+    protected void DataBinding_SetContentView(View layout) {
         if (ifHaveBinding()) mLog.e("错误：DataBinding不支持通过View实体进行setContentView()操作");
         else
             super.setContentView(layout);
@@ -474,7 +480,7 @@ public abstract class BaseActivity extends Activity {
     /**
      * 封装super.setContentView(layout);以提供其他BaseActivity的继承覆盖
      */
-    public void DataBinding_SetContentView(@LayoutRes int layoutres) {
+    protected void DataBinding_SetContentView(@LayoutRes int layoutres) {
         if (ifHaveBinding()) {
             useBindingContentView = true;
             ViewDataBinding bind = DataBindingUtil.setContentView(this, layoutres);
@@ -503,7 +509,7 @@ public abstract class BaseActivity extends Activity {
 
     }
 
-    public View getDecorView() {
+    protected View getDecorView() {
         return getWindow().getDecorView();
     }
 
@@ -660,19 +666,18 @@ public abstract class BaseActivity extends Activity {
     /**
      * 增加代码化属性所依赖的实体对象，自定义名
      */
-    public void addXmlAttData(String name, @Nullable Object xmlAttData) {
+    protected void addXmlAttData(String name, @Nullable Object xmlAttData) {
         xmlAttDataHashMap.put(name, xmlAttData);
     }
 
-    public ViewDataBinding getBinding() throws MyException {
+    protected ViewDataBinding getBinding() throws MyException {
         try {
             return (ViewDataBinding) getBindingField().get(this);
         } catch (Exception e) {
             throw new MyException("你必须在Activity里声明一个ViewDataBinding子类变量");
         }
     }
-
-    public boolean ifHaveBinding() {
+    protected boolean ifHaveBinding() {
         try {
             return getBindingField()!=null;
         } catch (NoSuchFieldException e) {
@@ -682,7 +687,7 @@ public abstract class BaseActivity extends Activity {
     }
 
 
-    public ViewDataBinding optBinding() {
+    protected ViewDataBinding optBinding() {
         try {
             return (ViewDataBinding) getBindingField().get(this);
         } catch (NoSuchFieldException e) {
@@ -694,10 +699,12 @@ public abstract class BaseActivity extends Activity {
         }
         return null;
     }
-
+    private Field bindingField;
     private Field getBindingField() throws NoSuchFieldException {
+        if(bindingField!=null) return bindingField;
         for (Field field : ReflectionUtils.getFieldArray(this)) {
             if (ViewDataBinding.class.isAssignableFrom(field.getType())) {
+                bindingField=field;
                 return field;
             }
 
