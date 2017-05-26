@@ -72,7 +72,7 @@ public class Web {
                 vs.showLoading("正在获取中...", null);
             }
         });
-        String str_url = requster.getUrl();
+        String str_url = requster.getUrl();//附加action
         if (RequestBuilder.getDefaultUrl() == null) throw new MyException("你需要为Url设置一个默认值");
         if (RequestBuilder.getDefaultEncode() == null) throw new MyException("你需要为编码Encode设置一个默认值");
         if (RequestBuilder.getDefaultHttpStyle() == -1) throw new MyException("你需要为HttpStyle(GET/POST)设置一个默认值");
@@ -191,5 +191,6 @@ public class Web {
     public enum RESULTSTYLE {
         Fail_WebException, Fail_UserCancel, Fail_ServiceRefuse, Fail_NotFound, Success
     }
+
 
 }
