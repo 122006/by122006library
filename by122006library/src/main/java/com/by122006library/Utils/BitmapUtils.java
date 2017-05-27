@@ -21,6 +21,7 @@ import android.view.View;
 
 import com.by122006library.Activity.BaseActivity;
 import com.by122006library.MyException;
+import com.by122006library.R;
 import com.by122006library.View.mToast;
 
 import java.io.InputStream;
@@ -44,6 +45,12 @@ public class BitmapUtils {
         bmpmap.clear();
     }
 
+    /**
+     * 获得图片资源，如果本地无缓存自动网络获取
+     *
+     * @param scr
+     * @return
+     */
     public static Bitmap getBitmap(Context context, String scr) {
         return getBitmap(context, scr, true);
     }
@@ -53,6 +60,7 @@ public class BitmapUtils {
                                                 final String scr, final boolean inPurgeable) {
         if (scr == null || scr.length() == 0)
             return null;
+
         Bitmap bitmap = bmpmap.get(scr);
         if (bitmap != null && !bitmap.isRecycled()) {
             return bitmap;
@@ -93,7 +101,7 @@ public class BitmapUtils {
                 }).start();
 
             }
-            bitmap = getBitmap(context, "webgetting.png");
+            bitmap = getBitmap(context, R.drawable.nopicture,0);
             return bitmap;
         }
         bmpmap.put(scr, bitmap);

@@ -40,9 +40,12 @@
    本基类已支持DataBinding框架。
 
    你可以在自己的实体类中，初始化一个继承于`ViewDataBinding`、类名基于layoutID（该类在DataBinding格式的xml定义时编辑器已自动生成）的变量（变量名不限）。
+
    你不需要为该变量赋值，当定义完成后，在调用`setContentView(int)`方法时会自动为该变量赋值。
 
 > 其实就是省略了一句 `DataBindingUtil.setContentView(this, layoutres);`
+>
+> so~如果你要不在BaseActivity中使用DataBinding，你应该使用`DataBindingUtil.setContentView(this, layoutres);`
 
 
 

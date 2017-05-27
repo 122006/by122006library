@@ -9,6 +9,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.databinding.BindingAdapter;
 import android.databinding.DataBindingUtil;
 import android.databinding.ViewDataBinding;
 import android.graphics.Bitmap;
@@ -39,6 +40,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
@@ -50,8 +52,8 @@ import com.by122006library.Interface.UIThread;
 import com.by122006library.MyException;
 import com.by122006library.R;
 import com.by122006library.Utils.ReflectionUtils;
-import com.by122006library.Utils.ThreadUtils;
 import com.by122006library.Utils.ViewUtils;
+import com.squareup.picasso.Picasso;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -84,6 +86,7 @@ public abstract class BaseActivity extends Activity {
     private boolean useBindingContentView = false;
     private OrientationEventListener mScreenOrientationEventListener;
     private ArrayList<View> needTouchView = new ArrayList<>();
+    private Field bindingField;
 
     public static Context getContext() throws MyException {
         Activity baseActivity = getTopActivity();
@@ -296,7 +299,7 @@ public abstract class BaseActivity extends Activity {
 
     public static void bindActList(Application application) {
         act_out_list = new ArrayList<>();
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
             application.registerActivityLifecycleCallbacks(new Application.ActivityLifecycleCallbacks() {
                 @Override
                 public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
@@ -364,6 +367,18 @@ public abstract class BaseActivity extends Activity {
 
     }
 
+    @BindingAdapter("android:src")
+    public static void setImageUrl(ImageView view, String url) {
+        Picasso.with(view.getContext()).load(url).into(view);
+    }
+
+    @BindingAdapter("android:text")
+    public static void setTvObjectValue(TextView view, Object i) {
+//        mLog.i(i.toString());
+//        if (i instanceof String) return;
+        view.setText(i.toString());
+    }
+
     public void setFullScreen(boolean FLAG_ACT_FULLSCREEN) {
         this.FLAG_ACT_FULLSCREEN = FLAG_ACT_FULLSCREEN;
     }
@@ -380,7 +395,6 @@ public abstract class BaseActivity extends Activity {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         if (FLAG_ACT_FULLSCREEN) getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
         LayoutInflaterCompat.setFactory(getLayoutInflater(), new MyLayoutFactory());
         super.onCreate(savedInstanceState);
         if (canRotate) {
@@ -451,7 +465,7 @@ public abstract class BaseActivity extends Activity {
                     super.setContentView(layoutres);
                 }
             } else {
-                mLog.i("DataBinding_SetContentView");
+                mLog.i("set a DataBinding ContentView in window");
                 DataBinding_SetContentView(layoutres);
             }
 
@@ -464,6 +478,7 @@ public abstract class BaseActivity extends Activity {
                 super.setContentView(layoutres);
             }
         }
+        mLog.i("setContentView()完成");
 
 
     }
@@ -485,7 +500,7 @@ public abstract class BaseActivity extends Activity {
             useBindingContentView = true;
             ViewDataBinding bind = DataBindingUtil.setContentView(this, layoutres);
             try {
-                getBindingField().set(this,bind);
+                getBindingField().set(this, bind);
             } catch (NoSuchFieldException e) {
                 mLog.e("DataBindingBaseActivity中必须定义变量 xml");
             } catch (IllegalAccessException e) {
@@ -509,7 +524,7 @@ public abstract class BaseActivity extends Activity {
 
     }
 
-    protected View getDecorView() {
+    public View getDecorView() {
         return getWindow().getDecorView();
     }
 
@@ -548,13 +563,12 @@ public abstract class BaseActivity extends Activity {
     /**
      * 将在控件构建之后于主线程运行<p> 运行于onAttachedToWindow()中，onResume()后<p> 可以正确获得控件params
      */
-    @UIThread
     public void onUpdateUi() {
+//        if (SmartRun.sPrepare(this)) return;
         if (!getDecorView().isShown()) {
             mLog.w("Stop the onUpdateUi() action : isShow() = false");
             return;
         }
-        if(SmartRun.sPrepare(this)) return;
 
     }
 
@@ -573,6 +587,8 @@ public abstract class BaseActivity extends Activity {
         return ViewUtils.getViewBitmap(resId == -1 ? findViewById(resId) : getDecorView());
     }
 
+    ;
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -585,6 +601,8 @@ public abstract class BaseActivity extends Activity {
         }
     }
 
+    ;
+
     /**
      * 注册界面回传的回调事件
      *
@@ -594,8 +612,6 @@ public abstract class BaseActivity extends Activity {
         if (activityResultCallBackList == null) activityResultCallBackList = new ArrayList<ActivityResultCallBack>();
         activityResultCallBackList.add(activityResultCallBack);
     }
-
-    ;
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
@@ -609,8 +625,6 @@ public abstract class BaseActivity extends Activity {
 
         return super.dispatchTouchEvent(ev);
     }
-
-    ;
 
     public void registerNeedTouchView(View v) {
         if (needTouchView.contains(v)) return;
@@ -677,15 +691,15 @@ public abstract class BaseActivity extends Activity {
             throw new MyException("你必须在Activity里声明一个ViewDataBinding子类变量");
         }
     }
+
     protected boolean ifHaveBinding() {
         try {
-            return getBindingField()!=null;
+            return getBindingField() != null;
         } catch (NoSuchFieldException e) {
             e.printStackTrace();
         }
         return false;
     }
-
 
     protected ViewDataBinding optBinding() {
         try {
@@ -699,19 +713,18 @@ public abstract class BaseActivity extends Activity {
         }
         return null;
     }
-    private Field bindingField;
+
     private Field getBindingField() throws NoSuchFieldException {
-        if(bindingField!=null) return bindingField;
+        if (bindingField != null) return bindingField;
         for (Field field : ReflectionUtils.getFieldArray(this)) {
             if (ViewDataBinding.class.isAssignableFrom(field.getType())) {
-                bindingField=field;
+                bindingField = field;
                 return field;
             }
 
         }
         return null;
     }
-
 
     /**
      * 界面回传的回调事件
@@ -743,7 +756,7 @@ public abstract class BaseActivity extends Activity {
         @Override
         public View onCreateView(View parent, String name, Context context, AttributeSet attrs) {
             View v = null;
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.HONEYCOMB) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
                 v = getAct().onCreateView(parent, name, context, attrs);
             }
 
@@ -755,6 +768,5 @@ public abstract class BaseActivity extends Activity {
             return v;
         }
     }
-
 
 }

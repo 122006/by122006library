@@ -41,12 +41,13 @@ task clearJar(type: Delete) {
 }
 
 dependencies {
+
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     compile 'com.android.support:appcompat-v7:24.2.1'
     testCompile 'junit:junit:4.12'
-    annotationProcessor 'com.jakewharton:butterknife-compiler:8.5.1'
     compile 'com.github.dcendents:android-maven-gradle-plugin:1.5'
     compile 'me.grantland:autofittextview:0.2.+'
+    compile 'com.squareup.picasso:picasso:2.5.2'
 }

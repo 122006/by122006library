@@ -39,12 +39,6 @@
 
    同系统Log的使用，自动标记所在类名方法位置、Release自动隐藏、格式化显示格式
 
-4. [AttBinder 关联型属性变量类](/by122006library/src/main/java/com/by122006library/Functions/AttBinder/AttBinder.java) （推荐级数：★★★★★）
- [ReadMe.md](/by122006library/src/main/java/com/by122006library/Functions/README.md)
-
-    牵一发而动全身。
-
-    App控件动画，属性级联，简洁明了。
 
 4. [Web 网络连接](/by122006library/src/main/java/com/by122006library/web/Web.java) （推荐级数：★★☆☆☆）
  [ReadMe.md](/by122006library/src/main/java/com/by122006library/web/README.md)

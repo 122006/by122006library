@@ -29,43 +29,45 @@ public class ViewAtt extends Att {
         this.view = v;
         this.attStyle = attStyle;
     }
-
+    double attNum =-1;
     @Override
     public double measureAtt() {
         if(view==null) return -1;
+
         switch (attStyle) {
             case Other:
-                return -1;
+                attNum = -1;
             case Height:
-                return view.getHeight();
+                attNum = view.getHeight();
             case Width:
-                return view.getWidth();
+                attNum = view.getWidth();
             case Alpha:
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-                    return view.getAlpha();
-                } else return view.getBackground().getAlpha();
+                    attNum = view.getAlpha();
+                } else attNum = view.getBackground().getAlpha();
             case Left:
-                return view.getLeft();
+                attNum = view.getLeft();
             case Right:
-                return view.getRight();
+                attNum = view.getRight();
             case Top:
-                return view.getTop();
+                attNum = view.getTop();
             case Bottom:
-                return view.getBottom();
+                attNum = view.getBottom();
             case ScrollX:
-                return view.getScrollX();
+                attNum = view.getScrollX();
             case ScrollY:
-                return view.getScrollY();
+                attNum = view.getScrollY();
         }
 
-        return -1;
+        return attNum;
     }
 
     @Override
     public void setAttNum(double num) {
         if(view==null) return;
         ViewGroup.LayoutParams params = view.getLayoutParams();
-
+        if(num==attNum||Math.abs(num-attNum)<=0.00001)return;
+        attNum=num;
         switch (attStyle) {
             case Other:
                 break;
@@ -141,7 +143,7 @@ public class ViewAtt extends Att {
     }
 
     @Override
-    public void setListener() {
+    public void setOutSideListener() {
 
     }
 

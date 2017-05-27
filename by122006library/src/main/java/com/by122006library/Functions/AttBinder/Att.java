@@ -25,7 +25,7 @@ public abstract class Att {
     public Att(double max, double min) {
         this.max = Math.max(max, min);
         this.min = Math.min(max, min);
-        setListener();
+        setOutSideListener();
     }
 
     protected void addBinder(AttBinder binder) {
@@ -73,9 +73,9 @@ public abstract class Att {
     public abstract double transform(double per);
 
     /**
-     * 设定属性变化的监听器<p>你需要在监听器的最后调用fluctuation(num)方法</>
+     * 设定外部监听器，该监听器应该能够对控件值进行修改<p>你需要在监听器的最后调用fluctuation(num)方法</>
      */
-    public abstract void setListener();
+    public abstract void setOutSideListener();
 
     /**
      * 发生数据修改，默认方法测量属性并缓存，发送至AttBinder
@@ -124,5 +124,19 @@ public abstract class Att {
             binder.atts.remove(this);
         }
     }
+
+    protected AttProgressListener attProgressListener;
+
+    /**
+     * 设定进度监听器
+     *
+     * @param attProgressListener
+     */
+    public void setAttProgressListener(AttProgressListener attProgressListener){
+        this.attProgressListener=attProgressListener;
+    }
+
+
+
 
 }

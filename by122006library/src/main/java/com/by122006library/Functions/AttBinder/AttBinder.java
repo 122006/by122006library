@@ -27,12 +27,16 @@ public class AttBinder {
         }
         for (Att att:(ArrayList<Att>)atts.clone()){
             if (att==from) continue;
-            if(per==0||per==1) return;
             if(per>1) per=1;
             if(per<0) per=0;
             double p=att.transform(per);
+            if(p==att.getPer()) continue;
             att.setPer(p);
+            double before=att.attNum;
             att.attNum=att.min +p*(att.max -att.min);
+            if(att.attProgressListener!=null){
+                attProgressListener.progress(before,att.attNum,p);
+            }
         }
     }
 
@@ -47,7 +51,11 @@ public class AttBinder {
             if(per<0) per=0;
             double p=att.transform(per);
             att.setPer(p);
+            double before=att.attNum;
             att.attNum=att.min +p*(att.max -att.min);
+            if(att.attProgressListener!=null){
+                attProgressListener.progress(before,att.attNum,p);
+            }
         }
     }
 
@@ -57,6 +65,14 @@ public class AttBinder {
             att.remove();
         }
     }
+    private AttProgressListener attProgressListener;
 
+    /**
+     * 设定进度监听器
+     * @param attProgressListener
+     */
+    public void setAttProgressListener(AttProgressListener attProgressListener){
+        this.attProgressListener=attProgressListener;
+    }
 
 }
