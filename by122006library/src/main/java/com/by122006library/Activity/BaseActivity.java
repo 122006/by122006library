@@ -60,7 +60,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import me.grantland.widget.AutofitTextView;
 
 /**
  * Created by 122006 on 2016/12/8.
@@ -357,13 +356,13 @@ public abstract class BaseActivity extends Activity {
      * 初始化默认的自定义View替换规则集
      */
     public static void initCustomView() {
-        addCustomView("TextView", new CustomView(AutofitTextView.class) {
-            @Override
-            View onCreate(View parent, String name, Context context, AttributeSet attrs) {
-                AutofitTextView tv = new AutofitTextView(context, attrs);
-                return tv;
-            }
-        });
+//        addCustomView("TextView", new CustomView(AutofitTextView.class) {
+//            @Override
+//            View onCreate(View parent, String name, Context context, AttributeSet attrs) {
+//                AutofitTextView tv = new AutofitTextView(context, attrs);
+//                return tv;
+//            }
+//        });
 
     }
 

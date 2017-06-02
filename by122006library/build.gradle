@@ -25,11 +25,7 @@ android {
     dataBinding {
         enabled = true
     }
-    productFlavors {
-        create('all') {
 
-        }
-    }
 }
 task clearJar(type: Delete) {
     delete 'libs/sdk.jar' // sdk是你自己jar包的名字，随便命名
@@ -43,6 +39,6 @@ dependencies {
     compile 'com.android.support:appcompat-v7:24.2.1'
     testCompile 'junit:junit:4.12'
     compile 'com.github.dcendents:android-maven-gradle-plugin:1.5'
-    compile 'me.grantland:autofittextview:0.2.+'
     compile 'com.squareup.picasso:picasso:2.5.2'
+
 }
