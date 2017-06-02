@@ -5,6 +5,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.by122006library.BuildConfig;
+import com.by122006library.Utils.DebugUtils;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -56,7 +57,7 @@ public class mLog {
 
 
     public static void d(String content) {
-        if (!BuildConfig.DEBUG) {
+        if (!DebugUtils.isDebugBuild()) {
             return;
         }
 
@@ -71,7 +72,7 @@ public class mLog {
     }
 
     public static void d(String content, Throwable e) {
-        if (!BuildConfig.DEBUG) {
+        if (!DebugUtils.isDebugBuild()) {
             return;
         }
 
@@ -86,7 +87,7 @@ public class mLog {
     }
 
     public static void e(String content) {
-        if (!BuildConfig.DEBUG) {
+        if (!DebugUtils.isDebugBuild()) {
             return;
         }
 
@@ -104,7 +105,7 @@ public class mLog {
     }
 
     public static void e(Throwable e) {
-        if (!BuildConfig.DEBUG) {
+        if (!DebugUtils.isDebugBuild()) {
             return;
         }
 
@@ -122,7 +123,7 @@ public class mLog {
     }
 
     public static void e(String content, Throwable e) {
-        if (!BuildConfig.DEBUG) {
+        if (!DebugUtils.isDebugBuild()) {
             return;
         }
 
@@ -140,7 +141,7 @@ public class mLog {
     }
 
     public static void i(String content) {
-        if (!BuildConfig.DEBUG) {
+        if (!DebugUtils.isDebugBuild()) {
             return;
         }
 
@@ -158,7 +159,7 @@ public class mLog {
     }
 
     public static void i(String content, Throwable e) {
-        if (!BuildConfig.DEBUG) {
+        if (!DebugUtils.isDebugBuild()) {
             return;
         }
 
@@ -176,7 +177,7 @@ public class mLog {
     }
 
     public static void v(String content) {
-        if (!BuildConfig.DEBUG) {
+        if (!DebugUtils.isDebugBuild()) {
             return;
         }
 
@@ -194,7 +195,7 @@ public class mLog {
     }
 
     public static void v(String content, Throwable e) {
-        if (!BuildConfig.DEBUG) {
+        if (!DebugUtils.isDebugBuild()) {
             return;
         }
 
@@ -212,7 +213,7 @@ public class mLog {
     }
 
     public static void w(String content) {
-        if (!BuildConfig.DEBUG) {
+        if (!DebugUtils.isDebugBuild()) {
             return;
         }
         StackTraceElement caller = getCallerStackTraceElement();
@@ -229,7 +230,7 @@ public class mLog {
     }
 
     public static void w(String content, Throwable e) {
-        if (!BuildConfig.DEBUG) {
+        if (!DebugUtils.isDebugBuild()) {
             return;
         }
 
@@ -247,7 +248,7 @@ public class mLog {
     }
 
     public static void w(Throwable e) {
-        if (!BuildConfig.DEBUG) {
+        if (!DebugUtils.isDebugBuild()) {
             return;
         }
 
@@ -265,7 +266,7 @@ public class mLog {
     }
 
     public static void wtf(String content) {
-        if (!BuildConfig.DEBUG) {
+        if (!DebugUtils.isDebugBuild()) {
             return;
         }
 
@@ -283,7 +284,7 @@ public class mLog {
     }
 
     public static void wtf(String content, Throwable e) {
-        if (!BuildConfig.DEBUG) {
+        if (!DebugUtils.isDebugBuild()) {
             return;
         }
 
@@ -301,7 +302,7 @@ public class mLog {
     }
 
     public static void wtf(Throwable e) {
-        if (!BuildConfig.DEBUG) {
+        if (!DebugUtils.isDebugBuild()) {
             return;
         }
 

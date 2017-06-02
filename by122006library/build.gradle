@@ -30,11 +30,6 @@ android {
 
         }
     }
-    publishNonDefault true
-}
-configurations {
-    allDebug
-    allRelease
 }
 task clearJar(type: Delete) {
     delete 'libs/sdk.jar' // sdk是你自己jar包的名字，随便命名
