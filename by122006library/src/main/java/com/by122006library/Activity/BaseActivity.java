@@ -155,7 +155,11 @@ public abstract class BaseActivity extends Activity {
     }
 
     public static Activity getTopActivity() throws MyException {
-        BaseActivity act = getTopBaseActivity();
+        BaseActivity act = null;
+        try {
+            act = getTopBaseActivity();
+        } catch (MyException e) {
+        }
         if (act == null) return getTopOutActivity();
         else
             return act;
