@@ -133,7 +133,7 @@ public class SubclassAttributeProcessor extends javax.annotation.processing.Abst
                 }
             }
             TypeSpec.Builder builder = TypeSpec.classBuilder(className)
-                    .addModifiers(Modifier.PUBLIC).addSuperinterface(getClassName("com.by122006library.Interface.NoConfusion_All"));
+                    .addModifiers(Modifier.PUBLIC).addSuperinterface(getClassName("com.by122006library.Interface.NoProguard_All"));
             MethodSpec.Builder methodGZ = MethodSpec.constructorBuilder()
                     .addParameter(oriClassName, "obj")
                     .addStatement("this.obj=obj");

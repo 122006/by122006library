@@ -10,6 +10,9 @@
 
 #### 就是这样~~
 
+ <font color=#6495ED size=6 face=“宋体”>[更新日志.md](/update.md)</font>
+
+
 ### 值得一试的核心原创功能
 ******
   > 标题指向代码文件，具体使用方法见Md文件
@@ -40,7 +43,7 @@
    同系统Log的使用，自动标记所在类名方法位置、Release自动隐藏、格式化显示格式
 
 
-4. <font color=#8888ee size=3 face=“宋体”>SubclassAttribute 虚拟属性</font> （推荐级数：★★★★★）
+4. <font color=#6495ED size=3 face=“宋体”>SubclassAttribute 虚拟属性</font> （推荐级数：★★★★★）
  [ReadMe.md](/by122006library/src/main/java/com/by122006library/Functions/README.md)
 
    Java在子类继承时只能使用继承，子类中设定父类所用属性只能通过赋值或赋值方法。
@@ -73,6 +76,10 @@
 	        compile 'com.github.122006:by122006library:最新版本'
 	}
 
->“最新版本”请替换为最新的版本号，最新版本号参见下方标牌绿色部分，如"v0.8"
+
+>“最新版本”请替换为最新的版本号，最新版本号参见下方标牌绿色部分，如"v1.6"
 
 [![](https://jitpack.io/v/122006/by122006library.svg)](https://jitpack.io/#122006/by122006library)
+
+
+<font color=#6495ED size=5 face=“宋体”>[混淆配置文件](/need_proguard.md)</font>

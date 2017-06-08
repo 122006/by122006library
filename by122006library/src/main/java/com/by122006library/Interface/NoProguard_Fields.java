@@ -5,5 +5,5 @@ package com.by122006library.Interface;
  * Created by 122006 on 2017/6/8.
  */
 
-public interface NoConfusion_Methods {
+public interface NoProguard_Fields {
 }

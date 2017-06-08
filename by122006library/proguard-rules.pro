@@ -33,10 +33,10 @@
 }
 #该库不会参与混淆
 -keep class com.by122006library.** { *;}
-#不混淆NoConfusion_Fields标记
--keep class * implements com.by122006library.Interface.NoConfusion_Fields {
+#不混淆NoProguard_Fields标记
+-keep class * implements com.by122006library.Interface.NoProguard_Fields {
   <fields>;
 }
--keep class * implements com.by122006library.Interface.NoConfusion_Methods {
+-keep class * implements com.by122006library.Interface.NoProguard_Methods {
   <methods>;
 }

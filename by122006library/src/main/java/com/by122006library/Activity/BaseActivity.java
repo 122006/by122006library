@@ -52,7 +52,7 @@ import com.by122006library.Function.SubclassAttribute;
 import com.by122006library.Functions.CycleTask.CycleTask;
 import com.by122006library.Functions.SmartRun;
 import com.by122006library.Functions.mLog;
-import com.by122006library.Interface.NoConfusion_All;
+import com.by122006library.Interface.NoProguard_All;
 import com.by122006library.Interface.SpecialMethod;
 import com.by122006library.Interface.UIThread;
 import com.by122006library.MyException;
@@ -74,7 +74,7 @@ import java.util.List;
  */
 @Subclass(att = {@Attribute(name = "FLAG_ACT_FULLSCREEN", type = boolean.class, defaultValue = "false"),
         @Attribute(name = "FLAG_ACT_NO_TITLE", type = boolean.class, defaultValue = "true")})
-public abstract class BaseActivity extends Activity implements NoConfusion_All{
+public abstract class BaseActivity extends Activity implements NoProguard_All {
     public static ArrayList<BaseActivity> list_act = new ArrayList<BaseActivity>();
     public static HashMap<String, CustomView> customViewHashMap = new HashMap<>();
     private static ArrayList<Activity> act_out_list;
