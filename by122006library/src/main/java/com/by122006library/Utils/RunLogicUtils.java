@@ -29,10 +29,13 @@ public class RunLogicUtils {
         return count;
     }
 
-    public static void clearHereRunTimes() {
+    public static void clearMethodRunTimes() {
         StackTraceElement caller = mLog.getCallerStackTraceElement();
-        String tag = caller.getClassName() + "." + caller.getMethodName() + "." + caller.getLineNumber();
-        mHereRunTimes.remove(tag);
+        String tag = caller.getClassName() + "." + caller.getMethodName() + ".";
+        for (String strings:mHereRunTimes.keySet()){
+            if(strings.startsWith(tag)) mHereRunTimes.remove(strings);
+        }
+
     }
     public static void clearAllRunTimes() {
         mHereRunTimes.clear();

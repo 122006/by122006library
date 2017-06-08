@@ -23,6 +23,7 @@ import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.IBinder;
 import android.os.Process;
 import android.support.annotation.CallSuper;
 import android.support.annotation.IdRes;
@@ -45,17 +46,24 @@ import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
+import com.by122006.annotation.Attribute;
+import com.by122006.annotation.Subclass;
+import com.by122006library.Function.SubclassAttribute;
 import com.by122006library.Functions.CycleTask.CycleTask;
 import com.by122006library.Functions.SmartRun;
 import com.by122006library.Functions.mLog;
+import com.by122006library.Interface.NoConfusion_All;
+import com.by122006library.Interface.SpecialMethod;
 import com.by122006library.Interface.UIThread;
 import com.by122006library.MyException;
 import com.by122006library.R;
-import com.by122006library.Utils.ReflectionUtils;
-import com.by122006library.Utils.ViewUtils;
+import com.by122006library.Utils.*;
 import com.squareup.picasso.Picasso;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -64,14 +72,13 @@ import java.util.List;
 /**
  * Created by 122006 on 2016/12/8.
  */
-
-public abstract class BaseActivity extends Activity {
+@Subclass(att = {@Attribute(name = "FLAG_ACT_FULLSCREEN", type = boolean.class, defaultValue = "false"),
+        @Attribute(name = "FLAG_ACT_NO_TITLE", type = boolean.class, defaultValue = "true")})
+public abstract class BaseActivity extends Activity implements NoConfusion_All{
     public static ArrayList<BaseActivity> list_act = new ArrayList<BaseActivity>();
     public static HashMap<String, CustomView> customViewHashMap = new HashMap<>();
     private static ArrayList<Activity> act_out_list;
     public boolean canRotate;
-    protected boolean FLAG_ACT_NO_TITLE = true;
-    protected boolean FLAG_ACT_FULLSCREEN = true;
     /*
      * 程序的已运行次数<p>
      * 为0时首次运行
@@ -165,6 +172,11 @@ public abstract class BaseActivity extends Activity {
             return act;
     }
 
+    /**
+     * @return
+     * @throws MyException
+     */
+    @SpecialMethod
     public static BaseActivity getTopBaseActivity() throws MyException {
         BaseActivity act = null;
         try {
@@ -300,6 +312,11 @@ public abstract class BaseActivity extends Activity {
         getContext().startActivity(mHomeIntent);
     }
 
+    /**
+     * 将本框架绑定到原有框架上，可以使用部分功能<p> 请在原有Application上对该方法进行调用
+     *
+     * @param application
+     */
     public static void bindActList(Application application) {
         act_out_list = new ArrayList<>();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
@@ -382,12 +399,41 @@ public abstract class BaseActivity extends Activity {
         view.setText(i.toString());
     }
 
+    /**
+     * 系统Activity注入方法，你需要在Application里注册，注册后可以获得类似于registerActivityLifecycleCallbacks
+     *
+     * @throws Throwable
+     */
+    public static void hookActivityManagerService() throws Throwable {
+        Class<?> activityManagerNativeClass = Class.forName("android.app.ActivityManagerNative");
+        //4.0以后，ActivityManagerNative有gDefault单例来进行保存，这个代码中一看就知道了
+        Field gDefaultField = activityManagerNativeClass.getDeclaredField("gDefault");
+        gDefaultField.setAccessible(true);
+        Object gDefault = gDefaultField.get(null);
+
+        Class<?> singleton = Class.forName("android.util.Singleton");
+        //mInstance其实就是真正的一个对象
+        Field mInstance = singleton.getDeclaredField("mInstance");
+        mInstance.setAccessible(true);
+
+        //真正的对象，就是干活的对象啦,其实就是ActivityManagerProxy而已啦
+        Object originalIActivityManager = mInstance.get(gDefault);
+
+        //通过动态代理生成一个接口的对象
+        Class<?> iActivityManagerInterface = Class.forName("android.app.IActivityManager");
+        Object object = Proxy.newProxyInstance(iActivityManagerInterface.getClassLoader(),
+                new Class[]{iActivityManagerInterface}, new IActivityManagerServiceHandler(originalIActivityManager));
+        //这里偷梁换柱，替换为我们自己的对象进行干活就好了
+        mInstance.set(gDefault, object);
+        mLog.i("By122006Library注入主程序成功");
+    }
+
     public void setFullScreen(boolean FLAG_ACT_FULLSCREEN) {
-        this.FLAG_ACT_FULLSCREEN = FLAG_ACT_FULLSCREEN;
+        SubclassAttribute.with(this).setFLAG_ACT_FULLSCREEN(FLAG_ACT_FULLSCREEN);
     }
 
     public void setNoTitle(boolean FLAG_ACT_NO_TITLE) {
-        this.FLAG_ACT_NO_TITLE = FLAG_ACT_NO_TITLE;
+        SubclassAttribute.with(this).setFLAG_ACT_NO_TITLE(FLAG_ACT_NO_TITLE);
     }
 
     @Override
@@ -396,8 +442,9 @@ public abstract class BaseActivity extends Activity {
         list_act.add(this);
 
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        if (FLAG_ACT_FULLSCREEN) getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        if ( SubclassAttribute.with(this).getFLAG_ACT_FULLSCREEN())
+            getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                    WindowManager.LayoutParams.FLAG_FULLSCREEN);
         LayoutInflaterCompat.setFactory(getLayoutInflater(), new MyLayoutFactory());
         super.onCreate(savedInstanceState);
         if (canRotate) {
@@ -444,14 +491,14 @@ public abstract class BaseActivity extends Activity {
     }
 
     public void setRightButton(String text, View.OnClickListener onClickListener) {
-        if (FLAG_ACT_NO_TITLE) return;
+        if (SubclassAttribute.with(this).getFLAG_ACT_NO_TITLE()) return;
         ((TextView) findViewById(R.id.rightbutton)).setText(text);
         ((TextView) findViewById(R.id.rightbutton)).setVisibility(View.VISIBLE);
         ((TextView) findViewById(R.id.rightbutton)).setOnClickListener(onClickListener);
     }
 
     public void setTitle(CharSequence title) {
-        if (FLAG_ACT_NO_TITLE) return;
+        if ( SubclassAttribute.with(this).getFLAG_ACT_NO_TITLE()) return;
         ((TextView) findViewById(R.id.title)).setText(title);
     }
 
@@ -460,7 +507,7 @@ public abstract class BaseActivity extends Activity {
         mLog.i(ifHaveBinding() + "");
         if (ifHaveBinding()) {
             if (useBindingContentView) {
-                if (!FLAG_ACT_NO_TITLE) {
+                if (!SubclassAttribute.with(this).getFLAG_ACT_NO_TITLE()) {
                     super.setContentView(R.layout.activity_base);
                     findViewById(R.id.titlebar).setVisibility(View.VISIBLE);
                     ((ViewGroup) findViewById(R.id.content)).addView(getLayoutInflater().inflate(layoutres, null));
@@ -473,7 +520,7 @@ public abstract class BaseActivity extends Activity {
             }
 
         } else {
-            if (!FLAG_ACT_NO_TITLE) {
+            if (!SubclassAttribute.with(this).getFLAG_ACT_NO_TITLE()) {
                 super.setContentView(R.layout.activity_base);
                 findViewById(R.id.titlebar).setVisibility(View.VISIBLE);
                 ((ViewGroup) findViewById(R.id.content)).addView(getLayoutInflater().inflate(layoutres, null));
@@ -515,7 +562,8 @@ public abstract class BaseActivity extends Activity {
 
     @Override
     public void setContentView(View layout) {
-        if (!FLAG_ACT_NO_TITLE) ((ViewGroup) findViewById(R.id.content)).addView(layout);
+        if (!SubclassAttribute.with(this).getFLAG_ACT_NO_TITLE())
+            ((ViewGroup) findViewById(R.id.content)).addView(layout);
         else DataBinding_SetContentView(layout);
     }
 
@@ -579,6 +627,8 @@ public abstract class BaseActivity extends Activity {
         return this;
     }
 
+    ;
+
     /**
      * 获得布局的截图
      *
@@ -603,8 +653,6 @@ public abstract class BaseActivity extends Activity {
             }
         }
     }
-
-    ;
 
     /**
      * 注册界面回传的回调事件
@@ -755,6 +803,30 @@ public abstract class BaseActivity extends Activity {
         abstract View onCreate(View parent, String name, Context context, AttributeSet attrs);
     }
 
+    public static class IActivityManagerServiceHandler implements InvocationHandler {
+
+        private Object base;
+
+        public IActivityManagerServiceHandler(Object base) {
+            this.base = base;
+        }
+
+        @Override
+        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+            //判断是不是activityResumed,如果是的话，那么拦截参数，然后反射获取实例就好
+            if (method.getName().equals("activityResumed")) {
+                //这里拿到想要的IBinder啦，就是token
+                IBinder iBinder = (IBinder) args[0];
+                Class<?> clazz = Class.forName("android.app.ActivityThread");
+                Method method1 = clazz.getDeclaredMethod("currentActivityThread");
+                Object object = method1.invoke(null);
+                Method getActivity = clazz.getDeclaredMethod("getActivity", IBinder.class);
+                Activity mActivity = (Activity) getActivity.invoke(object, iBinder);
+            }
+            return method.invoke(base, args);
+        }
+    }
+
     private class MyLayoutFactory implements LayoutInflaterFactory {
         @Override
         public View onCreateView(View parent, String name, Context context, AttributeSet attrs) {
@@ -771,5 +843,6 @@ public abstract class BaseActivity extends Activity {
             return v;
         }
     }
+
 
 }

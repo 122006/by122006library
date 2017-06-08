@@ -12,7 +12,8 @@ import com.by122006library.View.mToast;
 public class MyException extends Exception {
     public MyException(String message) {
         super(message);
-        mLog.e(message);
+        String tag = mLog.generateTag(mLog.getCallerStackTraceElement());
+        mLog.e("===="+tag+"\nException:"+message);
     }
 
     public static void show(Exception e) {

@@ -167,3 +167,34 @@
 ### 常用子类
 1. [ViewAtt 控件属性类](AttBinder/ViewAtt.java) 方便对控件的属性进行定义
 2. [TimeAtt 定时控件修改类](AttBinder/TimeAtt.java) 以60帧左右的速度刷新制定时间的控件
+
+
+
+
+## <font color=#8888ee size=5 face=“宋体”>SubclassAttribute 虚拟属性</font>
+
+   > Java在子类继承时只能使用继承，子类中设定父类所用属性只能通过赋值或赋值方法。
+
+   > SubclassAttribute可以让你直接在子类中定义属性，并且在父类中可以获得子类值。
+
+   ### 使用步骤：
+   1. 为父类增加`@Subclass`注释（`att`参数为`@Attribute[]`类型，注册需要在内容使用的子类虚拟属性）
+
+           @Subclass(att = {@Attribute(name = "FLAG_ACT_FULLSCREEN", type = boolean.class, defaultValue = "false"),
+                 @Attribute(name = "FLAG_ACT_NO_TITLE", type = boolean.class, defaultValue = "true")})
+   2. 你可以在子类中声明对应的属性量
+   3. 你可以在父类中使用如下方法调用属性
+        1. 静态调用
+
+            `BaseActivity_Attribute.getFLAG_ACT_FULLSCREEN(this,a);`
+
+            静态类类名规则：父类名+"-_Attribute"
+        2. 动态调用
+
+            `SubclassAttribute.with(this).getFLAG_ACT_NO_TITLE();`
+
+        #### 方法名规则：get+首字母大写的属性名
+        #### 更多方法：`setXXXX(xxx)`、`initXXXX()`
+
+   ### 细节：
+   1. 该功能不支持混淆、如果必须要使用混淆，请为继承序列中任意类添加`NoConfusion_Fields`接口声明

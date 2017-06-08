@@ -40,7 +40,15 @@
    同系统Log的使用，自动标记所在类名方法位置、Release自动隐藏、格式化显示格式
 
 
-4. [Web 网络连接](/by122006library/src/main/java/com/by122006library/web/Web.java) （推荐级数：★★☆☆☆）
+4. <font color=#8888ee size=3 face=“宋体”>SubclassAttribute 虚拟属性</font> （推荐级数：★★★★★）
+ [ReadMe.md](/by122006library/src/main/java/com/by122006library/Functions/README.md)
+
+   Java在子类继承时只能使用继承，子类中设定父类所用属性只能通过赋值或赋值方法。
+
+   SubclassAttribute可以让你直接在子类中定义属性，父类中可以获得子类值。
+
+
+5. [Web 网络连接](/by122006library/src/main/java/com/by122006library/web/Web.java) （推荐级数：★★☆☆☆）
  [ReadMe.md](/by122006library/src/main/java/com/by122006library/web/README.md)
 
     拥有自定义规则拦截派发，自定义解析，进度View绑定，多种Json自解析等功能。同时创建代码清晰易读易维护

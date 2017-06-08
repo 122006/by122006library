@@ -1,6 +1,5 @@
 package com.by122006library.Utils;
 
-import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -51,7 +50,7 @@ public class ReflectionUtils {
 //    }
 
     public static void setFieldValue(Object obj, String attname, Object value) throws NoSuchFieldException {
-        Class clazz = obj.getClass();
+        Class clazz = obj instanceof Class? (Class) obj : obj.getClass();
         Field field = null;
         try {
             field = clazz.getDeclaredField(attname);
@@ -63,7 +62,7 @@ public class ReflectionUtils {
     }
 
     public static <T> T getFieldValue(Object obj, String attname, Class<T> valueClazz) throws NoSuchFieldException {
-        Class clazz = obj.getClass();
+        Class clazz = obj instanceof Class? (Class) obj : obj.getClass();
         Field field = null;
         try {
             field = clazz.getDeclaredField(attname);
@@ -76,7 +75,7 @@ public class ReflectionUtils {
     }
 
     public static Field getField(Object obj, String attname) throws NoSuchFieldException {
-        Class clazz = obj.getClass();
+        Class clazz = obj instanceof Class? (Class) obj : obj.getClass();
         Field field = null;
         field = clazz.getDeclaredField(attname);
         field.setAccessible(true);
@@ -84,7 +83,7 @@ public class ReflectionUtils {
     }
 
     public static Field[] getFieldArray(Object obj) throws NoSuchFieldException {
-        Class clazz = obj.getClass();
+        Class clazz = obj instanceof Class? (Class) obj : obj.getClass();
         Field[] fields=clazz.getFields();
         for(Field field:fields){
             field.setAccessible(true);
@@ -92,7 +91,7 @@ public class ReflectionUtils {
         return fields;
     }
     public static Method[] getMethodArray(Object obj) throws NoSuchFieldException {
-        Class clazz = obj.getClass();
+        Class clazz = obj instanceof Class? (Class) obj : obj.getClass();
         Method[] methods=clazz.getMethods();
         for(Method method:methods){
             method.setAccessible(true);
@@ -100,11 +99,13 @@ public class ReflectionUtils {
         return methods;
     }
     public static Method getMethod(Object obj, String attname) throws  NoSuchMethodException {
-        Class clazz = obj.getClass();
+        Class clazz = obj instanceof Class? (Class) obj : obj.getClass();
         Method method = null;
         method = clazz.getDeclaredMethod(attname);
         method.setAccessible(true);
         return method;
     }
+
+
 
 }
