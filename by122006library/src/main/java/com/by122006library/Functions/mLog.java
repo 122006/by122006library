@@ -154,11 +154,11 @@ public class mLog {
         }
     }
 
-    public static void i(String content) {
+    public static void i(String content,Object... data) {
         if (!DebugUtils.isDebugBuild()) {
             return;
         }
-
+        content=String .format(content,data);
         StackTraceElement caller = getCallerStackTraceElement();
         String tag = generateTag(caller);
 
@@ -332,7 +332,44 @@ public class mLog {
             point(LOG_PATH, tag, e.toString());
         }
     }
+    public static void isNull(Object obj){
+        if(obj!=null )return;
+        String content="This Object is Null!";
+        if (!DebugUtils.isDebugBuild()) {
+            return;
+        }
 
+        StackTraceElement caller = getCallerStackTraceElement();
+        String tag = generateTag(caller);
+
+        if (customLogger != null) {
+            customLogger.e(tag, content);
+        } else {
+            Log.e(tag, content);
+        }
+        if (isSaveLog) {
+            point(LOG_PATH, tag, content);
+        }
+    }
+    public static void isNoNull(Object obj){
+        if(obj==null )return;
+        String content="This Object is not Null!";
+        if (!DebugUtils.isDebugBuild()) {
+            return;
+        }
+
+        StackTraceElement caller = getCallerStackTraceElement();
+        String tag = generateTag(caller);
+
+        if (customLogger != null) {
+            customLogger.e(tag, content);
+        } else {
+            Log.e(tag, content);
+        }
+        if (isSaveLog) {
+            point(LOG_PATH, tag, content);
+        }
+    }
     /**
      * 获得调用方法所被调用的父方法的数据
      *
@@ -340,10 +377,23 @@ public class mLog {
      */
     public static String getCallerLocation() {
         StackTraceElement stackTraceElement= Thread.currentThread().getStackTrace()[4];
-        String className=stackTraceElement.getClassName();
+        String className=stackTraceElement.getFileName();
         String methodName=stackTraceElement.getMethodName();
         int line=stackTraceElement.getLineNumber();
-        return String.format("(%s.%s:%d)",className, methodName,line);
+        return String.format("(%s:%d)",className,line);
+    }
+
+    /**
+     * 获得调用方法所被调用的父方法的数据
+     *
+     * @return
+     */
+    public static String getCallerLocation(int off) {
+        StackTraceElement stackTraceElement= Thread.currentThread().getStackTrace()[4+off];
+        String className=stackTraceElement.getFileName();
+        String methodName=stackTraceElement.getMethodName();
+        int line=stackTraceElement.getLineNumber();
+        return String.format("(%s:%d)",className,line);
     }
 
 

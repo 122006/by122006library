@@ -163,7 +163,7 @@ public abstract class SmartRun {
             if (st.getMethodName().equals("prepare")) continue;
             if (st.getMethodName().equals("sPrepare")) continue;
             boolean ifhave = false;
-            for (Method m : methodList) {
+            for (Method m : (ArrayList<Method>)methodList.clone()) {
                 if (m.getName().equals(st.getMethodName())) ifhave = true;
             }
 
@@ -188,7 +188,7 @@ public abstract class SmartRun {
             if (st.getMethodName().equals("prepare")) continue;
             if (st.getMethodName().equals("sPrepare")) continue;
             boolean ifhave = false;
-            for (Method m : methodList) {
+            for (Method m : (ArrayList<Method>)methodList.clone()) {
                 if (m.getName().equals(st.getMethodName())) ifhave = true;
             }
 //            mLog.i("含有的方法：" + st.getMethodName() + "  have=" + ifhave);

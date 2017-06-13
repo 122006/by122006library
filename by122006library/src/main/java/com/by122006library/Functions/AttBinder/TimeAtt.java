@@ -1,6 +1,9 @@
 package com.by122006library.Functions.AttBinder;
 
+import android.support.annotation.FloatRange;
+
 import com.by122006library.Functions.CycleTask.CycleTask;
+import com.by122006library.Functions.mLog;
 import com.by122006library.Interface.UIThread;
 import com.by122006library.MyException;
 
@@ -17,33 +20,47 @@ public class TimeAtt extends Att {
 
     public TimeAtt(final long time) {
         super(0, time);
-        cycleTask = new CycleTask(CycleTask.ImmediatelyRun, CYCLETIME, (int) (time / CYCLETIME + 1)) {
+        cycleTask = new CycleTask(CycleTask.ImmediatelyRun, CYCLETIME, (int) (time / CYCLETIME )) {
             @Override
             @UIThread
             public void doCycleAction(int haveCycleCount) throws MyException {
-                fluctuation();
+                try {
+                    fluctuation();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
 
             public void endCycleAction() {
-                remove();
+                try {
+                    setAttNum(time);
+                    if(getPer()<1)fluctuation(time);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
-        }.register(this);
+        }.register(this,-1);
         setAttProgressListener(new AttProgressListener() {
+            double beforeAttNum = 0;
+
             @Override
             public void progress(double beforeAttNum, double nowAttNum, double nowAttPer) {
-                for (TimeProgressAction timeProgressAction :(ArrayList<TimeProgressAction>) timeProgressActions.clone()) {
-                    if (beforeAttNum != nowAttNum && ((timeProgressAction.getRunTime() < nowAttNum &&
-                            timeProgressAction.getRunTime() >= beforeAttNum) || (timeProgressAction.getRunTime() >=
-                            nowAttNum && timeProgressAction.getRunTime() < beforeAttNum))) {
-                        timeProgressAction.action();
+                beforeAttNum = this.beforeAttNum;
+                if (beforeAttNum == nowAttNum && beforeAttNum != 0) return;
+//                mLog.i("beforeAttNum= %f ,nowAttNum = %f ", beforeAttNum, nowAttNum);
+                if(timeProgressActions!=null)
+                for (TimeProgressAction timeProgressAction : (ArrayList<TimeProgressAction>) timeProgressActions
+                        .clone()) {
+                    long actionTime = timeProgressAction.getRunTime();
+                    if ((!reverse&&nowAttNum >= actionTime &&beforeAttNum<actionTime)||(reverse&&nowAttNum < actionTime &&beforeAttNum>=actionTime)){
+                        timeProgressAction.event();
                     }
                 }
-                if (beforeAttNum != nowAttNum &&( (max <= nowAttNum &&
-                        max > beforeAttNum) || (max <= nowAttNum &&
-                        max > beforeAttNum))) {
+                if ((reverse && nowAttNum == min) || (!reverse && nowAttNum == max)) {
                     remove();
                     cycleTask.unRegister();
                 }
+                this.beforeAttNum = nowAttNum;
 
             }
         });
@@ -51,7 +68,12 @@ public class TimeAtt extends Att {
 
     @Override
     public double measureAtt() {
-        return cycleTask == null ? 0 : ((double) (cycleTask.cycleCount * cycleTask.cycleTime)) / max;
+        return attNum = (cycleTask == null ? 0 : ((double) (cycleTask.cycleCount * cycleTask.cycleTime)));
+    }
+
+    @Override
+    public double getAttNum() {
+        return attNum;
     }
 
     @Override
@@ -60,7 +82,7 @@ public class TimeAtt extends Att {
     }
 
     @Override
-    public double transform(double per) {
+    public double transform(@FloatRange(from = 0, to = 1) double per) {
         return per;
     }
 
@@ -80,19 +102,20 @@ public class TimeAtt extends Att {
      * @param attProgressListener
      */
     @Deprecated
-    final public void setAttProgressListener(AttProgressListener attProgressListener) {
-
+    final public Att setAttProgressListener(AttProgressListener attProgressListener) {
+        this.attProgressListener = attProgressListener;
+        return this;
     }
 
     public void addTimeProgressAction(TimeProgressAction timeProgressAction) {
-        if (timeProgressAction == null) timeProgressActions = new ArrayList<TimeProgressAction>();
+        if (timeProgressActions == null) timeProgressActions = new ArrayList<TimeProgressAction>();
         timeProgressActions.add(timeProgressAction);
     }
 
-    public abstract class TimeProgressAction {
+    public static abstract class TimeProgressAction {
         long runTime;
 
-        TimeProgressAction(long runTime) {
+        public TimeProgressAction(long runTime) {
             this.runTime = runTime;
         }
 
@@ -100,7 +123,7 @@ public class TimeAtt extends Att {
             return runTime;
         }
 
-        abstract void action();
+        public abstract void event();
     }
 
 }

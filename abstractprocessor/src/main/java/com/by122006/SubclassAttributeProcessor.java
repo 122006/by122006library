@@ -239,7 +239,7 @@ public class SubclassAttributeProcessor extends javax.annotation.processing.Abst
                             .addStatement("return ($T) field.get(obj)",getClassName(String.valueOf(map.get("type"))))
                             .endControlFlow()
                             .beginControlFlow(" catch (Exception e)")
-                            .addStatement("e.printStackTrace()")
+                            
                             .endControlFlow()
                             .addStatement("return " + (String.valueOf(map.get("type")) .equals(String.class.getName())
                                     ? "$S" : "$N"), String.valueOf(map.get("defaultValue")))
@@ -260,7 +260,7 @@ public class SubclassAttributeProcessor extends javax.annotation.processing.Abst
                             .beginControlFlow(" catch (Exception e)")
                             .addStatement("e.printStackTrace()")
                             .endControlFlow()
-                            .addStatement("return " + (String.valueOf(map.get("type")) .equals(String.class.getName()) 
+                            .addStatement("return " + (String.valueOf(map.get("type")) .equals(String.class.getName())
                                     ? "$S" : "$N"), String.valueOf(map.get("defaultValue")))
                             .addJavadoc("获得继承子类中的$T $N常量",getClassName(String.valueOf(map.get("type"))), String
                                     .valueOf(map.get("name")))
@@ -319,7 +319,7 @@ public class SubclassAttributeProcessor extends javax.annotation.processing.Abst
 //
         return true;
     }
-    
+
     public ClassName getClassName(String type){
         String packageStr=type.contains(".")?type.substring(0,type.lastIndexOf(".")):"";
         String simpleStr=type.contains(".")?type.substring(type.lastIndexOf(".")+1):type;

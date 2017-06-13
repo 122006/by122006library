@@ -1,5 +1,7 @@
 package com.by122006library.Utils;
 
+import com.by122006library.Functions.mLog;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -15,6 +17,7 @@ public class ReflectionUtils {
             InvocationTargetException, InstantiationException, NoSuchMethodException {
         Class[] classes = new Class[parameters.length];
         for (int i = 0; i < parameters.length; i++) {
+            mLog.i(parameters[i].getClass().getName());
             classes[i] = parameters[i].getClass();
         }
         Constructor c1 = clazz.getDeclaredConstructor(classes);

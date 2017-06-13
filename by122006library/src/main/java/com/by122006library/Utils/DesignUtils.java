@@ -50,6 +50,7 @@ public class DesignUtils {
         }
         return null;
     }
+
     /**
      * 获得子类某一属性
      * @param obj 当前对象名
@@ -74,13 +75,14 @@ public class DesignUtils {
         }
         return defaultValue;
     }
+
     /**
      * 设置子类某一属性
      * @param obj 当前对象名
      * @param attributeName 属性名
      * @param attributeValue    属性值
      *
-     *                          @Deprecated 建议使用@Subclass和@Attribute注释完成此功能
+     * @Deprecated 建议使用@Subclass和@Attribute注释完成此功能
      */
     @Nullable
     public static void setSubclassAttribute(Object obj,String attributeName,Object attributeValue){
@@ -94,4 +96,5 @@ public class DesignUtils {
             e.printStackTrace();
         }
     }
+
 }

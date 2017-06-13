@@ -2,6 +2,7 @@ package com.by122006library.Functions.AttBinder;
 
 import android.graphics.drawable.Drawable;
 import android.os.Build;
+import android.support.annotation.FloatRange;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -17,13 +18,13 @@ public class ViewAtt extends Att {
     AttStyle attStyle = AttStyle.Other;
     View view;
 
-    public ViewAtt(View v, int max, int min) {
+    public ViewAtt(View v, double max, double min) {
         super(max, min);
         if(v==null) mLog.e("传入参数v为null值");
         this.view = v;
     }
 
-    public ViewAtt(View v, AttStyle attStyle, int max, int min) {
+    public ViewAtt(View v, AttStyle attStyle, double max, double min) {
         super(max, min);
         if(v==null) mLog.e("传入参数v为null值");
         this.view = v;
@@ -138,7 +139,7 @@ public class ViewAtt extends Att {
     }
 
     @Override
-    public double transform(double per) {
+    public double transform(@FloatRange(from=0,to=1)double per) {
         return per;
     }
 

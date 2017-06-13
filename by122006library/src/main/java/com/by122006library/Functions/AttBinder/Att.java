@@ -1,7 +1,9 @@
 package com.by122006library.Functions.AttBinder;
 
 import android.support.annotation.CallSuper;
+import android.support.annotation.FloatRange;
 
+import com.by122006library.Functions.mLog;
 import com.by122006library.Utils.RunLogicUtils;
 
 import java.util.ArrayList;
@@ -11,10 +13,16 @@ import java.util.ArrayList;
  */
 
 public abstract class Att {
+    protected AttProgressListener attProgressListener;
+    protected boolean logProgress = false;
     ArrayList<AttBinder> binders = new ArrayList<>();
     double attNum;
     double max, min;
-
+    String tag = "";
+    /**
+     * 倒序标志
+     */
+    protected boolean reverse = false;
 
     /**
      * Max\min的数据顺序会被自动纠正和忽略。<br> 如果该属性是反向变化,你需要在transform(per)方法里返回1-per<br> 在这里，Listner也会被初始化。
@@ -61,6 +69,7 @@ public abstract class Att {
     }
 
     public void setPer(double per) {
+
         setAttNum(per * (max - min) + min);
     }
 
@@ -70,7 +79,7 @@ public abstract class Att {
      * @param per 原始的百分比
      * @return 转化后的百分比
      */
-    public abstract double transform(double per);
+    public abstract double transform(@FloatRange(from = 0, to = 1) double per);
 
     /**
      * 设定外部监听器，该监听器应该能够对控件值进行修改<p>你需要在监听器的最后调用fluctuation(num)方法</>
@@ -89,6 +98,7 @@ public abstract class Att {
      * 发生数据修改，将监听时获取的数据缓存，发送至AttBinder
      */
     public void fluctuation(double num) {
+//        mLog.i("fluctuation=%f",getPer());
         attNum = num;
         if (num < min || num >= max) {
             if (RunLogicUtils.getHereRunTimes(500) <= 1) {
@@ -125,18 +135,31 @@ public abstract class Att {
         }
     }
 
-    protected AttProgressListener attProgressListener;
-
     /**
      * 设定进度监听器
      *
      * @param attProgressListener
      */
-    public void setAttProgressListener(AttProgressListener attProgressListener){
-        this.attProgressListener=attProgressListener;
+    public Att setAttProgressListener(AttProgressListener attProgressListener) {
+        this.attProgressListener = attProgressListener;
+        return this;
     }
 
+    /**
+     * 打开log显示
+     */
+    public Att logProgress(String tag) {
+        logProgress = true;
+        this.tag = tag;
+        return this;
+    }
 
-
+    /**
+     * 倒序
+     */
+    public Att setReverse() {
+        reverse = true;
+        return this;
+    }
 
 }

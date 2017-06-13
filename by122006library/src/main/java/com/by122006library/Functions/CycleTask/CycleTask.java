@@ -174,7 +174,7 @@ public abstract class CycleTask {
             }
             list.remove(this);
         }
-        if (list.size() == 0) destroyTaskThread();
+//        if (list.size() == 0) destroyTaskThread();
     }
 
     /**
@@ -187,10 +187,13 @@ public abstract class CycleTask {
         return this;
     }
 
+
     /**
      * 注册该定时器
      *
-     * @param tag 定时器的依附对象
+     * @param tag  定时器的依附对象
+     * @param flag 0 :SINGLETASK 如果tag不唯一则不生效<p>1 :SINGLETASK_COVER 一定生效且覆盖同名tag事件<p>-1 :非单例模式
+     * @return
      */
     public CycleTask register(Object tag, int flag) {
         if (flag == SINGLETASK || flag == SINGLETASK_COVER) {
@@ -210,15 +213,18 @@ public abstract class CycleTask {
         }
         if (!isRunning) {
             isRunning = true;
-            thread.start();
+            try {
+                thread.start();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             try {
                 Thread.sleep(1);
             } catch (InterruptedException e) {
             }
         }
         mLastTime = System.currentTimeMillis();
-        StackTraceElement stackTraceElement = mLog.getCallerStackTraceElement();
-        mLog.i("注册CycleTask 注册代码位置：" + mLog.generateTag(stackTraceElement));
+        mLog.i("注册CycleTask 注册代码位置：" + mLog.getCallerLocation(1));
         mLog.i("重复次数：" + (cycleNum == ImmediatelyRun ? "n+" : cycleNum) + " 次   ;循环周期：" + cycleTime + "ms   ;首次延迟时间："
                 + (daleyTime <= 0 ? "立即" : daleyTime + "ms"));
         this.tag = tag;
