@@ -7,7 +7,7 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="?android:attr/textColorSecondaryNoDisable">
+        android:background="#fff">
 
         <LinearLayout
             android:orientation="vertical"
@@ -16,13 +16,14 @@
             android:layout_margin="30dp">
 
             <TextView
-                android:text="@{act.title}"
+                android:text="@{act.name}"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/textView3"
                 android:layout_gravity="center_horizontal"
                 android:textSize="24dp"
-                android:layout_marginBottom="5dp"/>
+                android:layout_marginBottom="5dp"
+                android:textColor="#000"/>
 
             <android.support.v7.widget.RecyclerView
 

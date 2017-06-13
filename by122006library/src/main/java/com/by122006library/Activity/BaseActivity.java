@@ -48,7 +48,7 @@ import android.widget.TextView;
 
 import com.by122006.annotation.Attribute;
 import com.by122006.annotation.Subclass;
-import com.by122006library.Function.SubclassAttribute;
+import com.by122006library.SubclassAttribute;
 import com.by122006library.Functions.CycleTask.CycleTask;
 import com.by122006library.Functions.SmartRun;
 import com.by122006library.Functions.mLog;
@@ -842,6 +842,9 @@ public abstract class BaseActivity extends Activity implements NoProguard_All {
             specialView(v, parent, name, context, attrs);
             return v;
         }
+    }
+    public void startThisActivity(Context from){
+        from.startActivity(new Intent(from,this.getClass()));
     }
 
 

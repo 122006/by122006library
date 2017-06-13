@@ -225,8 +225,8 @@ public abstract class CycleTask {
         }
         mLastTime = System.currentTimeMillis();
         mLog.i("注册CycleTask 注册代码位置：" + mLog.getCallerLocation(1));
-        mLog.i("重复次数：" + (cycleNum == ImmediatelyRun ? "n+" : cycleNum) + " 次   ;循环周期：" + cycleTime + "ms   ;首次延迟时间："
-                + (daleyTime <= 0 ? "立即" : daleyTime + "ms"));
+        mLog.i("重复次数：%d 次   ;循环周期：%dms   ;首次延迟时间：%s", (cycleNum == ImmediatelyRun ? "n+" : cycleNum) , cycleTime,
+                (daleyTime <= 0 ? "立即" : daleyTime + "ms"));
         this.tag = tag;
 
         Class clazz = this.getClass();

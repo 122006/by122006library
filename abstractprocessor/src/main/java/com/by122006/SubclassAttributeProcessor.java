@@ -6,7 +6,6 @@ import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
-import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 
 import java.io.IOException;
@@ -14,6 +13,7 @@ import java.io.Writer;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -83,8 +83,10 @@ public class SubclassAttributeProcessor extends javax.annotation.processing.Abst
         //处理被注解的元素
         for (Element element : roundEnv.getElementsAnnotatedWith(Subclass.class)) {
             String className = element.getSimpleName().toString() + "_Attribute";
-            ClassName attClassName=getClassName(element.getEnclosingElement().toString()+"."+element.getSimpleName().toString() + "_Attribute");
-            ClassName oriClassName=getClassName(element.getEnclosingElement().toString()+"."+element.getSimpleName().toString());
+            ClassName attClassName = getClassName(element.getEnclosingElement().toString() + "." + element
+                    .getSimpleName().toString() + "_Attribute");
+            ClassName oriClassName = getClassName(element.getEnclosingElement().toString() + "." + element
+                    .getSimpleName().toString());
             note(className);
             ArrayList<HashMap<String, Object>> arrayList = new ArrayList<>();
 
@@ -132,8 +134,10 @@ public class SubclassAttributeProcessor extends javax.annotation.processing.Abst
                     }
                 }
             }
+
             TypeSpec.Builder builder = TypeSpec.classBuilder(className)
-                    .addModifiers(Modifier.PUBLIC).addSuperinterface(getClassName("com.by122006library.Interface.NoProguard_All"));
+                    .addModifiers(Modifier.PUBLIC).addSuperinterface(getClassName("com.by122006library.Interface" +
+                            ".NoProguard_All"));
             MethodSpec.Builder methodGZ = MethodSpec.constructorBuilder()
                     .addParameter(oriClassName, "obj")
                     .addStatement("this.obj=obj");
@@ -166,7 +170,7 @@ public class SubclassAttributeProcessor extends javax.annotation.processing.Abst
                             .beginControlFlow(" catch (Exception e)")
                             .addStatement("e.printStackTrace()")
                             .endControlFlow()
-                            .addJavadoc("设置继承子类中的$T $N常量",getClassName(String.valueOf(map.get("type"))), String
+                            .addJavadoc("设置继承子类中的$T $N常量", getClassName(String.valueOf(map.get("type"))), String
                                     .valueOf(map.get("name")))
                             .returns(void.class);
                     builder.addMethod(methodSpec.build());
@@ -184,7 +188,7 @@ public class SubclassAttributeProcessor extends javax.annotation.processing.Abst
                             .beginControlFlow(" catch (Exception e)")
                             .addStatement("e.printStackTrace()")
                             .endControlFlow()
-                            .addJavadoc("设置继承子类中的$T $N常量",getClassName(String.valueOf(map.get("type"))), String
+                            .addJavadoc("设置继承子类中的$T $N常量", getClassName(String.valueOf(map.get("type"))), String
                                     .valueOf(map.get("name")))
                             .returns(void.class);
                     builder.addMethod(methodSpec.build());
@@ -197,14 +201,15 @@ public class SubclassAttributeProcessor extends javax.annotation.processing.Abst
                             .beginControlFlow("try")
                             .addStatement("field = clazz.getDeclaredField($S)", String.valueOf(map.get("name")))
                             .addStatement("field.setAccessible(true)")
-                            .addStatement("field.set( $S , " + (String.valueOf(map.get("type")) .equals(String.class.getName())
+                            .addStatement("field.set( $S , " + (String.valueOf(map.get("type")).equals(String.class
+                                    .getName())
                                     ? "$S" : "$N") + " )", String.valueOf(map.get("name")), String.valueOf(map.get
                                     ("defaultValue")))
                             .endControlFlow()
                             .beginControlFlow(" catch (Exception e)")
                             .addStatement("e.printStackTrace()")
                             .endControlFlow()
-                            .addJavadoc("继承子类中的$T $N常量设置为默认值",getClassName(String.valueOf(map.get("type"))), String
+                            .addJavadoc("继承子类中的$T $N常量设置为默认值", getClassName(String.valueOf(map.get("type"))), String
                                     .valueOf(map.get("name")))
                             .returns(void.class);
                     builder.addMethod(methodSpec.build());
@@ -216,14 +221,15 @@ public class SubclassAttributeProcessor extends javax.annotation.processing.Abst
                             .beginControlFlow("try")
                             .addStatement("field = clazz.getDeclaredField($S)", String.valueOf(map.get("name")))
                             .addStatement("field.setAccessible(true)")
-                            .addStatement("field.set( $S , " + (String.valueOf(map.get("type")) .equals(String.class.getName())
+                            .addStatement("field.set( $S , " + (String.valueOf(map.get("type")).equals(String.class
+                                    .getName())
                                     ? "$S" : "$N") + " )", String.valueOf(map.get("name")), String.valueOf(map.get
                                     ("defaultValue")))
                             .endControlFlow()
                             .beginControlFlow(" catch (Exception e)")
                             .addStatement("e.printStackTrace()")
                             .endControlFlow()
-                            .addJavadoc("继承子类中的$T $N常量设置为默认值",getClassName(String.valueOf(map.get("type"))), String
+                            .addJavadoc("继承子类中的$T $N常量设置为默认值", getClassName(String.valueOf(map.get("type"))), String
                                     .valueOf(map.get("name")))
                             .returns(void.class);
                     builder.addMethod(methodSpec.build());
@@ -236,14 +242,14 @@ public class SubclassAttributeProcessor extends javax.annotation.processing.Abst
                             .beginControlFlow("try")
                             .addStatement("field = clazz.getDeclaredField($S)", String.valueOf(map.get("name")))
                             .addStatement("field.setAccessible(true)")
-                            .addStatement("return ($T) field.get(obj)",getClassName(String.valueOf(map.get("type"))))
+                            .addStatement("return ($T) field.get(obj)", getClassName(String.valueOf(map.get("type"))))
                             .endControlFlow()
                             .beginControlFlow(" catch (Exception e)")
-                            
+
                             .endControlFlow()
-                            .addStatement("return " + (String.valueOf(map.get("type")) .equals(String.class.getName())
+                            .addStatement("return " + (String.valueOf(map.get("type")).equals(String.class.getName())
                                     ? "$S" : "$N"), String.valueOf(map.get("defaultValue")))
-                            .addJavadoc("获得继承子类中的$T $N常量",getClassName(String.valueOf(map.get("type"))), String
+                            .addJavadoc("获得继承子类中的$T $N常量", getClassName(String.valueOf(map.get("type"))), String
                                     .valueOf(map.get("name")))
                             .returns(getClassName(String.valueOf(map.get("type"))));
                     builder.addMethod(methodSpec.build());
@@ -255,25 +261,26 @@ public class SubclassAttributeProcessor extends javax.annotation.processing.Abst
                             .beginControlFlow("try")
                             .addStatement("field = clazz.getDeclaredField($S)", String.valueOf(map.get("name")))
                             .addStatement("field.setAccessible(true)")
-                            .addStatement("return ($T) field.get(obj)",getClassName(String.valueOf(map.get("type"))))
+                            .addStatement("return ($T) field.get(obj)", getClassName(String.valueOf(map.get("type"))))
                             .endControlFlow()
                             .beginControlFlow(" catch (Exception e)")
                             .addStatement("e.printStackTrace()")
                             .endControlFlow()
-                            .addStatement("return " + (String.valueOf(map.get("type")) .equals(String.class.getName())
+                            .addStatement("return " + (String.valueOf(map.get("type")).equals(String.class.getName())
                                     ? "$S" : "$N"), String.valueOf(map.get("defaultValue")))
-                            .addJavadoc("获得继承子类中的$T $N常量",getClassName(String.valueOf(map.get("type"))), String
+                            .addJavadoc("获得继承子类中的$T $N常量", getClassName(String.valueOf(map.get("type"))), String
                                     .valueOf(map.get("name")))
                             .returns(getClassName(String.valueOf(map.get("type"))));
                     builder.addMethod(methodSpec.build());
                 } catch (Exception e) {
-                    error(element, map.get("type")  + e.getStackTrace()[0].toString());
+                    error(element, map.get("type") + e.getStackTrace()[0].toString());
                 }
             }
             TypeSpec java = builder.build();
 
             try {
-                JavaFileObject source = processingEnv.getFiler().createSourceFile(element.getEnclosingElement().toString()+"."+className);
+                JavaFileObject source = processingEnv.getFiler().createSourceFile(element.getEnclosingElement()
+                        .toString() + "." + className);
 
                 Writer writer = source.openWriter();
                 JavaFile javaFile = JavaFile.builder(element.getEnclosingElement().toString(), java)
@@ -285,15 +292,21 @@ public class SubclassAttributeProcessor extends javax.annotation.processing.Abst
 //                note(e.getMessage());
             }
         }
+//        HashMap<String,ArrayList<ClassName>> listHashMap=new HashMap<String,ArrayList<ClassName>>();
+//        for(ClassName clazzName :all){
+//            ArrayList<ClassName> list=listHashMap.get(clazzName.packageName());
+//        }
+        note("准备封装 SubclassAttribute");
         TypeSpec.Builder builder = TypeSpec.classBuilder("SubclassAttribute")
                 .addModifiers(Modifier.PUBLIC);
-        for (ClassName closingName : all) {
-
+//        builder.addJavadoc("update time : $N",new Date(System.currentTimeMillis()).toString());
+        for (ClassName closingName : all) {note("封装 %s",closingName.toString());
             try {
                 MethodSpec.Builder methodSpec = MethodSpec.methodBuilder("with")
-                        .addParameter(getClassName(closingName.toString().substring(0,closingName.toString().length()-"_Arrtribute".length()+1)), "obj")
+                        .addParameter(getClassName(closingName.toString().substring(0, closingName.toString().length
+                                () - "_Arrtribute".length() + 1)), "obj")
                         .addModifiers(Modifier.PUBLIC, Modifier.FINAL, Modifier.STATIC)
-                        .addStatement("$T attClass=new $T(obj);", closingName,closingName)
+                        .addStatement("$T attClass=new $T(obj);", closingName, closingName)
                         .addStatement("return attClass")
                         .addJavadoc("获得 $S 基于 obj 的实例", closingName.simpleName())
                         .returns(closingName);
@@ -302,30 +315,39 @@ public class SubclassAttributeProcessor extends javax.annotation.processing.Abst
                 note(e.getMessage() + e.getStackTrace()[0].toString());
             }
         }
-        TypeSpec java = builder.build();
+        if (all.size() != 0) {
+            TypeSpec java = builder.build();
+            try {
+                String packageName=all.get(0).toString();
+                try {
+                    int p=all.get(0).toString().indexOf(".");
+                    p=all.get(0).toString().indexOf(".",p+1);
+                    packageName=all.get(0).toString().substring(0,p);
+                } catch (Exception e) {
+                    packageName=all.get(0).toString();
+                }
+                JavaFileObject source = processingEnv.getFiler().createSourceFile( packageName +
+                        ".SubclassAttribute");
+                Writer writer = source.openWriter();
+                JavaFile.Builder javaFile = JavaFile.builder(packageName, java);
 
-        try {
-            JavaFileObject source = processingEnv.getFiler().createSourceFile("com.by122006library.Function.SubclassAttribute");
-            Writer writer = source.openWriter();
-            JavaFile.Builder javaFile = JavaFile.builder("com.by122006library.Function", java);
-
-            javaFile.build().writeTo(writer);
-            writer.flush();
-            writer.close();
-        } catch (IOException e) {
+                javaFile.build().writeTo(writer);
+                writer.flush();
+                writer.close();
+            } catch (IOException e) {
 //                note(e.getMessage());
+            }
         }
 //
 //
         return true;
     }
 
-    public ClassName getClassName(String type){
-        String packageStr=type.contains(".")?type.substring(0,type.lastIndexOf(".")):"";
-        String simpleStr=type.contains(".")?type.substring(type.lastIndexOf(".")+1):type;
-        return ClassName.get(packageStr,simpleStr);
+    public ClassName getClassName(String type) {
+        String packageStr = type.contains(".") ? type.substring(0, type.lastIndexOf(".")) : "";
+        String simpleStr = type.contains(".") ? type.substring(type.lastIndexOf(".") + 1) : type;
+        return ClassName.get(packageStr, simpleStr);
     }
-
 
 
     /**

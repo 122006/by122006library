@@ -238,7 +238,7 @@ public abstract class SmartRun {
     final private Method getMethodByParams(String methodName, Object... parameter) {
         Method method = null;
         Method method_canable = null;
-        for (Method m : methodList) {
+        for (Method m : (ArrayList<Method>)methodList.clone()) {
             if (!m.getName().equals(methodName)) continue;
             if (method_canable == null) method_canable = m;
             Class<?>[] parameterTypes = m.getParameterTypes();

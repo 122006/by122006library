@@ -1,7 +1,6 @@
 package com.by122006.modelprojectby122006;
 
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -10,58 +9,35 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.by122006.modelprojectby122006.databinding.ActivityMainBinding;
 import com.by122006library.Activity.BaseActivity;
 import com.by122006library.Functions.mLog;
+import com.by122006library.Utils.ReflectionUtils;
 import com.by122006library.Utils.ViewUtils;
+
+import java.lang.reflect.InvocationTargetException;
 
 /**
  * by122006<p> </>
  */
 public class MainActivity extends BaseActivity {
-    static public Class<? extends FunctionActivity>[] aClass = new Class[]{MainActivity.class};
-    boolean FLAG_ACT_FULLSCREEN = true;
+    static public Class<?>[] aClass = new Class[]{ViewsReplace.class};
+    boolean FLAG_ACT_FULLSCREEN = false;
     boolean FLAG_ACT_NO_TITLE = true;
-//    ActivityMainBinding binding = null;
-    String title = "by122006库 Test";
+    ActivityMainBinding binding = null;
+
+    public String name = "by122006库 Test";
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_main);
-//        binding.setAct(this);
-//        binding.recycer.setLayoutManager(new LinearLayoutManager(this));
-//        binding.recycer.setAdapter(new MyAdapter());
-//        binding.recycer.setItemAnimator(new DefaultItemAnimator());
-        LinearLayout layout=new LinearLayout(this);
-        final TextView textView=new TextView(this);
-        textView.setTextColor(Color.BLUE);
-        textView.setText("显示的第一个TextView");
-        textView.setTextSize(20);
-        final TextView textView2=new TextView(this);
-        textView2.setText("渐隐覆盖替换对象");
-        textView2.setTextColor(Color.RED);
-        textView2.setTextSize(20);
-        layout.addView(textView);
-        setContentView(layout);
-        layout.post(new Runnable() {
-            @Override
-            public void run() {
-                ViewUtils.smoothReplace(textView,textView2,200);
-            }
-        });
-        layout.setClickable(true);
-        layout.setBackgroundColor(0xff114332);
-        layout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mLog.i("textView2.getParent()="+textView2.getParent());
-                mLog.i("textView1.getParent()="+textView.getParent());
-                ViewUtils.smoothReplace_Smart(textView,textView2,200);
-            }
-        });
+        setContentView(R.layout.activity_main);
+        binding.setAct(this);
+        binding.recycer.setLayoutManager(new LinearLayoutManager(this));
+        binding.recycer.setAdapter(new MyAdapter());
+        binding.recycer.setItemAnimator(new DefaultItemAnimator());
+
 
     }
 
@@ -71,20 +47,50 @@ public class MainActivity extends BaseActivity {
             RecyclerView.ViewHolder holder=null;
             switch (viewType){
                 case 0:
-                    View view= ViewUtils.getLayout(optContext(),R.layout.activity_main);
-                    return new TextVH(view);
+                    View view= ViewUtils.getLayout(optContext(),R.layout.item_main_activity_list_newactivity_style);
+                    holder=new NewActivityVH(view);
+                    return holder;
             }
             return null;
         }
 
         @Override
         public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-
+            Class clazz=aClass[position];
+            try {
+                final FunctionActivity functionActivity= (FunctionActivity) ReflectionUtils.newInstance(clazz);
+                switch (holder.getItemViewType()){
+                    case 0:
+                        mLog.i(functionActivity.getClass().getName());
+                        ((NewActivityVH)holder).title.setText(new FunctionActivity_Attribute(functionActivity).getTitle());
+                        ((NewActivityVH)holder).title.setTextColor(new FunctionActivity_Attribute(functionActivity).getBgColor());
+                        ((NewActivityVH)holder).title.setClickable(true);
+                        ((NewActivityVH)holder).title.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                functionActivity.startThisActivity(MainActivity.this);
+                            }
+                        });
+                        break;
+                }
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            } catch (InvocationTargetException e) {
+                e.printStackTrace();
+            } catch (InstantiationException e) {
+                e.printStackTrace();
+            } catch (NoSuchMethodException e) {
+                e.printStackTrace();
+            }
+            return;
         }
 
         @Override
         public int getItemViewType(int position) {
-            return 0;
+            if(aClass[position].isAssignableFrom(FunctionActivity.class))    return 0;
+            if(aClass[position].isAssignableFrom(View.class))    return 1;
+            if(aClass[position].isAssignableFrom(FunctionActivity.class))    return 0;
+            return -1;
         }
 
         @Override
@@ -92,19 +98,20 @@ public class MainActivity extends BaseActivity {
             return aClass.length;
         }
 
-        class TextVH extends RecyclerView.ViewHolder {
+        class NewActivityVH extends RecyclerView.ViewHolder {
             ImageView iv;
             TextView title;
 
-            public TextVH(View view) {
+            public NewActivityVH(View view) {
                 super(view);
                 title = (TextView) view.findViewById(R.id.title);
             }
 
         }
 
-        class BitmapVH extends TextVH {
+        class BitmapVH extends NewActivityVH {
             ImageView iv;
+//            View v;
 
             public BitmapVH(View view) {
                 super(view);
