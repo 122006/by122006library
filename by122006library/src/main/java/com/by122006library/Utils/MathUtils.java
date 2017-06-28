@@ -50,11 +50,11 @@ public class MathUtils  {
 
     }
 
-     public static long getLegalNumInRange(int num, long minnum, long maxnum) {
+     public static long getLegalNumInRange(long num, long minnum, long maxnum) {
         return Math.max(minnum, Math.min(num, maxnum));
 
     }
-    public static double getLegalNumInRange(int num, double minnum, double maxnum) {
+    public static double getLegalNumInRange(double num, double minnum, double maxnum) {
         return Math.max(minnum, Math.min(num, maxnum));
 
     }

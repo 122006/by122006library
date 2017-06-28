@@ -101,11 +101,12 @@ public class ReflectionUtils {
         }
         return methods;
     }
-    public static Method getMethod(Object obj, String attname) throws  NoSuchMethodException {
+    public static Method getMethod(Object obj, String methodName,Class<?>... parameterTypes) throws  NoSuchMethodException {
         Class clazz = obj instanceof Class? (Class) obj : obj.getClass();
         Method method = null;
-        method = clazz.getDeclaredMethod(attname);
+        method = clazz.getDeclaredMethod(methodName,parameterTypes);
         method.setAccessible(true);
+        mLog.isNull(method);
         return method;
     }
 

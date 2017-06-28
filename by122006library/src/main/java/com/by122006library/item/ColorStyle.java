@@ -8,7 +8,26 @@ package com.by122006library.item;
 public class ColorStyle {
     public static ColorStyle initData;
     private int bgColor = 0xffdd8c00;
-    private int tvColor = 0xffffffff;
+    private int textColor = 0xffffffff;
+    private int topBarTextColor = 0xffffffff;
+
+    public int getTopBarBgColor() {
+        return topBarBgColor;
+    }
+
+    public void setTopBarBgColor(int topBarBgColor) {
+        this.topBarBgColor = topBarBgColor;
+    }
+
+    public int getTopBarTextColor() {
+        return topBarTextColor;
+    }
+
+    public void setTopBarTextColor(int topBarTextColor) {
+        this.topBarTextColor = topBarTextColor;
+    }
+
+    private int topBarBgColor = 0xff000000;
 
     public static ColorStyle getInitData() {
         if(initData==null) initData=new ColorStyle();
@@ -19,12 +38,12 @@ public class ColorStyle {
         ColorStyle.initData = initData;
     }
 
-    public int getTvColor() {
-        return tvColor;
+    public int getTextColor() {
+        return textColor;
     }
 
-    public void setTvColor(int tvColor) {
-        this.tvColor = tvColor;
+    public void setTextColor(int textColor) {
+        this.textColor = textColor;
     }
 
     public int getBgColor() {

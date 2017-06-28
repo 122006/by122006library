@@ -3,7 +3,6 @@ package com.by122006library.Functions.AttBinder;
 import android.support.annotation.FloatRange;
 
 import com.by122006library.Functions.CycleTask.CycleTask;
-import com.by122006library.Functions.mLog;
 import com.by122006library.Interface.UIThread;
 import com.by122006library.MyException;
 
@@ -14,32 +13,12 @@ import java.util.ArrayList;
  */
 
 public class TimeAtt extends Att {
-    final static private long CYCLETIME = 16;
+    final static public long CYCLETIME = 16;
     CycleTask cycleTask = null;
     ArrayList<TimeProgressAction> timeProgressActions;
 
     public TimeAtt(final long time) {
         super(0, time);
-        cycleTask = new CycleTask(CycleTask.ImmediatelyRun, CYCLETIME, (int) (time / CYCLETIME )) {
-            @Override
-            @UIThread
-            public void doCycleAction(int haveCycleCount) throws MyException {
-                try {
-                    fluctuation();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-
-            public void endCycleAction() {
-                try {
-                    setAttNum(time);
-                    if(getPer()<1)fluctuation(time);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }.register(this,-1);
         setAttProgressListener(new AttProgressListener() {
             double beforeAttNum = 0;
 
@@ -48,14 +27,15 @@ public class TimeAtt extends Att {
                 beforeAttNum = this.beforeAttNum;
                 if (beforeAttNum == nowAttNum && beforeAttNum != 0) return;
 //                mLog.i("beforeAttNum= %f ,nowAttNum = %f ", beforeAttNum, nowAttNum);
-                if(timeProgressActions!=null)
-                for (TimeProgressAction timeProgressAction : (ArrayList<TimeProgressAction>) timeProgressActions
-                        .clone()) {
-                    long actionTime = timeProgressAction.getRunTime();
-                    if ((!reverse&&nowAttNum >= actionTime &&beforeAttNum<actionTime)||(reverse&&nowAttNum < actionTime &&beforeAttNum>=actionTime)){
-                        timeProgressAction.event();
+                if (timeProgressActions != null)
+                    for (TimeProgressAction timeProgressAction : (ArrayList<TimeProgressAction>) timeProgressActions
+                            .clone()) {
+                        long actionTime = timeProgressAction.getRunTime();
+                        if ((!reverse && nowAttNum >= actionTime && beforeAttNum < actionTime) || (reverse &&
+                                nowAttNum < actionTime && beforeAttNum >= actionTime)) {
+                            timeProgressAction.event();
+                        }
                     }
-                }
                 if ((reverse && nowAttNum == min) || (!reverse && nowAttNum == max)) {
                     remove();
                     cycleTask.unRegister();
@@ -77,8 +57,8 @@ public class TimeAtt extends Att {
     }
 
     @Override
-    public void setAttNum(double num) {
-
+    public TimeAtt setAttNum(double num) {
+        return this;
     }
 
     @Override
@@ -105,6 +85,30 @@ public class TimeAtt extends Att {
     final public Att setAttProgressListener(AttProgressListener attProgressListener) {
         this.attProgressListener = attProgressListener;
         return this;
+    }
+
+    @Override
+    public void beBinded() {
+        cycleTask = new CycleTask(CycleTask.ImmediatelyRun, CYCLETIME, (int) (max / CYCLETIME)) {
+            @Override
+            @UIThread
+            public void doCycleAction(int haveCycleCount) throws MyException {
+                try {
+                    fluctuation();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            public void endCycleAction() {
+                try {
+                    setAttNum(max);
+                    if (getPer() < 1) fluctuation(max);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }.register(this, -1);
     }
 
     public void addTimeProgressAction(TimeProgressAction timeProgressAction) {

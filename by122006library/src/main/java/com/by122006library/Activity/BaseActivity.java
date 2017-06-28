@@ -58,6 +58,8 @@ import com.by122006library.Interface.UIThread;
 import com.by122006library.MyException;
 import com.by122006library.R;
 import com.by122006library.Utils.*;
+import com.by122006library.View.TopBar;
+import com.by122006library.databinding.TopbarBinding;
 import com.squareup.picasso.Picasso;
 
 import java.lang.reflect.Field;
@@ -191,6 +193,7 @@ public abstract class BaseActivity extends Activity implements NoProguard_All {
     }
 
     public static Activity getTopOutActivity() throws MyException {
+        if(ThreadUtils.getThisAct()!=null) return ThreadUtils.getThisAct();
         Activity act = null;
         try {
             act = act_out_list.get(act_out_list.size() - 1);
@@ -333,6 +336,7 @@ public abstract class BaseActivity extends Activity implements NoProguard_All {
 
                 @Override
                 public void onActivityResumed(Activity activity) {
+                    ThreadUtils.setThisAct(activity);
                     act_out_list.add(activity);
                 }
 
@@ -445,6 +449,11 @@ public abstract class BaseActivity extends Activity implements NoProguard_All {
         if ( SubclassAttribute.with(this).getFLAG_ACT_FULLSCREEN())
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                     WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        else{
+            getWindow().setFlags(
+                    WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS,
+                    WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        }
         LayoutInflaterCompat.setFactory(getLayoutInflater(), new MyLayoutFactory());
         super.onCreate(savedInstanceState);
         if (canRotate) {
@@ -489,40 +498,40 @@ public abstract class BaseActivity extends Activity implements NoProguard_All {
         }
 
     }
+    TopBar topBar=null;
 
-    public void setRightButton(String text, View.OnClickListener onClickListener) {
-        if (SubclassAttribute.with(this).getFLAG_ACT_NO_TITLE()) return;
-        ((TextView) findViewById(R.id.rightbutton)).setText(text);
-        ((TextView) findViewById(R.id.rightbutton)).setVisibility(View.VISIBLE);
-        ((TextView) findViewById(R.id.rightbutton)).setOnClickListener(onClickListener);
+    public TopBar getTopBar(){
+        return topBar;
     }
 
-    public void setTitle(CharSequence title) {
-        if ( SubclassAttribute.with(this).getFLAG_ACT_NO_TITLE()) return;
-        ((TextView) findViewById(R.id.title)).setText(title);
-    }
+
+
 
     @Override
     public void setContentView(@LayoutRes int layoutres) {
         mLog.i(ifHaveBinding() + "");
         if (ifHaveBinding()) {
-            if (useBindingContentView) {
-                if (!SubclassAttribute.with(this).getFLAG_ACT_NO_TITLE()) {
-                    super.setContentView(R.layout.activity_base);
-                    findViewById(R.id.titlebar).setVisibility(View.VISIBLE);
-                    ((ViewGroup) findViewById(R.id.content)).addView(getLayoutInflater().inflate(layoutres, null));
-                } else {
-                    super.setContentView(layoutres);
-                }
-            } else {
-                mLog.i("set a DataBinding ContentView in window");
-                DataBinding_SetContentView(layoutres);
+            ViewDataBinding bind = DataBindingUtil.inflate(getLayoutInflater(), layoutres, null, true);
+            try {
+                getBindingField().set(this, bind);
+            } catch (NoSuchFieldException e) {
+                mLog.e("DataBindingBaseActivity中必须定义变量 xml");
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
             }
-
+            if (!SubclassAttribute.with(this).getFLAG_ACT_NO_TITLE()) {
+                super.setContentView(R.layout.activity_base);
+                topBar=TopBar.createIn((ViewGroup) findViewById(R.id.topbar));
+                findViewById(R.id.topbar).setVisibility(View.VISIBLE);
+                ((ViewGroup) findViewById(R.id.content)).addView(bind.getRoot());
+            } else {
+                super.setContentView(bind.getRoot());
+            }
         } else {
             if (!SubclassAttribute.with(this).getFLAG_ACT_NO_TITLE()) {
                 super.setContentView(R.layout.activity_base);
-                findViewById(R.id.titlebar).setVisibility(View.VISIBLE);
+                topBar=TopBar.createIn((ViewGroup) findViewById(R.id.topbar));
+                findViewById(R.id.topbar).setVisibility(View.VISIBLE);
                 ((ViewGroup) findViewById(R.id.content)).addView(getLayoutInflater().inflate(layoutres, null));
             } else {
                 super.setContentView(layoutres);
@@ -542,23 +551,23 @@ public abstract class BaseActivity extends Activity implements NoProguard_All {
             super.setContentView(layout);
     }
 
-    /**
-     * 封装super.setContentView(layout);以提供其他BaseActivity的继承覆盖
-     */
-    protected void DataBinding_SetContentView(@LayoutRes int layoutres) {
-        if (ifHaveBinding()) {
-            useBindingContentView = true;
-            ViewDataBinding bind = DataBindingUtil.setContentView(this, layoutres);
-            try {
-                getBindingField().set(this, bind);
-            } catch (NoSuchFieldException e) {
-                mLog.e("DataBindingBaseActivity中必须定义变量 xml");
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            }
-        } else
-            super.setContentView(layoutres);
-    }
+//    /**
+//     * 封装super.setContentView(layout);以提供其他BaseActivity的继承覆盖
+//     */
+//    protected void DataBinding_SetContentView(@LayoutRes int layoutres) {
+//        if (ifHaveBinding()) {
+//            useBindingContentView = true;
+//            ViewDataBinding bind = DataBindingUtil.setContentView(this, layoutres);
+//            try {
+//                getBindingField().set(this, bind);
+//            } catch (NoSuchFieldException e) {
+//                mLog.e("DataBindingBaseActivity中必须定义变量 xml");
+//            } catch (IllegalAccessException e) {
+//                e.printStackTrace();
+//            }
+//        } else
+//            super.setContentView(layoutres);
+//    }
 
     @Override
     public void setContentView(View layout) {

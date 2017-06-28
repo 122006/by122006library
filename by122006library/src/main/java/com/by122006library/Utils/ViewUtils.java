@@ -99,6 +99,22 @@ public class ViewUtils {
         v.setDrawingCacheBackgroundColor(color);
         return bitmap;
     }
+    public static void countViews(ArrayList<View> views, ViewGroup viewGroup) {
+        if (viewGroup == null) {
+            return;
+        }
+        views.clear();
+        int count = viewGroup.getChildCount();
+        for (int i = 0; i < count; i++) {
+            View view = viewGroup.getChildAt(i);
+            if (view instanceof ViewGroup) {
+                views.add(view);
+                countViews(views, (ViewGroup) view);
+            } else {
+                views.add(view);
+            }
+        }
+    }
 
     /**
      * 控件包裹方法 <p>Created by 122006
@@ -133,25 +149,29 @@ public class ViewUtils {
      * @return
      */
     public static <T extends ViewGroup> T surroundViewGroup(View v, T viewGroup) {
-        ViewGroup parent = null;
-        int parentIndex = -1;
-        if (viewGroup == null) return null;
-        if (v.getParent() != null) {
-            parent = (ViewGroup) v.getParent();
-            parentIndex = parent.indexOfChild(v);
-            parent.removeView(v);
+        try {
+            ViewGroup parent = null;
+            int parentIndex = -1;
+            if (viewGroup == null) return null;
+            if (v.getParent() != null) {
+                parent = (ViewGroup) v.getParent();
+                parentIndex = parent.indexOfChild(v);
+                parent.removeView(v);
+            }
+            viewGroup.addView(v);
+            ViewGroup.MarginLayoutParams params = null;
+            if (v.getLayoutParams() == null) {
+                params = new ViewGroup.MarginLayoutParams(-2, -2);
+            } else {
+                params = (ViewGroup.MarginLayoutParams) v.getLayoutParams();
+            }
+            viewGroup.setLayoutParams(params);
+            if (parent == null) return viewGroup;
+            parent.addView(viewGroup, parentIndex);
+            return viewGroup;
+        } catch (Exception e) {
+            return viewGroup;
         }
-        viewGroup.addView(v);
-        ViewGroup.LayoutParams params = null;
-        if (v.getLayoutParams() == null) {
-            params = new ViewGroup.LayoutParams(-2, -2);
-        } else {
-            params = v.getLayoutParams();
-        }
-        viewGroup.setLayoutParams(params);
-        if (parent == null) return viewGroup;
-        parent.addView(viewGroup, parentIndex);
-        return viewGroup;
     }
 
     public static int[] getWindowWH(Activity activity) {
@@ -361,6 +381,7 @@ public class ViewUtils {
     }
 
     public static void smoothReplace_Smart(View oldV, View newV, long dur) {
+        DebugUtils.runningDurtime();
         if (oldV.getParent() != null && newV.getParent() == null) {
             smoothReplace(oldV, newV, dur);
         } else if (oldV.getParent() == null && newV.getParent() != null) {

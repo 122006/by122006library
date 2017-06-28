@@ -17,7 +17,11 @@ buildscript {
 
 allprojects {
     repositories {
+        maven { url "https://jitpack.io" }
         jcenter()
         mavenCentral()
     }
 }
+//tasks.withType(JavaCompile) {
+//    options.compilerArgs << "-Xlint:unchecked"
+//}

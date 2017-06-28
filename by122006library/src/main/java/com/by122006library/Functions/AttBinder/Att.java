@@ -15,9 +15,27 @@ import java.util.ArrayList;
 public abstract class Att {
     protected AttProgressListener attProgressListener;
     protected boolean logProgress = false;
-    ArrayList<AttBinder> binders = new ArrayList<>();
+    public ArrayList<AttBinder> binders = new ArrayList<>();
     double attNum;
-    double max, min;
+
+    public double getMax() {
+        return max;
+    }
+
+    public void setMax(double max) {
+        this.max = max;
+    }
+
+    public double getMin() {
+        return min;
+    }
+
+    public void setMin(double min) {
+        this.min = min;
+    }
+
+    public double max;
+    public double min;
     String tag = "";
     /**
      * 倒序标志
@@ -25,7 +43,7 @@ public abstract class Att {
     protected boolean reverse = false;
 
     /**
-     * Max\min的数据顺序会被自动纠正和忽略。<br> 如果该属性是反向变化,你需要在transform(per)方法里返回1-per<br> 在这里，Listner也会被初始化。
+     * Max\min的数据顺序会被自动纠正和忽略。<br> 如果该属性是反向变化,你需要在transform(per)方法里返回1-per(当然，你也可以调用setReverse()方法)<br> 在这里，Listener也会被初始化。
      *
      * @param max 最大范围， >=max的事件不会被运行
      * @param min 最小范围， &lt;min的事件不会被运行<br>
@@ -59,18 +77,22 @@ public abstract class Att {
      *
      * @param num 需要设置的属性
      */
-    public abstract void setAttNum(double num);
+    public abstract Att setAttNum(double num);
 
     /**
      * 返回缓存中的该项属性
      */
     public double getPer() {
-        return (attNum - min) / (max - min);
+        double per=(attNum - getMin()) / (getMax() - getMin());
+        if(per>1&&useMaxBorder()) per=1;
+        if(per<0&&useMinBorder()) per=0;
+        return per;
     }
 
     public void setPer(double per) {
-
-        setAttNum(per * (max - min) + min);
+        if(per>1&&useMaxBorder()) per=1;
+        if(per<0&&useMinBorder()) per=0;
+        setAttNum(per * (getMax() - getMin()) + getMin());
     }
 
     /**
@@ -96,21 +118,23 @@ public abstract class Att {
 
     /**
      * 发生数据修改，将监听时获取的数据缓存，发送至AttBinder
+     * <p></>
+     * 和Binder中方法不同，这里传入的是实际数据
      */
     public void fluctuation(double num) {
 //        mLog.i("fluctuation=%f",getPer());
         attNum = num;
-        if (num < min || num >= max) {
+        if (num < getMin() || num >= getMax()) {
             if (RunLogicUtils.getHereRunTimes(500) <= 1) {
-                if (num < min && useMinBorder()) num = min;
-                else if (num >= max && useMaxBorder()) num = max;
+                if (num < getMin() && useMinBorder()) num = getMin();
+                else if (num >= getMax() && useMaxBorder()) num = getMax();
                 else
                     return;
             } else
                 return;
         }
         for (AttBinder binder : binders) {
-            binder.change(this, (num - min) / (max - min));
+            binder.change(this, (num - getMin()) / (getMax() - getMin()));
         }
     }
 
@@ -118,14 +142,25 @@ public abstract class Att {
      * 子类需要重写该方法<p> 以确定是否在超过Max越界时使用Max界限数据而不是直接抛弃
      */
     public boolean useMaxBorder() {
-        return true;
+        return border;
     }
+
+    public boolean isBorder() {
+        return border;
+    }
+
+    public Att setBorder(boolean border) {
+        this.border = border;
+        return this;
+    }
+
+    boolean border=true;
 
     /**
      * 子类需要重写该方法<p> 以确定是否在超过Min越界时使用Min界限数据而不是直接抛弃
      */
     public boolean useMinBorder() {
-        return false;
+        return border;
     }
 
     @CallSuper
@@ -161,5 +196,10 @@ public abstract class Att {
         reverse = true;
         return this;
     }
+
+    @CallSuper
+    public void  beBinded(){
+//        measureAtt();
+    };
 
 }

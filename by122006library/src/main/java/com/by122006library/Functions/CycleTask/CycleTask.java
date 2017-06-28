@@ -1,5 +1,7 @@
 package com.by122006library.Functions.CycleTask;
 
+import android.widget.LinearLayout;
+
 import com.by122006library.Functions.mLog;
 import com.by122006library.Interface.BGThread;
 import com.by122006library.Interface.DefaultThread;
@@ -109,54 +111,74 @@ public abstract class CycleTask {
         }
     }
 
+    public static ArrayList<CycleTask> indexOfTag(Object tag){
+        ArrayList<CycleTask> list=new ArrayList<CycleTask>();
+        for (CycleTask item : (ArrayList<CycleTask>) list.clone()) {
+            if (item.tag == null) continue;
+            if (item.tag.equals(tag)) {
+                list.add(item);
+            }
+
+        }
+        return list;
+    }
+
+
+
     public static void destroyTaskThread() {
         isRunning = false;
     }
 
     public void run(long durtime) throws MyException {
+//        mLog.i(durtime);
         if (cycleNum == 0) return;
         if (daleyTime > 0) daleyTime -= durtime;
         if (daleyTime > 0) return;
-
+        final int fCycleCount=cycleCount;
         restTime -= durtime;
 
         if (restTime <= 0) {
 
+            cycleCount++;
             mCurDurtime = System.currentTimeMillis() - mLastTime;
 
             restTime = cycleTime;
-            if (runThreadStyle.equals(ThreadStyle.Style.BG)) {
-                if (ThreadUtils.isUIThread()) {
-                    new Thread(new Runnable() {
+            try {
+                if (runThreadStyle.equals(ThreadStyle.Style.BG)) {
+                    if (ThreadUtils.isUIThread()) {
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    doCycleAction(fCycleCount);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }).start();
+                    } else
+                        try {
+                            doCycleAction(fCycleCount);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                } else if (runThreadStyle.equals(ThreadStyle.Style.UI)) {
+
+                    ThreadUtils.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             try {
-                                doCycleAction(cycleCount);
+                                doCycleAction(fCycleCount);
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
                         }
-                    }).start();
-                } else
-                    try {
-                        doCycleAction(cycleCount);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-            } else if (runThreadStyle.equals(ThreadStyle.Style.UI)) {
-
-                ThreadUtils.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            doCycleAction(cycleCount);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                });
+                    });
+                }
+            } catch (MyException e) {
+                e.printStackTrace();
             }
-            cycleCount++;
+
             mLastTime = System.currentTimeMillis();
             if (cycleCount >= cycleNum && cycleNum > 0) unRegister();
         }
@@ -206,7 +228,7 @@ public abstract class CycleTask {
                 if (flag == SINGLETASK) return this;
                 else {
                     for (CycleTask cycleTask : (ArrayList<CycleTask>) CycleTask.list.clone()) {
-                        list.remove(cycleTask);
+                        if (cycleTask.equals(tag)) list.remove(cycleTask);
                     }
                 }
             }

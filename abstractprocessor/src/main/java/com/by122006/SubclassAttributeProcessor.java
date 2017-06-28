@@ -165,7 +165,7 @@ public class SubclassAttributeProcessor extends javax.annotation.processing.Abst
                             .beginControlFlow("try")
                             .addStatement("field = clazz.getDeclaredField($S)", String.valueOf(map.get("name")))
                             .addStatement("field.setAccessible(true)")
-                            .addStatement("field.set($S, value )", String.valueOf(map.get("name")))
+                            .addStatement("field.set(obj, value )")
                             .endControlFlow()
                             .beginControlFlow(" catch (Exception e)")
                             .addStatement("e.printStackTrace()")
@@ -183,7 +183,7 @@ public class SubclassAttributeProcessor extends javax.annotation.processing.Abst
                             .beginControlFlow("try")
                             .addStatement("field = clazz.getDeclaredField($S)", String.valueOf(map.get("name")))
                             .addStatement("field.setAccessible(true)")
-                            .addStatement("field.set($S, value )", String.valueOf(map.get("name")))
+                            .addStatement("field.set(obj, value )")
                             .endControlFlow()
                             .beginControlFlow(" catch (Exception e)")
                             .addStatement("e.printStackTrace()")
@@ -201,9 +201,9 @@ public class SubclassAttributeProcessor extends javax.annotation.processing.Abst
                             .beginControlFlow("try")
                             .addStatement("field = clazz.getDeclaredField($S)", String.valueOf(map.get("name")))
                             .addStatement("field.setAccessible(true)")
-                            .addStatement("field.set( $S , " + (String.valueOf(map.get("type")).equals(String.class
+                            .addStatement("field.set( obj , " + (String.valueOf(map.get("type")).equals(String.class
                                     .getName())
-                                    ? "$S" : "$N") + " )", String.valueOf(map.get("name")), String.valueOf(map.get
+                                    ? "$S" : "$N") + " )", String.valueOf(map.get
                                     ("defaultValue")))
                             .endControlFlow()
                             .beginControlFlow(" catch (Exception e)")
@@ -221,9 +221,9 @@ public class SubclassAttributeProcessor extends javax.annotation.processing.Abst
                             .beginControlFlow("try")
                             .addStatement("field = clazz.getDeclaredField($S)", String.valueOf(map.get("name")))
                             .addStatement("field.setAccessible(true)")
-                            .addStatement("field.set( $S , " + (String.valueOf(map.get("type")).equals(String.class
+                            .addStatement("field.set( obj , " + (String.valueOf(map.get("type")).equals(String.class
                                     .getName())
-                                    ? "$S" : "$N") + " )", String.valueOf(map.get("name")), String.valueOf(map.get
+                                    ? "$S" : "$N") + " )", String.valueOf(map.get
                                     ("defaultValue")))
                             .endControlFlow()
                             .beginControlFlow(" catch (Exception e)")
@@ -410,11 +410,11 @@ public class SubclassAttributeProcessor extends javax.annotation.processing.Abst
     }
 
     private void error(Element e, String msg, Object... args) {
-        mMessager.printMessage(Diagnostic.Kind.ERROR, String.format(msg, args), e);
+        mMessager.printMessage(Diagnostic.Kind.ERROR, getClass().getName()+String.format(msg, args), e);
     }
 
     private void note(String msg, Object... args) {
-        mMessager.printMessage(Diagnostic.Kind.NOTE, String.format(msg, args));
+        mMessager.printMessage(Diagnostic.Kind.NOTE,getClass().getName()+ String.format(msg, args));
     }
 }
 

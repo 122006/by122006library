@@ -4,4 +4,6 @@
     </item>
     <item name="tag_2" type="id">
     </item>
+
+    <item type="id" name="Tag_SlideSpinner"></item>
 </resources>

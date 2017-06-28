@@ -24,14 +24,14 @@ public abstract class SmartRun {
     final static String[] ignoreMethods = new String[]{
             "toString", "wait", "getClass", "hashCode", "notify", "notifyAll"
     };
-    static HashMap<Object, SmartRun> staticMap;
+    static ExpMap<Object, SmartRun> staticMap;
     ArrayList<Method> methodList;
     HashMap<Method, ThreadStyle.Style> changeThreadStyleMap;
     HashMap<Method, Boolean> changeThreadAsnycMap;
 
     final public static <T> void removeCache(T target) {
         if (staticMap == null) {
-            staticMap = new HashMap<>();
+            staticMap = new ExpMap<>();
         }
         if (staticMap.containsKey(target)) {
             staticMap.remove(target);
@@ -43,7 +43,7 @@ public abstract class SmartRun {
         StackTraceElement[] stackTraceElement = Thread.currentThread().getStackTrace();
 
         if (staticMap == null) {
-            staticMap = new HashMap<>();
+            staticMap = new ExpMap<>();
         }
         SmartRun smartRun;
         if (!staticMap.containsKey(target)) {
@@ -143,6 +143,7 @@ public abstract class SmartRun {
         boolean boo = !(lastMethodName.equals("chooseThreadRun") || lastMethodName.equals("invoke"));
         methodName = (methodName.equals("chooseThreadRun") || methodName.equals("invoke")) ? lastMethodName :
                 methodName;
+//        mLog.array(lastMethodName,methodName);
 //        if (boo) mLog.i("=============\n正常转切换用反射打开 " + methodName + "(参数量" + parameter.length + ")");
 //        else mLog.i("正在运行的是反射方法 " + methodName + "(参数量" + parameter.length + ")");
 //        mLog.i("boo=" + boo);
@@ -246,7 +247,7 @@ public abstract class SmartRun {
             boolean ifthis = true;
             for (int i = 0; i < parameterTypes.length; i++) {
                 if (parameter[i] == null) {
-//                    mLog.e("传入参数发现null，已忽略该位置匹配，可能结果会产生错误");
+//                    mLog.s("传入参数发现null，已忽略该位置匹配，可能结果会产生错误");
                     continue;
                 }
                 if (parameter[i].getClass().toString().contains("java.lang.") && parameter[i].getClass().toString()
@@ -297,6 +298,7 @@ public abstract class SmartRun {
 //        mLog.i("chooseThreadRun：" + parameter.length);
         if (methodName == null || methodName.length() == 0) {
             mLog.e("SmartRun 方法分析异常   "+target.getClass().toString());
+            mLog.e(mLog.getCallerLocation());
             try {
                 mLog.e(StringUtils.getStringFromArray(Thread.currentThread().getStackTrace()));
             }catch (Exception e){

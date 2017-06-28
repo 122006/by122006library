@@ -9,30 +9,15 @@
         android:layout_height="match_parent"
         android:background="#fff">
 
-        <LinearLayout
-            android:orientation="vertical"
+        <android.support.v7.widget.RecyclerView
+
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_margin="30dp">
-
-            <TextView
-                android:text="@{act.name}"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/textView3"
-                android:layout_gravity="center_horizontal"
-                android:textSize="24dp"
-                android:layout_marginBottom="5dp"
-                android:textColor="#000"/>
-
-            <android.support.v7.widget.RecyclerView
-
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:id="@+id/recycer"/>
-
-
-        </LinearLayout>
+            android:id="@+id/recycer"
+            android:paddingLeft="20dp"
+            android:paddingBottom="3dp"
+            android:paddingTop="3dp"
+            android:paddingRight="20dp"/>
 
     </FrameLayout>
 

@@ -5,7 +5,9 @@
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
-        android:supportsRtl="true">
+        android:supportsRtl="true"
+        android:theme="@style/AppBaseTheme"
+        android:name=".MyApplication">
 
         <activity
             android:name=".MainActivity">
@@ -16,7 +18,18 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ViewsReplace">
+            android:name=".SV_ViewsReplace"
+            android:windowSoftInputMode="stateHidden|stateAlwaysHidden">
+
+        </activity>
+        <activity
+            android:name=".SV_SlideSpinner"
+            android:windowSoftInputMode="stateHidden|stateAlwaysHidden">
+
+        </activity>
+        <activity
+            android:name=".SV_PullDownTopbarMenu"
+            android:windowSoftInputMode="stateHidden|stateAlwaysHidden">
 
         </activity>
     </application>
