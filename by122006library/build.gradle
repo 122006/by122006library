@@ -30,8 +30,8 @@ android {
     dataBinding {
         enabled = true
     }
-
 }
+
 task clearJar(type: Delete) {
     delete 'libs/sdk.jar' // sdk是你自己jar包的名字，随便命名
 }
@@ -52,6 +52,6 @@ dependencies {
     compile 'me.grantland:autofittextview:0.2.+'
     compile 'com.anupcowkur:reservoir:3.1.0'
 
-    apt project(':abstractprocessor')
+//    apt project(':abstractprocessor')
 
 }
