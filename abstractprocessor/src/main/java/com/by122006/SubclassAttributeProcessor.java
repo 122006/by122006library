@@ -96,7 +96,7 @@ public class SubclassAttributeProcessor extends javax.annotation.processing.Abst
             if (element.getEnclosingElement().getKind() == ElementKind.CLASS && className == null)
                 className = element.getEnclosingElement().getSimpleName().toString();
             all.add(attClassName);
-            List<AnnotationMirror> list = (List<AnnotationMirror>) element.getAnnotationMirrors();
+            List<? extends AnnotationMirror> list = (List<? extends AnnotationMirror>) element.getAnnotationMirrors();
 
             for (AnnotationMirror mirror : list) {
                 if (!mirror.getAnnotationType().asElement().getSimpleName().toString().equals(Subclass.class

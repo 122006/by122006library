@@ -59,7 +59,6 @@ import com.by122006library.MyException;
 import com.by122006library.R;
 import com.by122006library.Utils.*;
 import com.by122006library.View.TopBar;
-import com.by122006library.databinding.TopbarBinding;
 import com.squareup.picasso.Picasso;
 
 import java.lang.reflect.Field;
