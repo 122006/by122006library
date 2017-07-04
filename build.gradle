@@ -9,7 +9,8 @@ buildscript {
         // in the individual module build.gradle files
         classpath 'com.github.dcendents:android-maven-gradle-plugin:1.5'
         classpath "com.jfrog.bintray.gradle:gradle-bintray-plugin:1.0"
-    }
+        //替换成最新android-apt版本
+        classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'  }
 
 }
 
