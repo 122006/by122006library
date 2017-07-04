@@ -41,9 +41,9 @@ import static javax.lang.model.element.Modifier.STATIC;
 
 @AutoService(Processor.class)
 public class SubclassAttributeProcessor extends javax.annotation.processing.AbstractProcessor {
-    private Filer mFiler; //ÎÄ¼şÏà¹Ø¹¤¾ßÀà
-    private Elements mElementUtils; //ÔªËØÏà¹ØµÄ¹¤¾ßÀà
-    private Messager mMessager; //ÈÕÖ¾Ïà¹ØµÄ¹¤¾ßÀà
+    private Filer mFiler; //æ–‡ä»¶ç›¸å…³å·¥å…·ç±»
+    private Elements mElementUtils; //å…ƒç´ ç›¸å…³çš„å·¥å…·ç±»
+    private Messager mMessager; //æ—¥å¿—ç›¸å…³çš„å·¥å…·ç±»
 
     //    }
     public static String toLowerCaseFirstOne(String s) {
@@ -53,7 +53,7 @@ public class SubclassAttributeProcessor extends javax.annotation.processing.Abst
             return (new StringBuilder()).append(Character.toLowerCase(s.charAt(0))).append(s.substring(1)).toString();
     }
 
-    //Ê××ÖÄ¸×ª´óĞ´
+    //é¦–å­—æ¯è½¬å¤§å†™
     public static String toUpperCaseFirstOne(String s) {
         if (Character.isUpperCase(s.charAt(0)))
             return s;
@@ -62,7 +62,7 @@ public class SubclassAttributeProcessor extends javax.annotation.processing.Abst
     }
 
     /**
-     * ´¦ÀíÆ÷µÄ³õÊ¼»¯·½·¨£¬¿ÉÒÔ»ñÈ¡Ïà¹ØµÄ¹¤¾ßÀà
+     * å¤„ç†å™¨çš„åˆå§‹åŒ–æ–¹æ³•ï¼Œå¯ä»¥è·å–ç›¸å…³çš„å·¥å…·ç±»
      */
     @Override
     public synchronized void init(ProcessingEnvironment processingEnv) {
@@ -74,13 +74,13 @@ public class SubclassAttributeProcessor extends javax.annotation.processing.Abst
 
 
     /**
-     * ´¦ÀíÆ÷µÄÖ÷·½·¨£¬ÓÃÓÚÉ¨Ãè´¦Àí×¢½â£¬Éú³ÉjavaÎÄ¼ş
+     * å¤„ç†å™¨çš„ä¸»æ–¹æ³•ï¼Œç”¨äºæ‰«æå¤„ç†æ³¨è§£ï¼Œç”Ÿæˆjavaæ–‡ä»¶
      */
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
         note("process");
         ArrayList<ClassName> all = new ArrayList<>();
-        //´¦Àí±»×¢½âµÄÔªËØ
+        //å¤„ç†è¢«æ³¨è§£çš„å…ƒç´ 
         for (Element element : roundEnv.getElementsAnnotatedWith(Subclass.class)) {
             String className = element.getSimpleName().toString() + "_Attribute";
             ClassName attClassName = getClassName(element.getEnclosingElement().toString() + "." + element
@@ -170,7 +170,7 @@ public class SubclassAttributeProcessor extends javax.annotation.processing.Abst
                             .beginControlFlow(" catch (Exception e)")
                             .addStatement("e.printStackTrace()")
                             .endControlFlow()
-                            .addJavadoc("ÉèÖÃ¼Ì³Ğ×ÓÀàÖĞµÄ$T $N³£Á¿", getClassName(String.valueOf(map.get("type"))), String
+                            .addJavadoc("è®¾ç½®ç»§æ‰¿å­ç±»ä¸­çš„$T $Nå¸¸é‡", getClassName(String.valueOf(map.get("type"))), String
                                     .valueOf(map.get("name")))
                             .returns(void.class);
                     builder.addMethod(methodSpec.build());
@@ -188,7 +188,7 @@ public class SubclassAttributeProcessor extends javax.annotation.processing.Abst
                             .beginControlFlow(" catch (Exception e)")
                             .addStatement("e.printStackTrace()")
                             .endControlFlow()
-                            .addJavadoc("ÉèÖÃ¼Ì³Ğ×ÓÀàÖĞµÄ$T $N³£Á¿", getClassName(String.valueOf(map.get("type"))), String
+                            .addJavadoc("è®¾ç½®ç»§æ‰¿å­ç±»ä¸­çš„$T $Nå¸¸é‡", getClassName(String.valueOf(map.get("type"))), String
                                     .valueOf(map.get("name")))
                             .returns(void.class);
                     builder.addMethod(methodSpec.build());
@@ -209,7 +209,7 @@ public class SubclassAttributeProcessor extends javax.annotation.processing.Abst
                             .beginControlFlow(" catch (Exception e)")
                             .addStatement("e.printStackTrace()")
                             .endControlFlow()
-                            .addJavadoc("¼Ì³Ğ×ÓÀàÖĞµÄ$T $N³£Á¿ÉèÖÃÎªÄ¬ÈÏÖµ", getClassName(String.valueOf(map.get("type"))), String
+                            .addJavadoc("ç»§æ‰¿å­ç±»ä¸­çš„$T $Nå¸¸é‡è®¾ç½®ä¸ºé»˜è®¤å€¼", getClassName(String.valueOf(map.get("type"))), String
                                     .valueOf(map.get("name")))
                             .returns(void.class);
                     builder.addMethod(methodSpec.build());
@@ -229,7 +229,7 @@ public class SubclassAttributeProcessor extends javax.annotation.processing.Abst
                             .beginControlFlow(" catch (Exception e)")
                             .addStatement("e.printStackTrace()")
                             .endControlFlow()
-                            .addJavadoc("¼Ì³Ğ×ÓÀàÖĞµÄ$T $N³£Á¿ÉèÖÃÎªÄ¬ÈÏÖµ", getClassName(String.valueOf(map.get("type"))), String
+                            .addJavadoc("ç»§æ‰¿å­ç±»ä¸­çš„$T $Nå¸¸é‡è®¾ç½®ä¸ºé»˜è®¤å€¼", getClassName(String.valueOf(map.get("type"))), String
                                     .valueOf(map.get("name")))
                             .returns(void.class);
                     builder.addMethod(methodSpec.build());
@@ -249,7 +249,7 @@ public class SubclassAttributeProcessor extends javax.annotation.processing.Abst
                             .endControlFlow()
                             .addStatement("return " + (String.valueOf(map.get("type")).equals(String.class.getName())
                                     ? "$S" : "$N"), String.valueOf(map.get("defaultValue")))
-                            .addJavadoc("»ñµÃ¼Ì³Ğ×ÓÀàÖĞµÄ$T $N³£Á¿", getClassName(String.valueOf(map.get("type"))), String
+                            .addJavadoc("è·å¾—ç»§æ‰¿å­ç±»ä¸­çš„$T $Nå¸¸é‡", getClassName(String.valueOf(map.get("type"))), String
                                     .valueOf(map.get("name")))
                             .returns(getClassName(String.valueOf(map.get("type"))));
                     builder.addMethod(methodSpec.build());
@@ -268,7 +268,7 @@ public class SubclassAttributeProcessor extends javax.annotation.processing.Abst
                             .endControlFlow()
                             .addStatement("return " + (String.valueOf(map.get("type")).equals(String.class.getName())
                                     ? "$S" : "$N"), String.valueOf(map.get("defaultValue")))
-                            .addJavadoc("»ñµÃ¼Ì³Ğ×ÓÀàÖĞµÄ$T $N³£Á¿", getClassName(String.valueOf(map.get("type"))), String
+                            .addJavadoc("è·å¾—ç»§æ‰¿å­ç±»ä¸­çš„$T $Nå¸¸é‡", getClassName(String.valueOf(map.get("type"))), String
                                     .valueOf(map.get("name")))
                             .returns(getClassName(String.valueOf(map.get("type"))));
                     builder.addMethod(methodSpec.build());
@@ -296,11 +296,11 @@ public class SubclassAttributeProcessor extends javax.annotation.processing.Abst
 //        for(ClassName clazzName :all){
 //            ArrayList<ClassName> list=listHashMap.get(clazzName.packageName());
 //        }
-        note("×¼±¸·â×° SubclassAttribute");
+        note("å‡†å¤‡å°è£… SubclassAttribute");
         TypeSpec.Builder builder = TypeSpec.classBuilder("SubclassAttribute")
                 .addModifiers(Modifier.PUBLIC);
 //        builder.addJavadoc("update time : $N",new Date(System.currentTimeMillis()).toString());
-        for (ClassName closingName : all) {note("·â×° %s",closingName.toString());
+        for (ClassName closingName : all) {note("å°è£… %s",closingName.toString());
             try {
                 MethodSpec.Builder methodSpec = MethodSpec.methodBuilder("with")
                         .addParameter(getClassName(closingName.toString().substring(0, closingName.toString().length
@@ -308,7 +308,7 @@ public class SubclassAttributeProcessor extends javax.annotation.processing.Abst
                         .addModifiers(Modifier.PUBLIC, Modifier.FINAL, Modifier.STATIC)
                         .addStatement("$T attClass=new $T(obj);", closingName, closingName)
                         .addStatement("return attClass")
-                        .addJavadoc("»ñµÃ $S »ùÓÚ obj µÄÊµÀı", closingName.simpleName())
+                        .addJavadoc("è·å¾— $S åŸºäº obj çš„å®ä¾‹", closingName.simpleName())
                         .returns(closingName);
                 builder.addMethod(methodSpec.build());
             } catch (Exception e) {
@@ -351,7 +351,7 @@ public class SubclassAttributeProcessor extends javax.annotation.processing.Abst
 
 
     /**
-     * Ö¸¶¨ÄÄĞ©×¢½âÓ¦¸Ã±»×¢½â´¦ÀíÆ÷×¢²á
+     * æŒ‡å®šå“ªäº›æ³¨è§£åº”è¯¥è¢«æ³¨è§£å¤„ç†å™¨æ³¨å†Œ
      */
     @Override
     public Set<String> getSupportedAnnotationTypes() {
@@ -361,7 +361,7 @@ public class SubclassAttributeProcessor extends javax.annotation.processing.Abst
     }
 
     /**
-     * ÓÃÀ´Ö¸¶¨ÄãÊ¹ÓÃµÄ java °æ±¾
+     * ç”¨æ¥æŒ‡å®šä½ ä½¿ç”¨çš„ java ç‰ˆæœ¬
      */
     @Override
     public SourceVersion getSupportedSourceVersion() {
@@ -371,12 +371,12 @@ public class SubclassAttributeProcessor extends javax.annotation.processing.Abst
     private boolean isValid(Class<? extends Annotation> annotationClass, String targetThing, Element element) {
         boolean isVaild = true;
 
-        //»ñÈ¡±äÁ¿µÄËùÔÚµÄ¸¸ÔªËØ£¬¿ÏÄÜÊÇÀà¡¢½Ó¿Ú¡¢Ã¶¾Ù
+        //è·å–å˜é‡çš„æ‰€åœ¨çš„çˆ¶å…ƒç´ ï¼Œè‚¯èƒ½æ˜¯ç±»ã€æ¥å£ã€æšä¸¾
         TypeElement enclosingElement = (TypeElement) element.getEnclosingElement();
-        //¸¸ÔªËØµÄÈ«ÏŞ¶¨Ãû
+        //çˆ¶å…ƒç´ çš„å…¨é™å®šå
         String qualifiedName = enclosingElement.getQualifiedName().toString();
 
-        // ËùÔÚµÄÀà²»ÄÜÊÇprivate»òstaticĞŞÊÎ
+        // æ‰€åœ¨çš„ç±»ä¸èƒ½æ˜¯privateæˆ–staticä¿®é¥°
         Set<Modifier> modifiers = element.getModifiers();
         if (modifiers.contains(PRIVATE) || modifiers.contains(STATIC)) {
             error(element, "@%s %s must not be private or static. (%s.%s)",
@@ -385,7 +385,7 @@ public class SubclassAttributeProcessor extends javax.annotation.processing.Abst
             isVaild = false;
         }
 
-        // ¸¸ÔªËØ±ØĞëÊÇÀà£¬¶ø²»ÄÜÊÇ½Ó¿Ú»òÃ¶¾Ù
+        // çˆ¶å…ƒç´ å¿…é¡»æ˜¯ç±»ï¼Œè€Œä¸èƒ½æ˜¯æ¥å£æˆ–æšä¸¾
         if (enclosingElement.getKind() != ElementKind.CLASS) {
             error(enclosingElement, "@%s %s may only be contained in classes. (%s.%s)",
                     annotationClass.getSimpleName(), targetThing, enclosingElement.getQualifiedName(),
@@ -393,13 +393,13 @@ public class SubclassAttributeProcessor extends javax.annotation.processing.Abst
             isVaild = false;
         }
 
-        //²»ÄÜÔÚAndroid¿ò¼Ü²ã×¢½â
+        //ä¸èƒ½åœ¨Androidæ¡†æ¶å±‚æ³¨è§£
         if (qualifiedName.startsWith("android.")) {
             error(element, "@%s-annotated class incorrectly in Android framework package. (%s)",
                     annotationClass.getSimpleName(), qualifiedName);
             return false;
         }
-        //²»ÄÜÔÚjava¿ò¼Ü²ã×¢½â
+        //ä¸èƒ½åœ¨javaæ¡†æ¶å±‚æ³¨è§£
         if (qualifiedName.startsWith("java.")) {
             error(element, "@%s-annotated class incorrectly in Java framework package. (%s)",
                     annotationClass.getSimpleName(), qualifiedName);
