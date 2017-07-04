@@ -23,7 +23,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="0"
                 android:background="#ccc"
-                android:paddingLeft="10dp">
+                android:paddingLeft="10dp"
+                android:id="@+id/layout_view_att">
 
                 <TextView
                     android:layout_width="wrap_content"

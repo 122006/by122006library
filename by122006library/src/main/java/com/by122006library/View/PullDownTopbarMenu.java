@@ -7,6 +7,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
@@ -18,6 +19,7 @@ import android.widget.TextView;
 import com.by122006library.R;
 import com.by122006library.Utils.MathUtils;
 import com.by122006library.Utils.ViewUtils;
+import com.google.common.util.concurrent.ExecutionError;
 
 /**
  * Created by admin on 2017/6/15.
@@ -27,7 +29,7 @@ public class PullDownTopbarMenu extends PopupWindow {
     LinearLayout rootLayout;
 
     Context context;
-    boolean Flag_Scrolling = false;
+//    boolean Flag_Scrolling = false;
     int topbarh = 0;
     View contextLayout, sliderView, topView;
 
@@ -54,7 +56,9 @@ public class PullDownTopbarMenu extends PopupWindow {
             public void run() {
                 setWidth(topView.getWidth());
                 setHeight(-2);
-                showAsDropDown(topView);
+                try {
+                    showAsDropDown(topView);
+                }catch (Exception e){}
             }
         });
 
@@ -141,6 +145,8 @@ public class PullDownTopbarMenu extends PopupWindow {
         Context context;
         boolean ifUseSliderView = true;
 
+        private int backGround=0xff607d8b;
+
         public Builder(Context context) {
             this.context = context;
             pullDownTopbarMenu = new PullDownTopbarMenu(context);
@@ -166,7 +172,10 @@ public class PullDownTopbarMenu extends PopupWindow {
         }
 
         public Builder setSliderView(View v) {
-
+            if(v==null){
+                v=new View(context);
+                v.setLayoutParams(new ViewGroup.LayoutParams(0,0));
+            }
             pullDownTopbarMenu.sliderView = v;
             return this;
         }
@@ -194,6 +203,7 @@ public class PullDownTopbarMenu extends PopupWindow {
                 iv.setBackgroundColor(Color.WHITE);
                 setSliderView(iv);
             }
+            pullDownTopbarMenu.rootLayout.setBackgroundColor(backGround);
             pullDownTopbarMenu.rootLayout.setLongClickable(true);
             pullDownTopbarMenu.rootLayout.setClickable(true);
             pullDownTopbarMenu.rootLayout.setOnTouchListener(new View.OnTouchListener() {
@@ -206,7 +216,7 @@ public class PullDownTopbarMenu extends PopupWindow {
                     if (pullDownTopbarMenu.topbarh == 0)
                         pullDownTopbarMenu.topbarh = pullDownTopbarMenu.topView.getBottom();
 
-                    pullDownTopbarMenu.Flag_Scrolling = false;
+//                    pullDownTopbarMenu.Flag_Scrolling = false;
                     if (ev.getAction() == MotionEvent.ACTION_DOWN) {
                         downY = ev.getRawY();
                         downTranslationY = pullDownTopbarMenu.rootLayout.getTranslationY();
@@ -243,6 +253,15 @@ public class PullDownTopbarMenu extends PopupWindow {
             pullDownTopbarMenu.setContentView(pullDownTopbarMenu.rootLayout);
 
             return pullDownTopbarMenu;
+        }
+
+        public int getBackGround() {
+            return backGround;
+        }
+
+        public Builder setBackGround(int backGround) {
+            this.backGround = backGround;
+            return this;
         }
     }
 

@@ -18,6 +18,7 @@ import android.widget.TextView;
 import com.by122006.modelprojectby122006.databinding.ActivityMainBinding;
 import com.by122006.modelprojectby122006.databinding.ItemMainActivityListViewStyleBinding;
 import com.by122006library.Activity.BaseActivity;
+import com.by122006library.Functions.AttBinder.AttBinder;
 import com.by122006library.Utils.BitmapUtils;
 import com.by122006library.Utils.ReflectionUtils;
 import com.by122006library.Utils.ViewUtils;
@@ -37,9 +38,9 @@ import java.util.Objects;
  */
 public class MainActivity extends BaseActivity {
     static public Class<? >[] class1=new Class[]{SV_ViewsReplace.class,SV_SlideSpinner.class,SV_PullDownTopbarMenu.class};
-    static public Class<? >[] class2=new Class[]{SV_ViewsReplace.class,SV_SlideSpinner.class,SV_PullDownTopbarMenu.class};
-    static public Class<? >[] class3=new Class[]{SV_ViewsReplace.class,SV_SlideSpinner.class,SV_PullDownTopbarMenu.class};
-    static public Class<? >[] class4=new Class[]{SV_ViewsReplace.class,SV_SlideSpinner.class,SV_PullDownTopbarMenu.class};
+    static public Class<? >[] class2=new Class[]{SF_SmartRun.class,SF_mLog.class,SF_CycleTask.class, SF_AttBinder.class};
+    static public Class<? >[] class3=new Class[]{};
+    static public Class<? >[] class4=new Class[]{};
 
 
      public String name = "by122006库 演示";
@@ -90,6 +91,7 @@ public class MainActivity extends BaseActivity {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 Class clazz=(Class) ((PinnedHeaderEntity<Object> )adapter.getData().get(position)).getData();
+                if(clazz==null )return;
                 startActivity(new Intent(MainActivity.this,clazz));
             }
         });

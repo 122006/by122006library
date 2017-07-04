@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.by122006.modelprojectby122006">
+          package="com.by122006.modelprojectby122006">
 
     <application
+        android:name=".MyApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:supportsRtl="true"
-        android:theme="@style/AppBaseTheme"
-        android:name=".MyApplication">
+        android:theme="@style/AppBaseTheme">
 
         <activity
             android:name=".MainActivity">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.MAIN"/>
 
-                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
         <activity
@@ -29,6 +29,26 @@
         </activity>
         <activity
             android:name=".SV_PullDownTopbarMenu"
+            android:windowSoftInputMode="stateHidden|stateAlwaysHidden">
+
+        </activity>
+        <activity
+            android:name=".SF_SmartRun"
+            android:windowSoftInputMode="stateHidden|stateAlwaysHidden">
+
+        </activity>
+        <activity
+            android:name=".SF_mLog"
+            android:windowSoftInputMode="stateHidden|stateAlwaysHidden">
+
+        </activity>
+        <activity
+            android:name=".SF_CycleTask"
+            android:windowSoftInputMode="stateHidden|stateAlwaysHidden">
+
+        </activity>
+        <activity
+            android:name=".SF_AttBinder"
             android:windowSoftInputMode="stateHidden|stateAlwaysHidden">
 
         </activity>

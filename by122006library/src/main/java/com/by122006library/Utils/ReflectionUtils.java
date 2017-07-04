@@ -6,6 +6,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 
 /**
  * Created by admin on 2017/3/1.
@@ -22,7 +23,7 @@ public class ReflectionUtils {
         }
         Constructor c1 = clazz.getDeclaredConstructor(classes);
         c1.setAccessible(true);
-        T t = (T) c1.newInstance(parameters);
+        T t =(T) clazz.cast(c1.newInstance(parameters)) ;
         return t;
     }
 
@@ -56,7 +57,7 @@ public class ReflectionUtils {
         Class clazz = obj instanceof Class? (Class) obj : obj.getClass();
         Field field = null;
         try {
-            field = clazz.getDeclaredField(attname);
+            field = clazz.getField(attname);
             field.setAccessible(true);
             field.set(obj, value);//设置对象中，私有变量的值
         } catch (IllegalAccessException e) {
@@ -68,9 +69,10 @@ public class ReflectionUtils {
         Class clazz = obj instanceof Class? (Class) obj : obj.getClass();
         Field field = null;
         try {
-            field = clazz.getDeclaredField(attname);
+            field = clazz.getField(attname);
             field.setAccessible(true);
-            return (T) field.get(obj);
+            if(Modifier.isStatic(field.getModifiers())) obj=clazz;
+            return (T) valueClazz.cast(field.get(obj));
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
@@ -80,14 +82,23 @@ public class ReflectionUtils {
     public static Field getField(Object obj, String attname) throws NoSuchFieldException {
         Class clazz = obj instanceof Class? (Class) obj : obj.getClass();
         Field field = null;
-        field = clazz.getDeclaredField(attname);
+        field = clazz.getField(attname);
         field.setAccessible(true);
         return field;
     }
 
+
     public static Field[] getFieldArray(Object obj) throws NoSuchFieldException {
         Class clazz = obj instanceof Class? (Class) obj : obj.getClass();
         Field[] fields=clazz.getFields();
+        for(Field field:fields){
+            field.setAccessible(true);
+        }
+        return fields;
+    }
+    public static Field[] getDeclaredFields(Object obj) throws NoSuchFieldException {
+        Class clazz = obj instanceof Class? (Class) obj : obj.getClass();
+        Field[] fields=clazz.getDeclaredFields();
         for(Field field:fields){
             field.setAccessible(true);
         }
@@ -101,7 +112,23 @@ public class ReflectionUtils {
         }
         return methods;
     }
+    public static Method[] getDeclaredMethods(Object obj) throws NoSuchFieldException {
+        Class clazz = obj instanceof Class? (Class) obj : obj.getClass();
+        Method[] methods=clazz.getDeclaredMethods();
+        for(Method method:methods){
+            method.setAccessible(true);
+        }
+        return methods;
+    }
     public static Method getMethod(Object obj, String methodName,Class<?>... parameterTypes) throws  NoSuchMethodException {
+        Class clazz = obj instanceof Class? (Class) obj : obj.getClass();
+        Method method = null;
+        method = clazz.getMethod(methodName,parameterTypes);
+        method.setAccessible(true);
+        mLog.isNull(method);
+        return method;
+    }
+    public static Method getDeclaredMethod(Object obj, String methodName,Class<?>... parameterTypes) throws  NoSuchMethodException {
         Class clazz = obj instanceof Class? (Class) obj : obj.getClass();
         Method method = null;
         method = clazz.getDeclaredMethod(methodName,parameterTypes);
@@ -109,7 +136,6 @@ public class ReflectionUtils {
         mLog.isNull(method);
         return method;
     }
-
 
 
 }

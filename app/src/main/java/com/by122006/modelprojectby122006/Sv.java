@@ -2,6 +2,7 @@ package com.by122006.modelprojectby122006;
 
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.StaggeredGridLayoutManager;
@@ -9,22 +10,29 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.SparseIntArray;
 import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.anupcowkur.reservoir.Reservoir;
 import com.anupcowkur.reservoir.ReservoirGetCallback;
 import com.by122006.modelprojectby122006.databinding.ActivitySvBinding;
+import com.by122006library.Functions.CycleTask.CycleTask;
+import com.by122006library.Functions.SmartRun;
 import com.by122006library.Functions.mLog;
 import com.by122006library.Interface.NoProguard_All;
+import com.by122006library.Interface.UIThread;
 import com.by122006library.MyException;
 import com.by122006library.Utils.ReflectionUtils;
 import com.by122006library.Utils.ViewUtils;
+import com.by122006library.View.PullDownTopbarMenu;
 import com.by122006library.View.SlideSpinner;
+import com.by122006library.View.TopBar;
 import com.by122006library.View.mToast;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
@@ -38,6 +46,10 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
+import kotlin.Unit;
 
 /**
  * Created by admin on 2017/6/20.
@@ -45,6 +57,7 @@ import java.util.List;
 
 public abstract class SV extends FunctionActivity implements NoProguard_All {
     public final static int Mark_Color = 0xff5677fc;
+    protected static long durObserverTime = 100;
     ActivitySvBinding binding;
     ArrayList<View> views = new ArrayList<>();
     View nowV;
@@ -52,9 +65,23 @@ public abstract class SV extends FunctionActivity implements NoProguard_All {
     boolean FLAG_ACT_NO_TITLE = false;
     ArrayList<View> marks = new ArrayList<>();
     ArrayList<SMethod> methods;
+    LinearLayout layout_observer;
+    ArrayList<DataObserver> observers = new ArrayList<>();
+    private PullDownTopbarMenu pullDownTopbarMenu;
 
     public void countViews(ArrayList<View> views) {
         ViewUtils.countViews(views, getViewGroup());
+    }
+    public void showViewAtt(){
+        ViewGroup group = getViewGroup();
+        nowV = putLayoutSpace(group);
+
+        pullDownTopbarMenu = getPullDownTopbarMenu();
+        binding.setNowV(nowV);
+//        group.removeAllViews();
+        countViews(views);
+        if (nowV == null) nowV = views.get(0);
+        setNowViewData();
     }
 
     @Override
@@ -62,13 +89,7 @@ public abstract class SV extends FunctionActivity implements NoProguard_All {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sv);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
-        ViewGroup group = getViewGroup();
-        nowV = putLayoutSpace(group);
-        binding.setNowV(nowV);
-        group.removeAllViews();
-        countViews(views);
-        if (nowV == null) nowV = views.get(0);
-        setNowViewData();
+        this.showViewAtt();
         binding.recycer.setLayoutManager(new LinearLayoutManager(this));
         showSpecialMethods();
         binding.name.setLongClickable(true);
@@ -129,7 +150,7 @@ public abstract class SV extends FunctionActivity implements NoProguard_All {
             }
             data.add(new PinnedHeaderEntity<SMethod>(item, BaseHeaderAdapter.TYPE_DATA, headName));
         }
-        showMethods(methods,data);
+        showMethods(methods, data);
     }
 
     public ViewGroup getViewGroup() {
@@ -247,7 +268,7 @@ public abstract class SV extends FunctionActivity implements NoProguard_All {
                         break;
                     case BaseHeaderAdapter.TYPE_DATA:
                         Field field = ((PinnedHeaderEntity<Field>) adapter.getData().get(position)).getData();
-
+                        new FieldObserver(functionObject, field).register();
                         break;
                 }
             }
@@ -256,6 +277,7 @@ public abstract class SV extends FunctionActivity implements NoProguard_All {
                 .setHeaderClickListener(null).create());
         binding.recycer.setAdapter(adapter);
     }
+
     public void showNormalMethods(View v) {
         List<PinnedHeaderEntity<SMethod>> data = new ArrayList<>();
         ArrayList<String> heads = new ArrayList<>();
@@ -283,10 +305,10 @@ public abstract class SV extends FunctionActivity implements NoProguard_All {
             }
             data.add(new PinnedHeaderEntity<SMethod>(item, BaseHeaderAdapter.TYPE_DATA, headName));
         }
-        showMethods(methods,data);
+        showMethods(methods, data);
     }
-    public void showMethods(ArrayList<SMethod> methods,List<PinnedHeaderEntity<SMethod>> data) {
 
+    public void showMethods(ArrayList<SMethod> methods, List<PinnedHeaderEntity<SMethod>> data) {
 
         SpecialMethodsAdapter adapter = new SpecialMethodsAdapter(data);
         adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
@@ -305,7 +327,7 @@ public abstract class SV extends FunctionActivity implements NoProguard_All {
                                 try {
                                     Object re = sMethod.method.invoke(sMethod.object, sMethod
                                             .initParams);
-                                    if(sMethod.method.getReturnType()==void.class) break;
+                                    if (sMethod.method.getReturnType() == void.class) break;
                                     TextView tv = (TextView) view.findViewWithTag("result");
                                     if (tv == null) {
                                         tv = new TextView(view.getContext());
@@ -319,8 +341,9 @@ public abstract class SV extends FunctionActivity implements NoProguard_All {
                                         });
                                         ((ViewGroup) view).addView(tv);
                                     }
-                                    if(re==sMethod.object)tv.setText(" => 链式");else
-                                    tv.setText(" => " + String.valueOf(re));
+                                    if (re == sMethod.object) tv.setText(" => 链式");
+                                    else
+                                        tv.setText(" => " + String.valueOf(re));
 
                                 } catch (IllegalAccessException e) {
                                     e.printStackTrace();
@@ -368,6 +391,20 @@ public abstract class SV extends FunctionActivity implements NoProguard_All {
                 iv.setVisibility(View.GONE);
             }
         });
+    }
+
+
+    public PullDownTopbarMenu getPullDownTopbarMenu() {
+        layout_observer = new LinearLayout(getAct());
+        pullDownTopbarMenu = new PullDownTopbarMenu.Builder(getAct()).setContextLayout
+                (layout_observer).setTopView(binding.layoutViewAtt).setBackGround(0xff304ff3).setSliderView(null).build().show();
+        layout_observer.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+            @Override
+            public void onLayoutChange(View view, int i, int i1, int i2, int i3, int i4, int i5, int i6, int i7) {
+                pullDownTopbarMenu.scrollToOpen(300);
+            }
+        });
+        return pullDownTopbarMenu;
     }
 
     class SpecialMethodsAdapter extends BaseHeaderAdapter<PinnedHeaderEntity<SMethod>> {
@@ -462,32 +499,37 @@ public abstract class SV extends FunctionActivity implements NoProguard_All {
 
                     Object value = null;
                     try {
-                        value = field.get(functionObject);
-
+                        value =ReflectionUtils.getFieldValue(functionObject,field.getName(),Object.class);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
+
                     FluidLayout layout = holder.getView(R.id.fluidlayout);
+                    layout.removeAllViews();
                     TextView tv = new TextView(layout.getContext());
                     tv.setLines(1);
                     tv.setMinWidth(ViewUtils.dip2px(200));
                     tv.setText(field.getName());
+                    tv.setTypeface(Typeface.defaultFromStyle(Modifier.isStatic(field.getModifiers())?Typeface.BOLD:Typeface.NORMAL));
                     tv.setPadding(ViewUtils.dip2px(2), 0, ViewUtils.dip2px(2), 0);
                     layout.addView(tv);
                     tv = new TextView(layout.getContext());
                     tv.setLines(1);
                     tv.setText("=");
                     tv.setPadding(ViewUtils.dip2px(5), 0, ViewUtils.dip2px(5), 0);
+                    tv.setTypeface(Typeface.defaultFromStyle(Modifier.isStatic(field.getModifiers())?Typeface.BOLD:Typeface.NORMAL));
                     layout.addView(tv);
 
                     if (field.getType().getName().equals(String.class.getName())) {
                         tv = new TextView(layout.getContext());
                         tv.setText("\"");
                         tv.setPadding(ViewUtils.dip2px(2), 0, 0, 0);
+                        tv.setTypeface(Typeface.defaultFromStyle(Modifier.isStatic(field.getModifiers())?Typeface.BOLD:Typeface.NORMAL));
                         layout.addView(tv);
                         EditText et = new EditText(layout.getContext());
                         et.setText(String.format("%s", value));
                         et.setPadding(ViewUtils.dip2px(2), 0, ViewUtils.dip2px(2), 0);
+                        et.setTypeface(Typeface.defaultFromStyle(Modifier.isStatic(field.getModifiers())?Typeface.BOLD:Typeface.NORMAL));
                         et.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12);
                         et.setBackgroundColor(Color.TRANSPARENT);
 //                    et.setFocusable(false);
@@ -515,6 +557,7 @@ public abstract class SV extends FunctionActivity implements NoProguard_All {
                         layout.addView(et);
                         tv = new TextView(layout.getContext());
                         tv.setText("\"");
+                        tv.setTypeface(Typeface.defaultFromStyle(Modifier.isStatic(field.getModifiers())?Typeface.BOLD:Typeface.NORMAL));
                         tv.setPadding(0, 0, ViewUtils.dip2px(2), 0);
                         layout.addView(tv);
                     } else if (field.getType().getName().equals(boolean.class.getName()) || field.getType().getName()
@@ -525,6 +568,7 @@ public abstract class SV extends FunctionActivity implements NoProguard_All {
                         btv.setPadding(ViewUtils.dip2px(2), 0, ViewUtils.dip2px(2), 0);
                         btv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12);
                         btv.setBackgroundColor(Color.TRANSPARENT);
+                        btv.setTypeface(Typeface.defaultFromStyle(Modifier.isStatic(field.getModifiers())?Typeface.BOLD:Typeface.NORMAL));
                         btv.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
@@ -544,6 +588,7 @@ public abstract class SV extends FunctionActivity implements NoProguard_All {
                         et.setPadding(ViewUtils.dip2px(2), 0, ViewUtils.dip2px(2), 0);
                         et.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12);
                         et.setBackgroundColor(Color.TRANSPARENT);
+                        et.setTypeface(Typeface.defaultFromStyle(Modifier.isStatic(field.getModifiers())?Typeface.BOLD:Typeface.NORMAL));
                         et.addTextChangedListener(new TextWatcher() {
                             @Override
                             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -590,7 +635,9 @@ public abstract class SV extends FunctionActivity implements NoProguard_All {
                         tv = new TextView(layout.getContext());
                         tv.setText(String.format("%s", field.getType().getName()));
                         tv.setPadding(ViewUtils.dip2px(2), 0, ViewUtils.dip2px(2), 0);
+                        tv.setTypeface(Typeface.defaultFromStyle(Modifier.isStatic(field.getModifiers())?Typeface.BOLD:Typeface.NORMAL));
                         layout.addView(tv);
+
                     }
 
                     break;
@@ -604,6 +651,107 @@ public abstract class SV extends FunctionActivity implements NoProguard_All {
             addItemType(BaseHeaderAdapter.TYPE_DATA, R.layout.item_sv_smethod);
         }
 
+    }
+
+    public abstract class DataObserver {
+        TextView v;
+        CycleTask task;
+        public DataObserver register() {
+
+            v = new TextView(getAct());
+            v.setText("资源监视器\n初始化中");
+            v.setTextColor(Color.WHITE);
+            v.setTextSize(TypedValue.COMPLEX_UNIT_SP,12);
+            layout_observer.addView(v);
+            v.setMaxLines(4);
+            LinearLayout.LayoutParams params=new LinearLayout.LayoutParams(ViewUtils.dip2px(90),-1);
+            params.setMargins(ViewUtils.dip2px(2),ViewUtils.dip2px(1),ViewUtils.dip2px(2),ViewUtils.dip2px(1));
+            v.setLayoutParams(params);
+            v.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    unRegister();
+                }
+            });
+            observers.add(this);
+            task=new CycleTask(CycleTask.ImmediatelyRun, durObserverTime, CycleTask.CircleForever) {
+                @Override
+                public void doCycleAction(int haveCycleCount) throws MyException {
+                    cycleTime=durObserverTime;
+                    update(observer());
+                }
+            }.register(getAct());
+            return this;
+        }
+
+        public void unRegister() {
+            layout_observer.removeView(v);
+            observers.remove(this);
+            task.unRegister();
+        }
+
+        abstract String observer();
+
+        @UIThread
+        public void update(String str) {
+            if(SmartRun.sPrepare(this,str)) return;
+            v.setText(str);
+        }
+    }
+
+    public class FieldObserver extends DataObserver {
+        Object obj;
+        Field field;
+        public DataObserver register(){
+            for (DataObserver observer : (ArrayList<DataObserver>) observers.clone()) {
+//                mLog.array(this.obj,((FieldObserver)observer).obj);
+//                mLog.array(this.field,((FieldObserver)observer).field);
+
+                if (equals(observer)) {
+                    mToast.getInstance(getAct()).show("已存在该属性监听");
+                    return observer;
+                }
+            }
+            super.register();
+            return this;
+        }
+
+        FieldObserver(Object obj, Field field) {
+            this.obj = obj;
+            this.field = field;
+        }
+
+        @Override
+        String observer() {
+            String value="";
+            try {
+                Object re=ReflectionUtils.getFieldValue(functionObject,field.getName(),Object.class);
+                if(re!=null){
+                    if (re instanceof Map) value=re+"\nsize:"+((Map) re).size();else
+                    if (re instanceof Object[]) value=re+"\nlength:"+((Object[]) re).length;else
+                        value= String.valueOf(re);
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                value= "属性读取错误";
+            }
+            return String.format("%s\n%s",field.getName(),value);
+
+        }
+
+
+
+        @Override
+        public boolean equals(Object obj) {
+            if (obj instanceof FieldObserver) {
+
+                if (/*(((FieldObserver) obj).obj == obj||((FieldObserver) obj).obj .equals(obj) ) && */(((FieldObserver) obj).field == field||((FieldObserver) obj).field .equals(field) )) {
+                    return true;
+                }
+            }
+            return false;
+        }
     }
 
 }

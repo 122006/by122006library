@@ -99,8 +99,9 @@ public class ExpMap<S, E> {
     @Nullable
     public E get(S key){
         for(int i=0;i<control.size();i++){
+
             C c=control.get(i);
-            if(c.s.equals(key)){
+            if(c.s.equals(key)||c.s==key){
                 c.getCount++;
                 applySort();
                 return data.get(c.s);
@@ -160,7 +161,7 @@ public class ExpMap<S, E> {
                 return list;
             }
 
-        }.register(this,DelayTask.SINGLETASK_COVER);
+        }.setLog(false).register(this,DelayTask.SINGLETASK_COVER);
     }
 
 

@@ -44,18 +44,18 @@ public class SV_ViewsReplace extends SV {
         textView2.setTextColor(Color.RED);
         textView2.setTextSize(20);
         layout.addView(textView);
-        layout.post(new Runnable() {
-            @Override
-            public void run() {
-                ViewUtils.smoothReplace(textView, textView2, 200);
-            }
-        });
+//        layout.post(new Runnable() {
+//            @Override
+//            public void run() {
+//                ViewUtils.smoothReplace(textView, textView2, 200);
+//            }
+//        });
         layout.setClickable(true);
         layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mLog.i("textView2.getParent()=" + textView2.getParent());
-                mLog.i("textView1.getParent()=" + textView.getParent());
+//                mLog.i("textView2.getParent()=" + textView2.getParent());
+//                mLog.i("textView1.getParent()=" + textView.getParent());
 //                new DelayTask(100) {
 //                    @Override
 //                    public void doCycleAction(int haveCycleCount) throws MyException {

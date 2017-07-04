@@ -1,8 +1,7 @@
 package com.by122006library.Functions.CycleTask;
 
-import android.widget.LinearLayout;
-
 import com.by122006library.Functions.mLog;
+import com.by122006library.Interface.Async;
 import com.by122006library.Interface.BGThread;
 import com.by122006library.Interface.DefaultThread;
 import com.by122006library.Interface.ThreadStyle;
@@ -35,6 +34,9 @@ public abstract class CycleTask {
     //    public static ArrayList<CycleTask> removeList = new ArrayList<>();
 //    public static ArrayList<CycleTask> addList = new ArrayList<>();
     public static boolean isRunning = false;
+    private static int tick=13;
+
+
     static long durtime = 0;
     static long lasttime = 0;
     public static Thread thread = new Thread(new Runnable() {
@@ -45,29 +47,33 @@ public abstract class CycleTask {
             while (isRunning) {
                 threadWhileRun();
                 try {
-                    Thread.sleep(5);
+                    Thread.sleep(tick);
                 } catch (InterruptedException e) {
                 }
             }
         }
     });
     public Object tag;
-    public long daleyTime;
+    public long delayTime;
     public long cycleTime;
     public int cycleCount, cycleNum = 1;
     public long restTime;
     public ThreadStyle.Style runThreadStyle;
-    public long mLastTime;
-    public long mCurDurtime;
+    public boolean async = false;
+    public long mLastTime;//上次运行时间
+    public long mCurDurtime;//真实运行时间
+
+    private boolean log = true;
+    volatile private TaskState state = TaskState.Create;
 
     /**
-     * @param daleyTime 首次延迟时间
+     * @param delayTime 首次延迟时间
      * @param cycleTime 每次循环时间
      * @param cycleNum  循环次数 <=0时为无限循环
      */
-    public CycleTask(long daleyTime, long cycleTime, int cycleNum) {
-        this.daleyTime = daleyTime;
-        if (daleyTime == ImmediatelyRun) this.daleyTime = -cycleTime;
+    public CycleTask(long delayTime, long cycleTime, int cycleNum) {
+        this.delayTime = delayTime;
+        if (delayTime == ImmediatelyRun) this.delayTime = -cycleTime;
         this.cycleTime = cycleTime;
         this.cycleNum = cycleNum;
 
@@ -83,6 +89,7 @@ public abstract class CycleTask {
 
     public static void threadWhileRun() {
         durtime = System.currentTimeMillis() - lasttime;
+//        durtime+=2;
         synchronized (list) {
             try {
                 for (CycleTask c : (ArrayList<CycleTask>) list.clone()) {
@@ -103,6 +110,10 @@ public abstract class CycleTask {
     public static void unRegister(Object tag) {
         if (tag == null) return;
         for (CycleTask item : (ArrayList<CycleTask>) list.clone()) {
+            if(item==null){
+                if(item.log)mLog.isNull(item);
+                return;
+            }
             if (item.tag == null) continue;
             if (item.tag.equals(tag)) {
                 list.remove(item);
@@ -111,8 +122,8 @@ public abstract class CycleTask {
         }
     }
 
-    public static ArrayList<CycleTask> indexOfTag(Object tag){
-        ArrayList<CycleTask> list=new ArrayList<CycleTask>();
+    public static ArrayList<CycleTask> indexOfTag(Object tag) {
+        ArrayList<CycleTask> list = new ArrayList<CycleTask>();
         for (CycleTask item : (ArrayList<CycleTask>) list.clone()) {
             if (item.tag == null) continue;
             if (item.tag.equals(tag)) {
@@ -123,52 +134,71 @@ public abstract class CycleTask {
         return list;
     }
 
-
-
     public static void destroyTaskThread() {
         isRunning = false;
+    }
+
+    public CycleTask setLog(Boolean boo) {
+        log = boo;
+        return this;
     }
 
     public void run(long durtime) throws MyException {
 //        mLog.i(durtime);
         if (cycleNum == 0) return;
-        if (daleyTime > 0) daleyTime -= durtime;
-        if (daleyTime > 0) return;
-        final int fCycleCount=cycleCount;
+        if (delayTime > 0) {
+            if(getState()!=TaskState.Running)setState(getState()==TaskState.Register||getState()==TaskState.Delay?TaskState.Delay:TaskState.Wait);
+            delayTime -= durtime;
+        }
+        if (delayTime > 0) return;
         restTime -= durtime;
+//        mLog.array(Thread.currentThread().toString(),getState());
 
         if (restTime <= 0) {
 
+            final int fCycleCount = cycleCount;
+            setState(TaskState.Running);
             cycleCount++;
             mCurDurtime = System.currentTimeMillis() - mLastTime;
 
-            restTime = cycleTime;
+            restTime = cycleCount*cycleTime+startTime+ delayTime -System.currentTimeMillis();
             try {
                 if (runThreadStyle.equals(ThreadStyle.Style.BG)) {
-                    if (ThreadUtils.isUIThread()) {
+                    if (ThreadUtils.isUIThread() && !async) {
                         new Thread(new Runnable() {
                             @Override
                             public void run() {
                                 try {
+                                    setState(TaskState.Running);
+//                                    mLog.array(Thread.currentThread().toString(),getState());
                                     doCycleAction(fCycleCount);
+                                    setState(TaskState.Wait);
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
                             }
                         }).start();
-                    } else
+                    } else {
                         try {
+                            setState(TaskState.Running);
+//                            mLog.array(Thread.currentThread().toString(),getState());
                             doCycleAction(fCycleCount);
+                            setState(TaskState.Wait);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
+
+
+                    }
                 } else if (runThreadStyle.equals(ThreadStyle.Style.UI)) {
 
                     ThreadUtils.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             try {
+                                setState(TaskState.Running);
                                 doCycleAction(fCycleCount);
+                                setState(TaskState.Wait);
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
@@ -195,6 +225,9 @@ public abstract class CycleTask {
                 e.printStackTrace();
             }
             list.remove(this);
+            setState(TaskState.Unregister);
+        }else{
+            if(log)mLog.e("不能注销循环任务 注销位置："+mLog.getCallerLocation());
         }
 //        if (list.size() == 0) destroyTaskThread();
     }
@@ -205,22 +238,30 @@ public abstract class CycleTask {
      * @param tag 定时器的依附对象
      */
     public CycleTask register(Object tag) {
-        register(tag, 0);
+        register(tag, -1);
         return this;
     }
 
+    public TaskState getState() {
+        return state;
+    }
 
+    public void setState(TaskState state) {
+        this.state = state;
+    }
+    long startTime=0;
     /**
      * 注册该定时器
      *
      * @param tag  定时器的依附对象
-     * @param flag 0 :SINGLETASK 如果tag不唯一则不生效<p>1 :SINGLETASK_COVER 一定生效且覆盖同名tag事件<p>-1 :非单例模式
+     * @param flag 1 :SINGLETASK 如果tag不唯一则不生效<p>2 :SINGLETASK_COVER 一定生效且覆盖同名tag事件<p>-1 :非单例模式
      * @return
      */
     public CycleTask register(Object tag, int flag) {
         if (flag == SINGLETASK || flag == SINGLETASK_COVER) {
             boolean ifhave = false;
             for (CycleTask cycleTask : (ArrayList<CycleTask>) CycleTask.list.clone()) {
+                if (cycleTask == null) continue;
                 if (cycleTask.equals(tag)) ifhave = true;
             }
 
@@ -245,10 +286,13 @@ public abstract class CycleTask {
             } catch (InterruptedException e) {
             }
         }
+        startTime=System.currentTimeMillis();
         mLastTime = System.currentTimeMillis();
-        mLog.i("注册CycleTask 注册代码位置：" + mLog.getCallerLocation(1));
-        mLog.i("重复次数：%d 次   ;循环周期：%dms   ;首次延迟时间：%s", (cycleNum == ImmediatelyRun ? "n+" : cycleNum) , cycleTime,
-                (daleyTime <= 0 ? "立即" : daleyTime + "ms"));
+        if (log) {
+            mLog.i("注册CycleTask 注册代码位置：" + mLog.getCallerLocation(1));
+            mLog.i("重复次数：%s 次   ;循环周期：%dms   ;首次延迟时间：%s", (cycleNum == ImmediatelyRun ? "n+" : cycleNum), cycleTime,
+                    (delayTime <= 0 ? "立即" : delayTime + "ms"));
+        }
         this.tag = tag;
 
         Class clazz = this.getClass();
@@ -268,12 +312,19 @@ public abstract class CycleTask {
                 if (a instanceof DefaultThread) {
                     runThreadStyle = ThreadStyle.Style.Default;
                 }
+                if (a instanceof Async) {
+                    async = true;
+                }
+
             }
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
         }
 
-        if (!list.contains(this)) list.add(this);
+        if (!list.contains(this)) {
+            list.add(this);
+            setState(TaskState.Register);
+        }
         return this;
     }
 
@@ -282,6 +333,7 @@ public abstract class CycleTask {
      */
     public void again() {
         restTime = 0;
+        startTime-=cycleTime;
         if (cycleNum > 0) cycleNum++;
     }
 
@@ -291,5 +343,9 @@ public abstract class CycleTask {
 
     }
 
-    ;
+    public enum TaskState {
+        Create, Register, Delay, Wait, Running, Unregister
+    }
+
+
 }

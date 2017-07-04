@@ -232,6 +232,11 @@ public class mLog {
             point(LOG_PATH, tag, content);
         }
     }
+    public static void mark() {
+        DebugUtils.runningDurtime();
+    }
+
+
 
     public static void v(String content) {
         if (!DebugUtils.isDebugBuild()) {
@@ -376,26 +381,23 @@ public class mLog {
         }
     }
 
-    public static void isNull(Object... objs) {
-        if (objs != null) return;
-        if (objs.length == 0) return;
-        for (Object obj : objs) {
-            String content = "This Object is Null!";
-            if (!DebugUtils.isDebugBuild()) {
-                return;
-            }
+    public static void isNull(Object obj) {
+        if (obj != null) return;
+        String content = "This Object is Null!";
+        if (!DebugUtils.isDebugBuild()) {
+            return;
+        }
 
-            StackTraceElement caller = getCallerStackTraceElement();
-            String tag = generateTag(caller);
+        StackTraceElement caller = getCallerStackTraceElement();
+        String tag = generateTag(caller);
 
-            if (customLogger != null) {
-                customLogger.e(tag, content);
-            } else {
-                Log.e(tag, content);
-            }
-            if (isSaveLog) {
-                point(LOG_PATH, tag, content);
-            }
+        if (customLogger != null) {
+            customLogger.e(tag, content);
+        } else {
+            Log.e(tag, content);
+        }
+        if (isSaveLog) {
+            point(LOG_PATH, tag, content);
         }
     }
 

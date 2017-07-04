@@ -38,7 +38,6 @@ public class TimeAtt extends Att {
                     }
                 if ((reverse && nowAttNum == min) || (!reverse && nowAttNum == max)) {
                     remove();
-                    cycleTask.unRegister();
                 }
                 this.beforeAttNum = nowAttNum;
 
@@ -109,6 +108,7 @@ public class TimeAtt extends Att {
                 }
             }
         }.register(this, -1);
+        cycleTask.setLog(logProgress);
     }
 
     public void addTimeProgressAction(TimeProgressAction timeProgressAction) {

@@ -591,6 +591,7 @@ public abstract class BaseActivity extends Activity implements NoProguard_All {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        mLog.i(this.getClass().getName()+" onDestroy()");
         list_act.remove(this);
         needTouchView.clear();
         needTouchView = null;

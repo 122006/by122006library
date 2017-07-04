@@ -1,10 +1,14 @@
 package com.by122006library.View;
 
 import android.app.Activity;
+import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutCompat;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -20,6 +24,10 @@ import android.widget.TextView;
 import com.by122006library.Functions.mLog;
 import com.by122006library.R;
 import com.by122006library.Utils.MathUtils;
+import com.by122006library.Utils.ReflectionUtils;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 import me.grantland.widget.AutofitTextView;
 
@@ -30,7 +38,7 @@ import me.grantland.widget.AutofitTextView;
 public class SlideSpinner extends PopupWindow {
     Activity context;
     FrameLayout layout;
-    boolean useCardView = true;
+    boolean useCardView = false;
     int itemHeight = 0;
     OnItemSelectedListener selectedListener;
     long everyTime;
@@ -40,6 +48,7 @@ public class SlideSpinner extends PopupWindow {
     private int startColor = -2, endColor = -2;
     private int fistItemBgColor = -2;
     private ScrollView sv;
+    private View rootV;
 
     public SlideSpinner(Activity context) {
         super(context);
@@ -47,11 +56,12 @@ public class SlideSpinner extends PopupWindow {
         setOutsideTouchable(true);
         setBackgroundDrawable(new BitmapDrawable());
         setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
-
+        setClippingEnabled(true);
     }
 
     public static SlideSpinner ClickBy(final View v) {
         final SlideSpinner slideSpinner = new SlideSpinner((Activity) v.getContext());
+        slideSpinner.rootV=v;
         slideSpinner.setOnDismissListener(new OnDismissListener() {
             @Override
             public void onDismiss() {
@@ -77,6 +87,51 @@ public class SlideSpinner extends PopupWindow {
 
         return slideSpinner;
     }
+    public static SlideSpinner LongClickBy(final View v) {
+        final SlideSpinner slideSpinner = new SlideSpinner((Activity) v.getContext());
+        slideSpinner.rootV=v;
+        slideSpinner.setOnDismissListener(new OnDismissListener() {
+            @Override
+            public void onDismiss() {
+                v.setTag(R.id.Tag_SlideSpinner, null);
+            }
+        });
+        v.setLongClickable(true);
+        v.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                if (view.getTag(R.id.Tag_SlideSpinner) != null && view.getTag(R.id.Tag_SlideSpinner) instanceof
+                        SlideSpinner) {
+                    ((SlideSpinner) view.getTag(R.id.Tag_SlideSpinner)).dismiss();
+                    return true;
+                }
+                if (slideSpinner.getItemHeight() == 0) slideSpinner.setItemHeight(slideSpinner.defaultTv.getHeight());
+                if (slideSpinner.getWidth() == 0) slideSpinner.setWidth(slideSpinner.defaultTv.getWidth());
+
+                slideSpinner.showDropDown(slideSpinner.defaultTv);
+                view.setTag(R.id.Tag_SlideSpinner, slideSpinner);
+
+                return true;
+            }
+        });
+        return slideSpinner;
+    }
+
+    protected boolean clickTurn=false;
+
+    /**
+     * 开启点击切换选择功能，会屏蔽单击下拉的功能，请绑定longclick事件或者使用LongClickBy(View)进行创建
+     *
+     * @return
+     */
+    public SlideSpinner clickTurn(){
+        clickTurn=true;
+        //构建一下单击事件
+        build();
+        return this;
+    }
+
+
     @Override
     public void setWidth(int width){
         super.setWidth(width);
@@ -130,7 +185,7 @@ public class SlideSpinner extends PopupWindow {
     }
 
     private void build() {
-        sv = new ScrollView(context) ;
+        sv = new ScrollView(context);
         sv.setLayoutParams(new ViewGroup.LayoutParams(-1, -1));
         sv.setFillViewport(true);
         sv.setVerticalScrollBarEnabled(false);
@@ -138,6 +193,7 @@ public class SlideSpinner extends PopupWindow {
         layout.setLayoutParams(new ViewGroup.LayoutParams(-1, LinearLayout.LayoutParams.FILL_PARENT));
         if (useCardView) {
             CardView cv = new CardView(context);
+            cv.setLayoutParams(new ViewGroup.LayoutParams(-1,-2));
             cv.setRadius(5);
             cv.addView(layout);
             setContentView(cv);
@@ -145,6 +201,26 @@ public class SlideSpinner extends PopupWindow {
             sv.addView(layout);
             setContentView(sv);
         }
+        if (clickTurn) {
+            rootV.setClickable(true);
+            rootV.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String nowTv=defaultTv.getText().toString();
+                    int index=-1;
+                    for(int i=0;i<data.length;i++){
+                        if (data[i].equals(nowTv)){
+                            index=i;
+                            break;
+                        }
+                    }
+                    index++;
+                    if (index==data.length) index=0;
+                    select(index);
+                }
+            });
+        }
+
     }
 
     public long getEveryTime() {
@@ -199,9 +275,20 @@ public class SlideSpinner extends PopupWindow {
             public void run() {
                 if(!v.isShown()) return;
                 build();
-                setHeight(itemHeight*maxShowCount);
-                layout.setMinimumHeight(itemHeight*data.length);
 
+                int xy[] = new int[2];
+                v.getLocationOnScreen(xy);
+                int cMax=0;
+                int cH=((Activity)v.getContext()).getWindowManager().getDefaultDisplay().getHeight()-xy[1]-v.getHeight();
+                cMax=cH/itemHeight;
+                setHeight(itemHeight*Math.min(cMax,maxShowCount));
+                layout.setMinimumHeight(itemHeight*data.length);
+                layout.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dismiss();
+                    }
+                });
                 final View[] items = new View[data.length];
                 for (int i = 0; i < data.length; i++) {
                     final AutofitTextView tv = new AutofitTextView(context);
@@ -240,8 +327,9 @@ public class SlideSpinner extends PopupWindow {
                     layout.addView(tv, 0);
                     items[i] = tv;
                 }
+                showAtLocation(((Activity)v.getContext()).getWindow().getDecorView(), Gravity.LEFT|Gravity.TOP,xy[0],xy[1]+v.getHeight());
 
-                showAsDropDown(v);
+//                showAsDropDown(v);
 
                 AnimationSet set = new AnimationSet(true);
                 for (int i = 0; i < data.length; i++) {

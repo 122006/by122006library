@@ -1,6 +1,7 @@
 package com.by122006.modelprojectby122006;
 
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -141,6 +142,7 @@ public class SMethod {
         String name = method.getName();
         tv = new TextView(layout.getContext());
         tv.setText(String.format("%s", name));
+        tv.setTypeface(Typeface.defaultFromStyle(Modifier.isStatic(method.getModifiers())?Typeface.BOLD:Typeface.NORMAL));
         tv.setPadding(ViewUtils.dip2px(2), 0, ViewUtils.dip2px(2), 0);
         layout.addView(tv);
 
