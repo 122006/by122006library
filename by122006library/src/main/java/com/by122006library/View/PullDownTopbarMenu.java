@@ -19,7 +19,6 @@ import android.widget.TextView;
 import com.by122006library.R;
 import com.by122006library.Utils.MathUtils;
 import com.by122006library.Utils.ViewUtils;
-import com.google.common.util.concurrent.ExecutionError;
 
 /**
  * Created by admin on 2017/6/15.

@@ -1,1 +1,1 @@
-include ':app', ':by122006library', ':abstractprocessor'
+include ':app', ':by122006library'
