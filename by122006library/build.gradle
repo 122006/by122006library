@@ -59,7 +59,7 @@ dependencies {
     compile 'com.anupcowkur:reservoir:3.1.0'
 
 
-    compile 'com.github.122006:SubclassAttributeProcessor:v1.8.0'
+//    compile 'com.github.122006:SubclassAttributeProcessor:v1.8.0'
     annotationProcessor  'com.github.122006:SubclassAttributeProcessor:v1.8.0'
 
 }
