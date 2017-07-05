@@ -78,6 +78,7 @@ public class SubclassAttributeProcessor extends javax.annotation.processing.Abst
      */
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
+
         note("process");
         ArrayList<ClassName> all = new ArrayList<>();
         //处理被注解的元素
@@ -410,11 +411,12 @@ public class SubclassAttributeProcessor extends javax.annotation.processing.Abst
     }
 
     private void error(Element e, String msg, Object... args) {
-        mMessager.printMessage(Diagnostic.Kind.ERROR, getClass().getName()+String.format(msg, args), e);
+//        mMessager.printMessage(Diagnostic.Kind.ERROR, getClass().getName()+"   "+String.format(msg, args), e);
+        mMessager.printMessage(Diagnostic.Kind.NOTE, getClass().getName()+"   "+String.format(msg, args));
     }
 
     private void note(String msg, Object... args) {
-        mMessager.printMessage(Diagnostic.Kind.NOTE,getClass().getName()+ String.format(msg, args));
+        mMessager.printMessage(Diagnostic.Kind.NOTE,getClass().getName()+"   "+ String.format(msg, args));
     }
 }
 

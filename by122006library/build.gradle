@@ -1,12 +1,9 @@
 apply plugin: 'com.android.library'
 apply plugin: 'com.github.dcendents.android-maven'
 
-apply plugin: 'com.neenbedankt.android-apt'
 
 group='com.github.122006'
 
-sourceCompatibility = 1.7
-targetCompatibility = 1.7
 
 android {
     compileSdkVersion 24
@@ -19,7 +16,9 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-
+        jackOptions {
+            enabled false
+        }
     }
     buildTypes {
         release {
@@ -29,6 +28,11 @@ android {
     }
     dataBinding {
         enabled = true
+    }
+    // 指定编译版本
+    compileOptions{
+        targetCompatibility = '1.7'
+        sourceCompatibility = '1.7'
     }
 }
 
@@ -52,6 +56,6 @@ dependencies {
     compile 'me.grantland:autofittextview:0.2.+'
     compile 'com.anupcowkur:reservoir:3.1.0'
 
-//    apt project(':abstractprocessor')
+    annotationProcessor  project(':abstractprocessor')
 
 }

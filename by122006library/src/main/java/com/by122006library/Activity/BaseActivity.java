@@ -508,9 +508,10 @@ public abstract class BaseActivity extends Activity implements NoProguard_All {
 
     @Override
     public void setContentView(@LayoutRes int layoutres) {
-        mLog.i(ifHaveBinding() + "");
         if (ifHaveBinding()) {
-            ViewDataBinding bind = DataBindingUtil.inflate(getLayoutInflater(), layoutres, null, true);
+            mLog.i("DataBinding");
+            ViewDataBinding bind = DataBindingUtil.inflate(getLayoutInflater(), layoutres, null, false);
+            if(bind==null) mLog.e("DataBinding加载失败！");
             try {
                 getBindingField().set(this, bind);
             } catch (NoSuchFieldException e) {
