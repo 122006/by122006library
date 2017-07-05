@@ -411,8 +411,8 @@ public class SubclassAttributeProcessor extends javax.annotation.processing.Abst
     }
 
     private void error(Element e, String msg, Object... args) {
-//        mMessager.printMessage(Diagnostic.Kind.ERROR, getClass().getName()+"   "+String.format(msg, args), e);
-        mMessager.printMessage(Diagnostic.Kind.NOTE, getClass().getName()+"   "+String.format(msg, args));
+        mMessager.printMessage(Diagnostic.Kind.ERROR, getClass().getName()+"   "+String.format(msg, args), e);
+//        mMessager.printMessage(Diagnostic.Kind.NOTE, getClass().getName()+"   "+String.format(msg, args));
     }
 
     private void note(String msg, Object... args) {
