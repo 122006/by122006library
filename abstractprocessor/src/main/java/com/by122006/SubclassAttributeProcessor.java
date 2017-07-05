@@ -366,7 +366,7 @@ public class SubclassAttributeProcessor extends javax.annotation.processing.Abst
      */
     @Override
     public SourceVersion getSupportedSourceVersion() {
-        return SourceVersion.latestSupported();
+        return SourceVersion.RELEASE_7;
     }
 
     private boolean isValid(Class<? extends Annotation> annotationClass, String targetThing, Element element) {
