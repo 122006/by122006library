@@ -57,7 +57,7 @@ import java.util.Objects;
 public abstract class SV extends FunctionActivity implements NoProguard_All {
     public final static int Mark_Color = 0xff5677fc;
     protected static long durObserverTime = 100;
-    ActivitySvBinding binding;
+    public ActivitySvBinding binding;
     ArrayList<View> views = new ArrayList<>();
     View nowV;
     boolean FLAG_ACT_FULLSCREEN = false;

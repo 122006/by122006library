@@ -329,10 +329,10 @@ public abstract class SmartRun {
                         actionThreadStyle = ((ThreadStyle) a).style();
                     }
                     String annotationName = a.annotationType().getSimpleName();
-                    if (a instanceof UIThread || annotationName.toLowerCase().equals("UIThread".toLowerCase())) {
+                    if (a instanceof UIThread || annotationName.toLowerCase().equals("com.by122006library.Interface.UIThread".toLowerCase())) {
                         actionThreadStyle = ThreadStyle.Style.UI;
                     }
-                    if (a instanceof BGThread || annotationName.toLowerCase().equals("BGThread".toLowerCase())) {
+                    if (a instanceof BGThread || annotationName.toLowerCase().equals("com.by122006library.Interface.BGThread".toLowerCase())) {
                         actionThreadStyle = ThreadStyle.Style.BG;
                     }
                     if (a instanceof DefaultThread || annotationName.toLowerCase().equals("DefaultThread".toLowerCase

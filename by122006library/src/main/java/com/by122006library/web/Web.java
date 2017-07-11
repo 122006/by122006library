@@ -80,7 +80,7 @@ public class Web {
         if (requster.getHttpStyle() == RequestBuilder.GET) str_url += "?" + requster.getData();
 
         if (requster.getHttpStyle() == RequestBuilder.POST && RequestBuilder.isUrlToken()) {
-            str_url += "?token=" + RequestBuilder.getToken();
+            str_url += "?"+RequestBuilder.getTokenKeyName()+"=" + RequestBuilder.getToken();
         }
 
         mLog.i("连接至网址：url=" + str_url);
@@ -154,7 +154,7 @@ public class Web {
             }
             mLog.e("网络出错：状态码=" + httpConn.getResponseCode());
 
-            if (RunLogicUtils.getHereRunTimes(10*1000) <= requster.getReStartMaxTimes()) {
+            if (RunLogicUtils.getHereRunTimes((requster.getReStartMaxTimes()+2)*requster.timeout) <= requster.getReStartMaxTimes()) {
                 return doSynchroHttp(requster, callback, vs);
             }
             callback.analyseBack(httpConn.getResponseCode() == 404 ? RESULTSTYLE.Fail_NotFound : RESULTSTYLE
@@ -169,7 +169,7 @@ public class Web {
 
         } catch (final Exception e) {
             mLog.e("网络出错：" + String.valueOf(e));
-            if (RunLogicUtils.getHereRunTimes(10*1000) <=  requster.getReStartMaxTimes()) {
+            if (RunLogicUtils.getHereRunTimes((requster.getReStartMaxTimes()+2)*requster.timeout) <=  requster.getReStartMaxTimes()) {
                 return doSynchroHttp(requster, callback, vs);
             }
             if (callback != null) try {

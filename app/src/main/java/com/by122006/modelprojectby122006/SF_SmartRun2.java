@@ -11,7 +11,7 @@ import java.util.ArrayList;
  * Created by admin on 2017/6/28.
  */
 
-public class SF_SmartRun extends SF {
+public class SF_SmartRun2 extends SF {
     boolean FLAG_ACT_FULLSCREEN = false;
     boolean FLAG_ACT_NO_TITLE = false;
 
@@ -84,22 +84,22 @@ public class SF_SmartRun extends SF {
 
     @Override
     public String getFunctionEnName() {
-        return "SmartRun";
+        return "SmartRun2";
     }
 
     @Override
     public String getFunctionChName() {
-        return "智能线程";
+        return "智能线程2";
     }
 
     @Override
     public String[] getFuncitonTags() {
-        return new String[]{"核心", "原创", "常用","框架", "智能", "黑科技", "代码修复", "注解", "堆栈回调", "一行代码"};
+        return new String[]{"开发中", "延伸", "Hook","weishu", "APT", "注解", "动态", "极简代码"};
     }
 
     @Override
     public String getFuncitonDescribe() {
-        return "库核心内容，帮助使用者快捷切换方法运行线程。\n低学习使用时间成本，易用性远高于同类三方库\n同时具有一定代码自维护能力减少debug次数";
+        return "类似于1版。\n缺点：只能在非匿名类方法使用，和1版部分冲突，不能使用AS热更新和分包技术\n但是技术含量是真的高。。。";
     }
 
     @Override

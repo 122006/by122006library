@@ -22,5 +22,7 @@ public class MyApplication extends Application {
             e.printStackTrace();
         }
         TopBar.setDefaultTopBarHeightdp(-2);
+//        com.by122006.modelprojectby122006.SmartRun2Mapping.doMapping();
+//        com.by122006library.Activity.SmartRun2Mapping.doMapping();
     }
 }

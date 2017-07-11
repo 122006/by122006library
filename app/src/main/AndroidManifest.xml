@@ -38,6 +38,11 @@
 
         </activity>
         <activity
+            android:name=".SF_SmartRun2"
+            android:windowSoftInputMode="stateHidden|stateAlwaysHidden">
+
+        </activity>
+        <activity
             android:name=".SF_mLog"
             android:windowSoftInputMode="stateHidden|stateAlwaysHidden">
 

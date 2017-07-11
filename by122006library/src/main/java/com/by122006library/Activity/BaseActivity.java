@@ -777,13 +777,14 @@ public abstract class BaseActivity extends Activity implements NoProguard_All {
 
     private Field getBindingField() throws NoSuchFieldException {
         if (bindingField != null) return bindingField;
-        for (Field field : ReflectionUtils.getFieldArray(this)) {
+        for (Field field : ReflectionUtils.getAllFields(this)) {
             if (ViewDataBinding.class.isAssignableFrom(field.getType())) {
                 bindingField = field;
                 return field;
             }
 
         }
+        mLog.i("非DataBinding界面");
         return null;
     }
 

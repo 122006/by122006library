@@ -104,6 +104,15 @@ public class ReflectionUtils {
         }
         return fields;
     }
+    public static Field[] getAllFields(Object obj) throws NoSuchFieldException {
+        Field[] fields1=getDeclaredFields(obj);
+        Field[] fields2=getFieldArray(obj);
+        Field[] all=new Field[fields1.length+fields2.length];
+        for(int i=0;i<all.length;i++){
+            all[i]=i<fields1.length?fields1[i]:fields2[i-fields1.length];
+        }
+        return all;
+    }
     public static Method[] getMethodArray(Object obj) throws NoSuchFieldException {
         Class clazz = obj instanceof Class? (Class) obj : obj.getClass();
         Method[] methods=clazz.getMethods();
@@ -119,6 +128,15 @@ public class ReflectionUtils {
             method.setAccessible(true);
         }
         return methods;
+    }
+    public static Method[] getAllMethods(Object obj) throws NoSuchFieldException {
+        Method[] methods1=getDeclaredMethods(obj);
+        Method[] methods2=getMethodArray(obj);
+        Method[] all=new Method[methods1.length+methods2.length];
+        for(int i=0;i<all.length;i++){
+            all[i]=i<methods1.length?methods1[i]:methods2[i-methods1.length];
+        }
+        return all;
     }
     public static Method getMethod(Object obj, String methodName,Class<?>... parameterTypes) throws  NoSuchMethodException {
         Class clazz = obj instanceof Class? (Class) obj : obj.getClass();

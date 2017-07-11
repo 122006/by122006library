@@ -79,6 +79,16 @@ public class RequestBuilder {
         return token;
     }
 
+    public static String getTokenKeyName() {
+        return tokenKeyName;
+    }
+
+    public  static void setTokenKeyName(String key) {
+        tokenKeyName = key;
+    }
+
+    public static String tokenKeyName="token";
+
     public static void setToken(String token) {
         RequestBuilder.token = token;
     }

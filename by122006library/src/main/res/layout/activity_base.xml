@@ -6,10 +6,8 @@
 
     <FrameLayout
         android:id="@+id/topbar"
-        android:fitsSystemWindows="true"
-        android:clipToPadding="true"
+
         android:layout_width="match_parent"
-        android:paddingTop="23dp"
         android:visibility="gone"
         android:layout_height="50dp">
 

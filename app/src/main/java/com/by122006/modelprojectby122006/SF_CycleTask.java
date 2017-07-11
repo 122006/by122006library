@@ -56,7 +56,7 @@ public class SF_CycleTask extends SF {
                 println("\n===========循环任务使用范例============");
                 println("已创建延迟500ms、循环2000s、循环次数无限次的循环事件");
                 println(" new CycleTask(500,2000,CycleTask.CircleForever) {", Color.RED);
-                println("  @UIThread");
+                println("  @com.by122006library.Interface.UIThread");
                 println("      public void doCycleAction(int haveCycleCount) throws MyException {");
                 println("      ...//任务主体内容");
                 println("      }");
@@ -174,7 +174,7 @@ public class SF_CycleTask extends SF {
                 println("\n===========延迟任务============");
                 println("添加了一个3s的延迟任务 具体代码如下",Color.BLUE);
                 println(" new DelayTask(3000){");
-                println("     @UIThread");
+                println("     @com.by122006library.Interface.UIThread");
                 println("     public void doCycleAction(int haveCycleCount) throws MyException {");
                 println("         //输出\"延迟任务生效，UI线程输出文字\"");
                 println("     }");
