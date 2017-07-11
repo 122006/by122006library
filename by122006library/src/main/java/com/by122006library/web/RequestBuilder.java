@@ -167,8 +167,8 @@ public class RequestBuilder {
 
     public String getData() {
         String data = "";
-        if (token != null&&!request.keySet().contains("token")) data +=
-                "token" + "=" + token;
+        if (token != null&&!request.keySet().contains(getTokenKeyName())) data +=
+                getTokenKeyName() + "=" + token;
         for (String key : request.keySet()) {
             String value = request.get(key);
             if (data.length() != 0) {
@@ -181,8 +181,8 @@ public class RequestBuilder {
 
     public JSONObject getJSONData() {
         JSONObject json = new JSONObject();
-        if (token != null&&!request.keySet().contains("token")) try {
-            json.put("token", token);
+        if (token != null&&!request.keySet().contains(getTokenKeyName())) try {
+            json.put(getTokenKeyName(), token);
         } catch (JSONException e) {
             e.printStackTrace();
         }
