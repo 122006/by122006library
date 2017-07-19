@@ -8,6 +8,8 @@ import com.by122006library.View.TopBar;
 
 import java.io.IOException;
 
+import static com.by122006library.Functions.mLog.i_ForReplace;
+
 /**
  * Created by admin on 2017/6/15.
  */
@@ -29,6 +31,7 @@ public class MyApplication extends Application {
     boolean b_mLog=false;
 
     public void use_mLog(boolean b_mLog){
+        if (!b_mLog)i_ForReplace("Log","原生Log.i即将被替换");
         this.b_mLog=b_mLog;
     }
 
