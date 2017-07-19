@@ -3,7 +3,7 @@ package com.by122006.modelprojectby122006;
 import android.app.Application;
 
 import com.anupcowkur.reservoir.Reservoir;
-import com.by122006library.Activity.BaseActivity;
+import com.by122006library.Functions.mLog;
 import com.by122006library.View.TopBar;
 
 import java.io.IOException;
@@ -22,7 +22,15 @@ public class MyApplication extends Application {
             e.printStackTrace();
         }
         TopBar.setDefaultTopBarHeightdp(-2);
+        if(b_mLog)mLog.autoReplaceLog();
 //        com.by122006.modelprojectby122006.SmartRun2Mapping.doMapping();
 //        com.by122006library.Activity.SmartRun2Mapping.doMapping();
     }
+    boolean b_mLog=false;
+
+    public void use_mLog(boolean b_mLog){
+        this.b_mLog=b_mLog;
+    }
+
+
 }

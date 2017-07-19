@@ -1,23 +1,26 @@
 package com.by122006library.Functions;
 
 import android.os.Environment;
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Log;
 
 import com.by122006library.Utils.DebugUtils;
+import com.by122006library.Utils.ReflectionUtils;
+import com.me.weishu.epic.Hook;
 
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.lang.reflect.Method;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Formatter;
 import java.util.Locale;
-import java.util.Objects;
 
 /**
  * Log工具，类似android.util.Log。 tag自动产生，格式: customTagPrefix:className.methodName(Line:lineNumber),
@@ -61,8 +64,7 @@ public class mLog {
             return;
         }
 
-        StackTraceElement caller = getCallerStackTraceElement();
-        String tag = generateTag(caller);
+        String tag = getTag();
 
         if (customLogger != null) {
             customLogger.d(tag, content);
@@ -76,8 +78,7 @@ public class mLog {
             return;
         }
 
-        StackTraceElement caller = getCallerStackTraceElement();
-        String tag = generateTag(caller);
+        String tag = getTag();
 
         if (customLogger != null) {
             customLogger.d(tag, content, e);
@@ -91,8 +92,7 @@ public class mLog {
             return;
         }
 
-        StackTraceElement caller = getCallerStackTraceElement();
-        String tag = generateTag(caller);
+        String tag = getTag();
 
         if (customLogger != null) {
             customLogger.e(tag, content);
@@ -124,8 +124,7 @@ public class mLog {
             return;
         }
 
-        StackTraceElement caller = getCallerStackTraceElement();
-        String tag = generateTag(caller);
+        String tag = getTag();
 
         if (customLogger != null) {
             customLogger.e(tag, "error", e);
@@ -142,8 +141,7 @@ public class mLog {
             return;
         }
 
-        StackTraceElement caller = getCallerStackTraceElement();
-        String tag = generateTag(caller);
+        String tag = getTag();
 
         if (customLogger != null) {
             customLogger.e(tag, content, e);
@@ -159,49 +157,65 @@ public class mLog {
         if (!DebugUtils.isDebugBuild()) {
             return;
         }
-        if(contentObj instanceof ArrayList) {array((ArrayList) contentObj);return ;}
-        if(contentObj instanceof Object[]) {array((Object[]) contentObj);return ;}
+        if (contentObj instanceof ArrayList) {
+            array((ArrayList) contentObj);
+            return;
+        }
+        if (contentObj instanceof Object[]) {
+            array((Object[]) contentObj);
+            return;
+        }
         String content = contentObj.toString();
         content = String.format(content, data);
-        StackTraceElement caller = getCallerStackTraceElement();
-        String tag = generateTag(caller);
-
+        String tag = getTag();
         if (customLogger != null) {
             customLogger.i(tag, content);
         } else {
-            Log.i(tag, content);
+            LogI(tag, content);
         }
         if (isSaveLog) {
             point(LOG_PATH, tag, content);
         }
     }
+
+    @NonNull
+    private static String getTag() {
+        String tag;
+            StackTraceElement[] callers =Thread.currentThread().getStackTrace();
+            for(int i=4;i<callers.length;i++) {
+                tag=generateTag(callers[i]);
+                if (!tag.contains("mLog.java")) return tag;
+            }
+        return "unKnown";
+    }
+
     public static void array(ArrayList contentObj) {
         if (!DebugUtils.isDebugBuild()) {
             return;
         }
         String content = "";
-        for(Object object:contentObj){
-            content+=object.toString()+" ; ";
+        for (Object object : contentObj) {
+            content += object.toString() + " ; ";
         }
-        StackTraceElement caller = getCallerStackTraceElement();
-        String tag = generateTag(caller);
+        String tag = getTag();
 
         if (customLogger != null) {
             customLogger.i(tag, content);
         } else {
-            Log.i(tag, content);
+            LogI(tag, content);
         }
         if (isSaveLog) {
             point(LOG_PATH, tag, content);
         }
     }
+
     public static void array(Object... contentObj) {
         if (!DebugUtils.isDebugBuild()) {
             return;
         }
         String content = "";
-        for(Object object:contentObj){
-            content+=String.valueOf(object)+" ; ";
+        for (Object object : contentObj) {
+            content += String.valueOf(object) + " ; ";
         }
         StackTraceElement caller = getCallerStackTraceElement();
         String tag = generateTag(caller);
@@ -209,19 +223,34 @@ public class mLog {
         if (customLogger != null) {
             customLogger.i(tag, content);
         } else {
-            Log.i(tag, content);
+            LogI(tag, content);
         }
         if (isSaveLog) {
             point(LOG_PATH, tag, content);
         }
     }
+
+    public static void autoReplaceLog() {
+        try {
+            Method m_o = ReflectionUtils.getDeclaredMethod(Log.class, "i", String.class, String.class);
+            Method m_n = ReflectionUtils.getDeclaredMethod(mLog.class, "i_ForReplace", String.class, String.class);
+            Hook.hook(m_o, m_n);
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static int i_ForReplace(String tag, String content) {
+        i(content);
+        return 0;
+    }
+
     public static void i(String content, Throwable e) {
         if (!DebugUtils.isDebugBuild()) {
             return;
         }
 
-        StackTraceElement caller = getCallerStackTraceElement();
-        String tag = generateTag(caller);
+        String tag = getTag();
 
         if (customLogger != null) {
             customLogger.i(tag, content, e);
@@ -232,10 +261,14 @@ public class mLog {
             point(LOG_PATH, tag, content);
         }
     }
+
+    private static int LogI(String tag, String content) {
+        return Log.println(Log.INFO, tag, content);
+    }
+
     public static void mark() {
         DebugUtils.runningDurtime();
     }
-
 
 
     public static void v(String content) {
@@ -243,8 +276,7 @@ public class mLog {
             return;
         }
 
-        StackTraceElement caller = getCallerStackTraceElement();
-        String tag = generateTag(caller);
+        String tag = getTag();
 
         if (customLogger != null) {
             customLogger.v(tag, content);
@@ -261,8 +293,7 @@ public class mLog {
             return;
         }
 
-        StackTraceElement caller = getCallerStackTraceElement();
-        String tag = generateTag(caller);
+        String tag = getTag();
 
         if (customLogger != null) {
             customLogger.v(tag, content, e);
@@ -278,8 +309,7 @@ public class mLog {
         if (!DebugUtils.isDebugBuild()) {
             return;
         }
-        StackTraceElement caller = getCallerStackTraceElement();
-        String tag = generateTag(caller);
+        String tag = getTag();
 
         if (customLogger != null) {
             customLogger.w(tag, content);
@@ -296,8 +326,7 @@ public class mLog {
             return;
         }
 
-        StackTraceElement caller = getCallerStackTraceElement();
-        String tag = generateTag(caller);
+        String tag = getTag();
 
         if (customLogger != null) {
             customLogger.w(tag, content, e);
@@ -314,8 +343,7 @@ public class mLog {
             return;
         }
 
-        StackTraceElement caller = getCallerStackTraceElement();
-        String tag = generateTag(caller);
+        String tag = getTag();
 
         if (customLogger != null) {
             customLogger.w(tag, e);
@@ -332,8 +360,7 @@ public class mLog {
             return;
         }
 
-        StackTraceElement caller = getCallerStackTraceElement();
-        String tag = generateTag(caller);
+        String tag = getTag();
 
         if (customLogger != null) {
             customLogger.wtf(tag, content);
@@ -350,8 +377,7 @@ public class mLog {
             return;
         }
 
-        StackTraceElement caller = getCallerStackTraceElement();
-        String tag = generateTag(caller);
+        String tag = getTag();
 
         if (customLogger != null) {
             customLogger.wtf(tag, content, e);
@@ -368,8 +394,7 @@ public class mLog {
             return;
         }
 
-        StackTraceElement caller = getCallerStackTraceElement();
-        String tag = generateTag(caller);
+        String tag = getTag();
 
         if (customLogger != null) {
             customLogger.wtf(tag, e);
@@ -388,8 +413,7 @@ public class mLog {
             return;
         }
 
-        StackTraceElement caller = getCallerStackTraceElement();
-        String tag = generateTag(caller);
+        String tag = getTag();
 
         if (customLogger != null) {
             customLogger.e(tag, content);
@@ -408,8 +432,7 @@ public class mLog {
             return;
         }
 
-        StackTraceElement caller = getCallerStackTraceElement();
-        String tag = generateTag(caller);
+        String tag = getTag();
 
         if (customLogger != null) {
             customLogger.e(tag, content);
@@ -451,6 +474,10 @@ public class mLog {
     public static StackTraceElement getCallerStackTraceElement() {
         return Thread.currentThread().getStackTrace()[4];
     }
+    public static StackTraceElement getCallerStackTraceElement(int off) {
+        return Thread.currentThread().getStackTrace()[4+off];
+    }
+
 
     public static void point(String path, String tag, String msg) {
         if (isSDAva()) {
