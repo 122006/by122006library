@@ -24,15 +24,9 @@ public class MyApplication extends Application {
             e.printStackTrace();
         }
         TopBar.setDefaultTopBarHeightdp(-2);
-        if(b_mLog)mLog.autoReplaceLog();
+        mLog.autoReplaceLog("widve");
 //        com.by122006.modelprojectby122006.SmartRun2Mapping.doMapping();
 //        com.by122006library.Activity.SmartRun2Mapping.doMapping();
-    }
-    boolean b_mLog=false;
-
-    public void use_mLog(boolean b_mLog){
-        if (!b_mLog)i_ForReplace("Log","原生Log.i即将被替换");
-        this.b_mLog=b_mLog;
     }
 
 

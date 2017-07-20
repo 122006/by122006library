@@ -7,6 +7,7 @@ import android.util.Log;
 
 import com.by122006library.Utils.DebugUtils;
 import com.by122006library.Utils.ReflectionUtils;
+import com.by122006library.web.RequestBuilder;
 import com.me.weishu.epic.Hook;
 
 import java.io.BufferedWriter;
@@ -69,7 +70,7 @@ public class mLog {
         if (customLogger != null) {
             customLogger.d(tag, content);
         } else {
-            Log.d(tag, content);
+            LogD(tag, content);
         }
     }
 
@@ -97,7 +98,7 @@ public class mLog {
         if (customLogger != null) {
             customLogger.e(tag, content);
         } else {
-            Log.e(tag, content);
+            LogE(tag, content);
         }
         if (isSaveLog) {
             point(LOG_PATH, tag, content);
@@ -112,7 +113,7 @@ public class mLog {
         if (customLogger != null) {
             customLogger.e(tag, content);
         } else {
-            Log.e(tag, content);
+            LogE(tag, content);
         }
         if (isSaveLog) {
             point(LOG_PATH, tag, content);
@@ -230,18 +231,74 @@ public class mLog {
         }
     }
 
+    /**
+     * 原生log替换功能开启方法<br>
+     * 调用该方法后原生Log.x(String,String)会被重定位到对应mLog方法中<br>
+     * 该方法在程序中仅可使用一次，请不要重复调用该方法
+     */
     public static void autoReplaceLog() {
-        try {
-            Method m_o = ReflectionUtils.getDeclaredMethod(Log.class, "i", String.class, String.class);
-            Method m_n = ReflectionUtils.getDeclaredMethod(mLog.class, "i_ForReplace", String.class, String.class);
-            Hook.hook(m_o, m_n);
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
+        autoReplaceLog("widev");
+    }
+
+    /**
+     * 原生log替换功能开启方法<br>
+     * 调用该方法后原生Log.x(String,String)会被重定位到对应mLog方法中<br>
+     * 该方法在程序中仅可使用一次，请不要重复调用该方法
+     *
+     * @param replageStyle 需要替换的方法名集合字符串 <br>
+     *                     eg."widev" 或 "wv" 或 "w,v,i" 或 "w;v;i"<br>
+     *                     分隔符会自动忽略<br>顺序无关<br>不可重复
+     */
+    public static void autoReplaceLog(String replageStyle) {
+        replageStyle=replageStyle.toLowerCase();
+        for(int i=0;i<replageStyle.length();i++){
+            String c=Character.toString(replageStyle.charAt(i));
+            if(!"widev".contains(c)) continue;
+            try {
+                Method m_o = ReflectionUtils.getDeclaredMethod(Log.class,c, String.class, String.class);
+                Method m_n = ReflectionUtils.getDeclaredMethod(mLog.class, c+"_ForReplace", String.class, String.class);
+                Hook.hook(m_o, m_n);
+                Method method= null;
+                try {
+                    method = ReflectionUtils.getMethod(Log.class,c,String.class,String.class);
+                    method.invoke(null,"如果看到该tag，说明替换失败","如果看到该tag，说明替换失败");
+                } catch (NoSuchMethodException e) {
+                    mLog.i(String.format("\"Log.%s()\"方法替换成功", c));
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
+        //混淆压缩保护
+        if(true) return;
+        i_ForReplace("","");
+        e_ForReplace("","");
+        w_ForReplace("","");
+        v_ForReplace("","");
+        d_ForReplace("","");
+
     }
 
     public static int i_ForReplace(String tag, String content) {
         i(content);
+        return 0;
+    }
+
+    public static int e_ForReplace(String tag, String content) {
+        e(content);
+        return 0;
+    }
+    public static int w_ForReplace(String tag, String content) {
+        w(content);
+        return 0;
+    }
+
+    public static int v_ForReplace(String tag, String content) {
+        v(content);
+        return 0;
+    }
+    public static int d_ForReplace(String tag, String content) {
+        d(content);
         return 0;
     }
 
@@ -262,9 +319,22 @@ public class mLog {
         }
     }
 
+    private static int LogW(String tag, String content) {
+        return Log.println(Log.WARN, tag, content);
+    }
     private static int LogI(String tag, String content) {
         return Log.println(Log.INFO, tag, content);
     }
+    private static int LogE(String tag, String content) {
+        return Log.println(Log.ERROR, tag, content);
+    }
+    private static int LogD(String tag, String content) {
+        return Log.println(Log.DEBUG, tag, content);
+    }
+    private static int LogV(String tag, String content) {
+        return Log.println(Log.VERBOSE, tag, content);
+    }
+
 
     public static void mark() {
         DebugUtils.runningDurtime();
@@ -281,7 +351,7 @@ public class mLog {
         if (customLogger != null) {
             customLogger.v(tag, content);
         } else {
-            Log.v(tag, content);
+            LogV(tag, content);
         }
         if (isSaveLog) {
             point(LOG_PATH, tag, content);
@@ -314,7 +384,7 @@ public class mLog {
         if (customLogger != null) {
             customLogger.w(tag, content);
         } else {
-            Log.w(tag, content);
+            LogW(tag, content);
         }
         if (isSaveLog) {
             point(LOG_PATH, tag, content);
@@ -418,7 +488,7 @@ public class mLog {
         if (customLogger != null) {
             customLogger.e(tag, content);
         } else {
-            Log.e(tag, content);
+            LogE(tag, content);
         }
         if (isSaveLog) {
             point(LOG_PATH, tag, content);
@@ -437,7 +507,7 @@ public class mLog {
         if (customLogger != null) {
             customLogger.e(tag, content);
         } else {
-            Log.e(tag, content);
+            LogE(tag, content);
         }
         if (isSaveLog) {
             point(LOG_PATH, tag, content);

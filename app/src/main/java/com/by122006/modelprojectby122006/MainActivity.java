@@ -79,7 +79,6 @@ public class MainActivity extends BaseActivity {
 //        StatusBarUtil.setStatusBarColor(this,R.color.black);
         setContentView(R.layout.activity_main);
         binding.setAct(this);
-        Log.i("测试","这是一个测试");
         binding.recycer.setLayoutManager(new LinearLayoutManager(this));
         List<PinnedHeaderEntity<Object>> data = new ArrayList<>();
         data.add(new PinnedHeaderEntity<>(null, BaseHeaderAdapter.TYPE_HEADER, "原创控件"));
