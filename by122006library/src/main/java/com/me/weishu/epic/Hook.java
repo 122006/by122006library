@@ -22,6 +22,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * @date 17/3/6
  */
 
+//todo 需要hook Class类的getMethod(...)之类方法以进行对反射调用的支持
+
 public class Hook {
 
     private static final String TAG = "Hook";
@@ -128,21 +130,17 @@ public class Hook {
 
                 byte[] newMethodBytes = new byte[artMethodSize];
                 artMethod.get(newMethodBytes);
-                Log.d(TAG, "new: " + Arrays.toString(newMethodBytes));
-                Log.i(TAG, "origin:" + Arrays.toString(MethodInspect.getMethodBytes(origin)));
                 // replace the artMethod of our new method
                 artMethodField.set(newMethod, artMethodAddress);
 
                 // modify the access flag of the new method
                 Integer accessFlags = (Integer) accessFlagsField.get(origin);
-                Log.d(TAG, "Acc:" + accessFlags);
                 int privateAccFlag = accessFlags & ~Modifier.PUBLIC | Modifier.PRIVATE;
                 accessFlagsField.set(newMethod, privateAccFlag);
 
                 // 1. try big endian
                 artMethod.order(ByteOrder.BIG_ENDIAN);
                 int nativeAccFlags = artMethod.getInt(ACC_FLAG_OFFSET);
-                Log.d(TAG, "bitendian:" + nativeAccFlags);
                 if (nativeAccFlags == accessFlags) {
                     // hit!
                     artMethod.putInt(ACC_FLAG_OFFSET, privateAccFlag);
@@ -150,7 +148,6 @@ public class Hook {
                     // 2. try little endian
                     artMethod.order(ByteOrder.LITTLE_ENDIAN);
                     nativeAccFlags = artMethod.getInt(ACC_FLAG_OFFSET);
-                    Log.d(TAG, "littleendian:" + nativeAccFlags);
                     if (nativeAccFlags == accessFlags) {
                         artMethod.putInt(ACC_FLAG_OFFSET, privateAccFlag);
                     } else {
@@ -158,7 +155,7 @@ public class Hook {
                         throw new RuntimeException("native set access flags error!");
                     }
                 }
-
+                mLog.more("backUp() 成功","origin:" + Arrays.toString(MethodInspect.getMethodBytes(origin)),"Acc:" + accessFlags,"bitendian:" + nativeAccFlags, "littleendian:" + nativeAccFlags);
                 return newMethod;
             }
         } catch (Throwable e) {
@@ -276,4 +273,5 @@ public class Hook {
             super(message, cause);
         }
     }
+
 }

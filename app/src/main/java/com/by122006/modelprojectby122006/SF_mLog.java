@@ -97,6 +97,30 @@ public class SF_mLog extends SF {
             }
         });
         list.add(sMethod);
+        sMethod = SMethod.create(mLog.class,"autoReplaceLog",String.class);
+        sMethod.setInitParams("widve");
+        sMethod.setDescrite("全局替换Log");
+        sMethod.setListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                println("\n=========全局替换Log");
+                println("在Application中调用该方法并传入\"widve\"的组合配置");
+                println("可以替换原有代码中所有系统Log调用");
+            }
+        });
+        list.add(sMethod);
+        sMethod = SMethod.create(mLog.class,"more",String.class,String[].class);
+        sMethod.setInitParams("标题",new String[]{"xx=xx","xx=xx"});
+        sMethod.setDescrite("折叠型参数");
+        sMethod.setListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                println("\n=========折叠型参数");
+                println("一个在AS的Logcat中可以折叠显示附加参数代码");
+                println("支持长代码换行");
+            }
+        });
+        list.add(sMethod);
         return list;
     }
 
@@ -112,13 +136,14 @@ public class SF_mLog extends SF {
 
     @Override
     public String[] getFuncitonTags() {
-        return new String[]{"常用", "原创", "拓展", "定位", "格式化", "代码分析", "一行代码"};
+        return new String[]{"常用", "原创", "拓展", "定位", "格式化", "代码分析", "一行代码", "Hook", "折叠"};
     }
 
     @Override
     public String getFuncitonDescribe() {
         return "强健的日志输出类，不需要额外配置，自动定位代码类名方法名行号、AS中一键抵达，正式包自动隐藏。\n" +
-                "含有多种方法帮助使用者判断空值、生成format字符串、显示数组、显示多个数据值、显示所在方法调用来源";
+                "含有多种方法帮助使用者判断空值、生成format字符串、显示数组、显示多个数据值、显示所在方法调用来源。\n" +
+                "支持一行替换原有系统Log。\n支持折叠式属性日志。";
     }
 
     @Override

@@ -20,7 +20,9 @@ import java.util.ArrayList;
  */
 
 public abstract class WEBBaseCallBack {
-
+    static {
+        mLog.setFileOutLog();
+    }
     /**
      * 默认的过滤方法
      */

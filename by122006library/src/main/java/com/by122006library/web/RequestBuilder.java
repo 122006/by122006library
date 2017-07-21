@@ -4,6 +4,7 @@ package com.by122006library.web;
 import android.support.annotation.IntDef;
 import android.view.SurfaceHolder;
 
+import com.by122006library.Functions.mLog;
 import com.by122006library.MyException;
 import com.by122006library.web.AnalysisOut.AnalysisOut;
 import com.by122006library.web.CallBack.WEBBaseCallBack;
@@ -20,6 +21,9 @@ import java.util.HashMap;
  * Created by admin on 2016/12/15.
  */
 public class RequestBuilder {
+    static {
+        mLog.setFileOutLog();
+    }
     static final public int GET = 0, POST = 1;
     public static String token = null;
     private static String defaultEncode = "UTF-8";

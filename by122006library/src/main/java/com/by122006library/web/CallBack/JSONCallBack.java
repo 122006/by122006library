@@ -2,6 +2,7 @@ package com.by122006library.web.CallBack;
 
 import android.support.annotation.CallSuper;
 
+import com.by122006library.Functions.mLog;
 import com.by122006library.MyException;
 import com.by122006library.web.Web;
 
@@ -13,6 +14,9 @@ import org.json.JSONObject;
  */
 
 public abstract class JSONCallBack extends WEBBaseCallBack {
+    static {
+        mLog.setFileOutLog();
+    }
     public JSONCallBack(){
         super();
 

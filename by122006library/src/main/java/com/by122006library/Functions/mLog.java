@@ -7,7 +7,6 @@ import android.util.Log;
 
 import com.by122006library.Utils.DebugUtils;
 import com.by122006library.Utils.ReflectionUtils;
-import com.by122006library.web.RequestBuilder;
 import com.me.weishu.epic.Hook;
 
 import java.io.BufferedWriter;
@@ -35,15 +34,61 @@ public class mLog {
             return new ReusableFormatter();
         }
     };
+    private static final String FLAG_NATIVE_METHOD = "at java.lang.reflect.Method.invoke(Native Method)";
     public static String customTagPrefix = "";    // 自定义Tag的前缀，可以是作者名
     public static boolean isSaveLog = false;    // 是否把保存日志到SD卡中
     /**
      * 自定义的logger
      */
     public static CustomLogger customLogger;
+    /**
+     * 设置不显示该类内部tag的Log关键字
+     */
+    static ArrayList<String> takeOutList;
     private static DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd", Locale.SIMPLIFIED_CHINESE);
+    private static int MoreAttCharsNum = 50;
+
+    static {
+        setOutLog("");
+    }
 
     private mLog() {
+    }
+
+    /**
+     * 设置该类的Log不会被显示
+     */
+    public static void setClassOutLog() {
+        setOutLog(ReflectionUtils.getSmallClassName(getCallerStackTraceElement().getClassName()) + ".");
+    }
+
+    /**
+     * 设置该方法的Log不会被显示
+     */
+    public static void setMethodOutLog() {
+        setOutLog(ReflectionUtils.getSmallClassName(getCallerStackTraceElement().getClassName()) + "." + ReflectionUtils.getSmallClassName(getCallerStackTraceElement().getMethodName()) + "()");
+    }
+
+
+    /**
+     * 设置该文件的Log不会被显示
+     */
+    public static void setFileOutLog() {
+        setOutLog("(" + getCallerStackTraceElement().getFileName());
+    }
+
+    /**
+     * 设置Log的Tag为str的不会被显示<br>
+     * 一般为方法名、类名、文件名
+     */
+    public static void setOutLog(String str) {
+        if (takeOutList == null) {
+            takeOutList = new ArrayList<>();
+            setFileOutLog();
+            takeOutList.add("Hook.java");
+            return;
+        }
+        takeOutList.add(str);
     }
 
     public static String generateTag(StackTraceElement caller) {
@@ -59,7 +104,6 @@ public class mLog {
         return tag;
     }
 
-
     public static void d(String content) {
         if (!DebugUtils.isDebugBuild()) {
             return;
@@ -70,7 +114,7 @@ public class mLog {
         if (customLogger != null) {
             customLogger.d(tag, content);
         } else {
-            LogD(tag, content);
+            D(tag, content);
         }
     }
 
@@ -98,7 +142,7 @@ public class mLog {
         if (customLogger != null) {
             customLogger.e(tag, content);
         } else {
-            LogE(tag, content);
+            E(tag, content);
         }
         if (isSaveLog) {
             point(LOG_PATH, tag, content);
@@ -113,7 +157,7 @@ public class mLog {
         if (customLogger != null) {
             customLogger.e(tag, content);
         } else {
-            LogE(tag, content);
+            E(tag, content);
         }
         if (isSaveLog) {
             point(LOG_PATH, tag, content);
@@ -172,7 +216,7 @@ public class mLog {
         if (customLogger != null) {
             customLogger.i(tag, content);
         } else {
-            LogI(tag, content);
+            I(tag, content);
         }
         if (isSaveLog) {
             point(LOG_PATH, tag, content);
@@ -181,13 +225,20 @@ public class mLog {
 
     @NonNull
     private static String getTag() {
-        String tag;
-            StackTraceElement[] callers =Thread.currentThread().getStackTrace();
-            for(int i=4;i<callers.length;i++) {
-                tag=generateTag(callers[i]);
-                if (!tag.contains("mLog.java")) return tag;
+        String tag = "unKnown";
+        StackTraceElement[] callers = Thread.currentThread().getStackTrace();
+        for (int i = 4; i < callers.length; i++) {
+            tag = generateTag(callers[i]);
+            boolean canShow = true;
+            for (String str : takeOutList) {
+                if (tag.contains(str)) {
+                    canShow = false;
+                    break;
+                }
             }
-        return "unKnown";
+            if (canShow) break;
+        }
+        return tag;
     }
 
     public static void array(ArrayList contentObj) {
@@ -203,7 +254,7 @@ public class mLog {
         if (customLogger != null) {
             customLogger.i(tag, content);
         } else {
-            LogI(tag, content);
+            I(tag, content);
         }
         if (isSaveLog) {
             point(LOG_PATH, tag, content);
@@ -224,7 +275,7 @@ public class mLog {
         if (customLogger != null) {
             customLogger.i(tag, content);
         } else {
-            LogI(tag, content);
+            I(tag, content);
         }
         if (isSaveLog) {
             point(LOG_PATH, tag, content);
@@ -250,18 +301,18 @@ public class mLog {
      *                     分隔符会自动忽略<br>顺序无关<br>不可重复
      */
     public static void autoReplaceLog(String replageStyle) {
-        replageStyle=replageStyle.toLowerCase();
-        for(int i=0;i<replageStyle.length();i++){
-            String c=Character.toString(replageStyle.charAt(i));
-            if(!"widev".contains(c)) continue;
+        replageStyle = replageStyle.toLowerCase();
+        for (int i = 0; i < replageStyle.length(); i++) {
+            String c = Character.toString(replageStyle.charAt(i));
+            if (!"widev".contains(c)) continue;
             try {
-                Method m_o = ReflectionUtils.getDeclaredMethod(Log.class,c, String.class, String.class);
-                Method m_n = ReflectionUtils.getDeclaredMethod(mLog.class, c+"_ForReplace", String.class, String.class);
+                Method m_o = ReflectionUtils.getDeclaredMethod(Log.class, c, String.class, String.class);
+                Method m_n = ReflectionUtils.getDeclaredMethod(mLog.class, c + "_ForReplace", String.class, String.class);
                 Hook.hook(m_o, m_n);
-                Method method= null;
+                Method method = null;
                 try {
-                    method = ReflectionUtils.getMethod(Log.class,c,String.class,String.class);
-                    method.invoke(null,"如果看到该tag，说明替换失败","如果看到该tag，说明替换失败");
+                    method = ReflectionUtils.getMethod(Log.class, c, String.class, String.class);
+                    method.invoke(null, "如果看到该tag，说明替换失败", "如果看到该tag，说明替换失败");
                 } catch (NoSuchMethodException e) {
                     mLog.i(String.format("\"Log.%s()\"方法替换成功", c));
                 }
@@ -270,12 +321,12 @@ public class mLog {
             }
         }
         //混淆压缩保护
-        if(true) return;
-        i_ForReplace("","");
-        e_ForReplace("","");
-        w_ForReplace("","");
-        v_ForReplace("","");
-        d_ForReplace("","");
+        if (true) return;
+        i_ForReplace("", "");
+        e_ForReplace("", "");
+        w_ForReplace("", "");
+        v_ForReplace("", "");
+        d_ForReplace("", "");
 
     }
 
@@ -288,6 +339,7 @@ public class mLog {
         e(content);
         return 0;
     }
+
     public static int w_ForReplace(String tag, String content) {
         w(content);
         return 0;
@@ -297,6 +349,7 @@ public class mLog {
         v(content);
         return 0;
     }
+
     public static int d_ForReplace(String tag, String content) {
         d(content);
         return 0;
@@ -319,27 +372,29 @@ public class mLog {
         }
     }
 
-    private static int LogW(String tag, String content) {
+    private static int W(String tag, String content) {
         return Log.println(Log.WARN, tag, content);
     }
-    private static int LogI(String tag, String content) {
+
+    private static int I(String tag, String content) {
         return Log.println(Log.INFO, tag, content);
     }
-    private static int LogE(String tag, String content) {
+
+    private static int E(String tag, String content) {
         return Log.println(Log.ERROR, tag, content);
     }
-    private static int LogD(String tag, String content) {
+
+    private static int D(String tag, String content) {
         return Log.println(Log.DEBUG, tag, content);
     }
-    private static int LogV(String tag, String content) {
+
+    private static int V(String tag, String content) {
         return Log.println(Log.VERBOSE, tag, content);
     }
-
 
     public static void mark() {
         DebugUtils.runningDurtime();
     }
-
 
     public static void v(String content) {
         if (!DebugUtils.isDebugBuild()) {
@@ -351,7 +406,7 @@ public class mLog {
         if (customLogger != null) {
             customLogger.v(tag, content);
         } else {
-            LogV(tag, content);
+            V(tag, content);
         }
         if (isSaveLog) {
             point(LOG_PATH, tag, content);
@@ -384,7 +439,7 @@ public class mLog {
         if (customLogger != null) {
             customLogger.w(tag, content);
         } else {
-            LogW(tag, content);
+            W(tag, content);
         }
         if (isSaveLog) {
             point(LOG_PATH, tag, content);
@@ -488,7 +543,7 @@ public class mLog {
         if (customLogger != null) {
             customLogger.e(tag, content);
         } else {
-            LogE(tag, content);
+            E(tag, content);
         }
         if (isSaveLog) {
             point(LOG_PATH, tag, content);
@@ -507,10 +562,88 @@ public class mLog {
         if (customLogger != null) {
             customLogger.e(tag, content);
         } else {
-            LogE(tag, content);
+            E(tag, content);
         }
         if (isSaveLog) {
             point(LOG_PATH, tag, content);
+        }
+    }
+
+    public static void more(String main, String... att) {
+        more(Log.INFO, main, att);
+    }
+
+    public static void more(int level, String main, String... att) {
+//        ArrayList<String> arrayList= (ArrayList<String>) Arrays.asList(att);
+        int MoreAttCharsNum = mLog.MoreAttCharsNum;
+        for (String a : att) {
+            MoreAttCharsNum = (int) Math.max(mLog.MoreAttCharsNum * 1.5, a.length());
+        }
+        //弹性长度判断
+        if (MoreAttCharsNum > mLog.MoreAttCharsNum && MoreAttCharsNum < mLog.MoreAttCharsNum * 1.5) {
+            MoreAttCharsNum = mLog.MoreAttCharsNum;
+        }
+        if (MoreAttCharsNum % 2 == 1) MoreAttCharsNum--;
+        StringBuilder str = new StringBuilder();
+        str.append("✔ ");
+        str.append(main);
+        str.append("\n╔");
+        for (int i = 0; i < MoreAttCharsNum / 2; i++) {
+            str.append("═");
+        }
+        str.append("╗");
+        str.append(FLAG_NATIVE_METHOD);
+        int blank = 0;//当前前置空格数
+        for (int i = 0; i < att.length; i++) {
+            att[i] = att[i].replace("\n", "");
+            str.append("\n║");
+            String show = String.format("%-" + MoreAttCharsNum + "s", att[i]);
+            if (blank == 0) {
+                blank = show.indexOf("=") + 1;
+                int blank2 = show.indexOf(":") + 1;
+                if (blank2 != -1 && (blank < blank2 || (blank == -1 && blank2 != -1)))
+                    blank = blank2;
+                blank = Math.min(blank, MoreAttCharsNum);
+            }
+            show = show.substring(0, MoreAttCharsNum);
+            str.append(show);
+            if (att[i].length() > show.length()) {
+                StringBuilder n = new StringBuilder();
+                for (int j = 0; j < blank; j++) {
+                    n.append(" ");
+                }
+                n.append(att[i].replace(show, ""));
+                att[i] = n.toString();
+                i--;
+            } else {
+                blank = 0;
+            }
+            str.append("║");
+            str.append(FLAG_NATIVE_METHOD);
+        }
+        str.append("\n╚");
+        for (int i = 0; i < MoreAttCharsNum / 2; i++) {
+            str.append("═");
+        }
+        str.append("╝");
+        str.append(FLAG_NATIVE_METHOD);
+
+        switch (level) {
+            case Log.INFO:
+                mLog.i(str.toString());
+                break;
+            case Log.VERBOSE:
+                mLog.v(str.toString());
+                break;
+            case Log.DEBUG:
+                mLog.d(str.toString());
+                break;
+            case Log.WARN:
+                mLog.w(str.toString());
+                break;
+            case Log.ERROR:
+                mLog.e(str.toString());
+                break;
         }
     }
 
@@ -544,8 +677,9 @@ public class mLog {
     public static StackTraceElement getCallerStackTraceElement() {
         return Thread.currentThread().getStackTrace()[4];
     }
+
     public static StackTraceElement getCallerStackTraceElement(int off) {
-        return Thread.currentThread().getStackTrace()[4+off];
+        return Thread.currentThread().getStackTrace()[4 + off];
     }
 
 

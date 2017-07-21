@@ -1,5 +1,7 @@
 package com.by122006library.Utils;
 
+import android.util.Log;
+
 import com.by122006library.Functions.mLog;
 
 import java.lang.reflect.Constructor;
@@ -155,5 +157,14 @@ public class ReflectionUtils {
         return method;
     }
 
+    public static String getSmallClassName(String string){
+        int index=string.lastIndexOf(".");
+        if (index==-1){
+            return string;
+        }else{
+            Log.println(4,"getSmallClassName", string.substring(index+1));
+            return string.substring(index+1);
+        }
+    };
 
 }

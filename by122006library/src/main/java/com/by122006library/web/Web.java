@@ -19,6 +19,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Set;
 
 /**
@@ -26,6 +28,9 @@ import java.util.Set;
  */
 
 public class Web {
+    static {
+        mLog.setFileOutLog();
+    }
 
     Web() {
     }
@@ -65,6 +70,7 @@ public class Web {
     public static JSONObject doSynchroHttp(RequestBuilder requster, @Nullable WEBBaseCallBack callback, @Nullable final
     WebViewShow vs) throws MyException {
         mLog.i("网络请求：" + mLog.getCallerLocation());
+
         if (ThreadUtils.isUIThread()) throw new MyException("不能在UI线程中调用该方法");
         if (vs != null) ThreadUtils.runOnUiThread(new Runnable() {
             @Override
@@ -82,8 +88,27 @@ public class Web {
         if (requster.getHttpStyle() == RequestBuilder.POST && RequestBuilder.isUrlToken()) {
             str_url += "?"+RequestBuilder.getTokenKeyName()+"=" + RequestBuilder.getToken();
         }
+        ArrayList<String> list=new ArrayList<String>();
+        list.add(String.format("%-8s= %s", "Action",requster.getAction()));
+        list.add(String.format("%-8s= %s", "Style",requster.getHttpStyle()==RequestBuilder.GET?"Get":"Post"));
+        list.add(String.format("%-8s= %s", "url",requster.getUrl()));
+        list.add(String.format("%-8s= \"%s\"", "  +?",RequestBuilder.getTokenKeyName()+"=" + RequestBuilder.getToken()));
+        for(String key:requster.getHead().keySet()){
+            list.add(String.format("%-8s= %s", key,requster.getHead().get(key)));
+        }
+        list.add(String.format("%-8s= %s", "TimeOut",requster.getTimeout()));
+        list.add(String.format("%-8s= %s", "Encode",requster.getEncode()));
+        list.add(String.format("%-8s= %s", "ReStart",requster.getReStartMaxTimes()));
+        list.add("Request parameter :");
+        for(String key:requster.request.keySet()){
+            try {
+                list.add(String.format("r %-8s= %s",requster.request.get(key).substring(0,30)));
+            } catch (Exception e) {
+                list.add(String.format("r %-8s= %s",requster.request.get(key)));
+            }
+        }
 
-        mLog.i("连接至网址：url=" + str_url);
+        mLog.more("连接至网址：url=" + str_url, (String[]) list.toArray());
 
         try {
             URL url = new URL(str_url);
@@ -99,7 +124,6 @@ public class Web {
             httpConn.setReadTimeout(requster.getTimeout());
 
             if (requster.getHttpStyle() == RequestBuilder.POST) {
-                mLog.i("post数据=\"" + requster.getJSONData() + "\"");
                 httpConn.setInstanceFollowRedirects(true);
                 httpConn.setRequestProperty("Content-Type",
                         "application/x-www-form-urlencoded");
@@ -114,7 +138,6 @@ public class Web {
                         String value = requster.getHead().get(key);
                         httpConn.setRequestProperty(key, value);
                     }
-                mLog.i("action=\"" + requster.getAction() + "\"");
                 byte[] requestStringBytes = requster.getJSONData().toString().getBytes(requster.getEncode());
                 OutputStream outputStream = httpConn.getOutputStream();
                 outputStream.write(requestStringBytes);
