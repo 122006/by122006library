@@ -93,14 +93,14 @@ public class Web {
         list.add(String.format("%-8s= %s", "Style",requster.getHttpStyle()==RequestBuilder.GET?"Get":"Post"));
         list.add(String.format("%-8s= %s", "url",requster.getUrl()));
         list.add(String.format("%-8s= \"%s\"", "  +?",RequestBuilder.getTokenKeyName()+"=" + RequestBuilder.getToken()));
-        for(String key:requster.getHead().keySet()){
+        if(requster.getHead()!=null)for(String key:requster.getHead().keySet()){
             list.add(String.format("%-8s= %s", key,requster.getHead().get(key)));
         }
         list.add(String.format("%-8s= %s", "TimeOut",requster.getTimeout()));
         list.add(String.format("%-8s= %s", "Encode",requster.getEncode()));
         list.add(String.format("%-8s= %s", "ReStart",requster.getReStartMaxTimes()));
         list.add("Request parameter :");
-        for(String key:requster.request.keySet()){
+        if(requster.getHead()!=null)for(String key:requster.request.keySet()){
             try {
                 list.add(String.format("r %-8s= %s",requster.request.get(key).substring(0,30)));
             } catch (Exception e) {

@@ -62,6 +62,6 @@ dependencies {
 //    compile 'com.github.122006:SubclassAttributeProcessor:v1.8.0'
 
 //    annotationProcessor  project(':smartrun2processor')
-    annotationProcessor  'com.github.122006:SubclassAttributeProcessor:v1.8.0'
+    annotationProcessor  'com.github.122006:SubclassAttributeProcessor:v+'
 
 }
