@@ -108,7 +108,7 @@ public class Web {
             }
         }
 
-        mLog.more("连接至网址：url=" + str_url, (String[]) list.toArray());
+        mLog.more("连接至网址：url=" + str_url, list.toArray());
 
         try {
             URL url = new URL(str_url);

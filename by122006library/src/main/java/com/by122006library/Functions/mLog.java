@@ -569,11 +569,15 @@ public class mLog {
         }
     }
 
-    public static void more(String main, String... att) {
+    public static void more(String main, Object... att) {
         more(Log.INFO, main, att);
     }
 
-    public static void more(int level, String main, String... att) {
+    public static void more(int level, String main, Object... objs) {
+        String[] att = new String[objs.length];
+        for (int i = 0; i < objs.length; i++) {
+            att[i] = String.valueOf(objs[i]);
+        }
 //        ArrayList<String> arrayList= (ArrayList<String>) Arrays.asList(att);
         int MoreAttCharsNum = mLog.MoreAttCharsNum;
         for (String a : att) {
@@ -585,49 +589,50 @@ public class mLog {
         }
         if (MoreAttCharsNum % 2 == 1) MoreAttCharsNum--;
         StringBuilder str = new StringBuilder();
-        str.append("✔ ");
+        if (objs != null && objs.length != 0) str.append("✔ ");
         str.append(main);
-        str.append("\n╔");
-        for (int i = 0; i < MoreAttCharsNum / 2; i++) {
-            str.append("═");
-        }
-        str.append("╗");
-        str.append(FLAG_NATIVE_METHOD);
-        int blank = 0;//当前前置空格数
-        for (int i = 0; i < att.length; i++) {
-            att[i] = att[i].replace("\n", "");
-            str.append("\n║");
-            String show = String.format("%-" + MoreAttCharsNum + "s", att[i]);
-            if (blank == 0) {
-                blank = show.indexOf("=") + 1;
-                int blank2 = show.indexOf(":") + 1;
-                if (blank2 != -1 && (blank < blank2 || (blank == -1 && blank2 != -1)))
-                    blank = blank2;
-                blank = Math.min(blank, MoreAttCharsNum);
+        if (objs != null && objs.length != 0) {
+            str.append("\n╔");
+            for (int i = 0; i < MoreAttCharsNum / 2; i++) {
+                str.append("═");
             }
-            show = show.substring(0, MoreAttCharsNum);
-            str.append(show);
-            if (att[i].length() > show.length()) {
-                StringBuilder n = new StringBuilder();
-                for (int j = 0; j < blank; j++) {
-                    n.append(" ");
+            str.append("╗");
+            str.append(FLAG_NATIVE_METHOD);
+            int blank = 0;//当前前置空格数
+            for (int i = 0; i < att.length; i++) {
+                att[i] = att[i].replace("\n", "");
+                str.append("\n║");
+                String show = String.format("%-" + MoreAttCharsNum + "s", att[i]);
+                if (blank == 0) {
+                    blank = show.indexOf("=") + 1;
+                    int blank2 = show.indexOf(":") + 1;
+                    if (blank2 != -1 && (blank < blank2 || (blank == -1 && blank2 != -1)))
+                        blank = blank2;
+                    blank = Math.min(blank, MoreAttCharsNum);
                 }
-                n.append(att[i].replace(show, ""));
-                att[i] = n.toString();
-                i--;
-            } else {
-                blank = 0;
+                show = show.substring(0, MoreAttCharsNum);
+                str.append(show);
+                if (att[i].length() > show.length()) {
+                    StringBuilder n = new StringBuilder();
+                    for (int j = 0; j < blank; j++) {
+                        n.append(" ");
+                    }
+                    n.append(att[i].replace(show, ""));
+                    att[i] = n.toString();
+                    i--;
+                } else {
+                    blank = 0;
+                }
+                str.append("║");
+                str.append(FLAG_NATIVE_METHOD);
             }
-            str.append("║");
+            str.append("\n╚");
+            for (int i = 0; i < MoreAttCharsNum / 2; i++) {
+                str.append("═");
+            }
+            str.append("╝");
             str.append(FLAG_NATIVE_METHOD);
         }
-        str.append("\n╚");
-        for (int i = 0; i < MoreAttCharsNum / 2; i++) {
-            str.append("═");
-        }
-        str.append("╝");
-        str.append(FLAG_NATIVE_METHOD);
-
         switch (level) {
             case Log.INFO:
                 mLog.i(str.toString());
