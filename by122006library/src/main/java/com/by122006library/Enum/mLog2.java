@@ -19,7 +19,7 @@ public class mLog2{
     }
 
     public static int w(String tag, String msg) {
-        mLog.I(tag,"xx "+msg);
+        mLog.I(tag,"xx:"+msg);
         mLog.W(tag,msg);
         return 0;
     }
