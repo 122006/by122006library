@@ -155,7 +155,7 @@ public class Hook {
                         throw new RuntimeException("native set access flags error!");
                     }
                 }
-                mLog.more("backUp() 成功","origin:" + Arrays.toString(MethodInspect.getMethodBytes(origin)),"Acc:" + accessFlags,"bitendian:" + nativeAccFlags, "littleendian:" + nativeAccFlags);
+                mLog.more("backUp() 成功","origin:" + Arrays.toString(MethodInspect.getMethodBytes(origin)),"Acc:" + accessFlags,"artMethodAddress:" +artMethodAddress,"oMethodAddress:" + MethodInspect.getMethodAddress(origin), "artMethodSize:" +artMethodSize);
                 return newMethod;
             }
         } catch (Throwable e) {
@@ -207,9 +207,9 @@ public class Hook {
         }
 
         public static long getArtMethodSize() {
-            if (sMethodSize > 0) {
-                return sMethodSize;
-            }
+//            if (sMethodSize > 0) {
+//                return sMethodSize;
+//            }
 
             try {
                 Method f1 = MethodInspect.class.getDeclaredMethod("ruler1");
@@ -217,7 +217,7 @@ public class Hook {
                 sMethodSize = getMethodAddress(f2) - getMethodAddress(f1);
                 return sMethodSize;
             } catch (Exception e) {
-                throw new RuntimeException("exceuse me ?? can not found method??");
+                throw new RuntimeException("excuse me ?? can not found method??");
             }
         }
 

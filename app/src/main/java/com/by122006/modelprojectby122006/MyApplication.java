@@ -4,10 +4,14 @@ import android.app.Application;
 import android.util.Log;
 
 import com.anupcowkur.reservoir.Reservoir;
+import com.by122006library.Enum.mLog2;
 import com.by122006library.Functions.mLog;
+import com.by122006library.Utils.ReflectionUtils;
 import com.by122006library.View.TopBar;
+import com.me.weishu.epic.Hook;
 
 import java.io.IOException;
+import java.lang.reflect.Method;
 
 /**
  * Created by admin on 2017/6/15.
@@ -24,11 +28,52 @@ public class MyApplication extends Application {
         }
         TopBar.setDefaultTopBarHeightdp(-2);
         mLog.autoReplaceLog("widve");
-        mLog.more(Log.INFO,"test","dadsa=21afasdfdasffffffffffffffffffffffffffffffffffaaaaaaaaaaaaaaaaaaaaaaeeeeeeeeeeeeeeeeeeeeeeeeeeeewwwwwwwwwwwwwwwwwwssssssssssssssssssssssssfffffffffffffffffffffffffaaaaaaaaaaaaaaaaaaaaaaaaaaaaaawwwwwwwwwwwwwwwwwwwww311","dadsa=21311","dadsa=21311");
 //        com.by122006.modelprojectby122006.SmartRun2Mapping.doMapping();
 //        com.by122006library.Activity.SmartRun2Mapping.doMapping();
 //        AppRunSpeed.setSpeed(2);
+//        m("","");
+//        try {
+//            Method m_o = ReflectionUtils.getDeclaredMethod(Log.class, "i",String.class,String.class);
+//            Method m_n = ReflectionUtils.getDeclaredMethod(MyApplication.class, "m",String.class,String.class);
+//            Hook.hook(m_o,m_n);
+//        } catch (NoSuchMethodException e) {
+//            e.printStackTrace();
+//        }
+//        m("","");
+//        try {
+//            Log.e("x", "e");
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//        try {
+//            Log.d("x", "d");
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//        try {
+//            Log.v("x", "v");
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//
+//        try {
+//            Log.i("x", "i");
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//
+//        try {
+//            Log.w("x", "w");
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
     }
 
+    public static void l(String string,String string2){
+        mLog.I("dadsa","xxxxxxxxxxx");
+    }
+    public static void m(String string,String string2){
+        mLog.I("dadsa","mmmmmmmm");
+    }
 
 }

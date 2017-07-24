@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.by122006library.Enum.mLog2;
 import com.by122006library.Utils.DebugUtils;
 import com.by122006library.Utils.ReflectionUtils;
 import com.me.weishu.epic.Hook;
@@ -86,6 +87,8 @@ public class mLog {
             takeOutList = new ArrayList<>();
             setFileOutLog();
             takeOutList.add("Hook.java");
+            takeOutList.add("MyException.java");
+            takeOutList.add("Thread.java");
             return;
         }
         takeOutList.add(str);
@@ -105,6 +108,20 @@ public class mLog {
     }
 
     public static void d(String content) {
+        if (!DebugUtils.isDebugBuild()) {
+            return;
+        }
+
+        String tag = getTag();
+
+        if (customLogger != null) {
+            customLogger.d(tag, content);
+        } else {
+            D(tag, content);
+        }
+    }
+
+    public static void d(String content, String str) {
         if (!DebugUtils.isDebugBuild()) {
             return;
         }
@@ -153,6 +170,8 @@ public class mLog {
         if (!DebugUtils.isDebugBuild()) {
             return;
         }
+
+        tag = getTag();
 
         if (customLogger != null) {
             customLogger.e(tag, content);
@@ -307,15 +326,31 @@ public class mLog {
             if (!"widev".contains(c)) continue;
             try {
                 Method m_o = ReflectionUtils.getDeclaredMethod(Log.class, c, String.class, String.class);
-                Method m_n = ReflectionUtils.getDeclaredMethod(mLog.class, c + "_ForReplace", String.class, String.class);
-                Hook.hook(m_o, m_n);
-                Method method = null;
+                Method m_n = ReflectionUtils.getDeclaredMethod(mLog2.class, c, String.class, String.class);
+                Hook.hook(m_o,m_n);
                 try {
-                    method = ReflectionUtils.getMethod(Log.class, c, String.class, String.class);
-                    method.invoke(null, "如果看到该tag，说明替换失败", "如果看到该tag，说明替换失败");
-                } catch (NoSuchMethodException e) {
-                    mLog.i(String.format("\"Log.%s()\"方法替换成功", c));
+                    switch (c) {
+                        case "i":
+                            Log.i("如果看到该tag，说明替换失败", String.format("\"Log.%s()\"方法替换成功", c));
+                            break;
+                        case "w":
+                            Log.w("如果看到该tag，说明替换失败", String.format("\"Log.%s()\"方法替换成功", c));
+                            break;
+                        case "e":
+                            Log.e("如果看到该tag，说明替换失败", String.format("\"Log.%s()\"方法替换成功", c));
+                            break;
+                        case "v":
+                            Log.v("如果看到该tag，说明替换失败", String.format("\"Log.%s()\"方法替换成功", c));
+                            break;
+                        case "d":
+                            Log.d("如果看到该tag，说明替换失败", String.format("\"Log.%s()\"方法替换成功", c));
+                            break;
+                    }
+                } catch (NoSuchMethodError e) {
+                    mLog.e(String.format("\"Log.%s()\"方法替换失败", c));
+
                 }
+                mLog.e("cc","vv");
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -372,23 +407,23 @@ public class mLog {
         }
     }
 
-    private static int W(String tag, String content) {
+    public static int W(String tag, String content) {
         return Log.println(Log.WARN, tag, content);
     }
 
-    private static int I(String tag, String content) {
+    public static int I(String tag, String content) {
         return Log.println(Log.INFO, tag, content);
     }
 
-    private static int E(String tag, String content) {
+    public static int E(String tag, String content) {
         return Log.println(Log.ERROR, tag, content);
     }
 
-    private static int D(String tag, String content) {
+    public static int D(String tag, String content) {
         return Log.println(Log.DEBUG, tag, content);
     }
 
-    private static int V(String tag, String content) {
+    public static int V(String tag, String content) {
         return Log.println(Log.VERBOSE, tag, content);
     }
 
@@ -790,4 +825,6 @@ public class mLog {
             return s;
         }
     }
+
+
 }
