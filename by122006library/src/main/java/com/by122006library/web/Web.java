@@ -103,9 +103,9 @@ public class Web {
         list.add("Request parameter :");
         if (requster.getData() != null) for (String key : requster.request.keySet()) {
             try {
-                list.add(String.format("r %-8s= %s", requster.request.get(key).substring(0, 30)));
+                list.add(String.format("r %-8s= %s",String.valueOf(requster.request.get(key).substring(0, 30))) );
             } catch (Exception e) {
-                list.add(String.format("r %-8s= %s", requster.request.get(key)));
+                list.add(String.format("r %-8s= %s",String.valueOf( requster.request.get(key))));
             }
         }
 
