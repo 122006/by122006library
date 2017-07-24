@@ -27,6 +27,33 @@ public class MyApplication extends Application {
             e.printStackTrace();
         }
         TopBar.setDefaultTopBarHeightdp(-2);
+                try {
+            Log.e("x", "e");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            Log.d("x", "d");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            Log.v("x", "v");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        try {
+            Log.i("x", "i");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        try {
+            Log.w("x", "w");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         mLog.autoReplaceLog("widve");
 //        com.by122006.modelprojectby122006.SmartRun2Mapping.doMapping();
 //        com.by122006library.Activity.SmartRun2Mapping.doMapping();
@@ -40,33 +67,7 @@ public class MyApplication extends Application {
 //            e.printStackTrace();
 //        }
 //        m("","");
-//        try {
-//            Log.e("x", "e");
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//        try {
-//            Log.d("x", "d");
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//        try {
-//            Log.v("x", "v");
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//
-//        try {
-//            Log.i("x", "i");
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//
-//        try {
-//            Log.w("x", "w");
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
+
     }
 
     public static void l(String string,String string2){

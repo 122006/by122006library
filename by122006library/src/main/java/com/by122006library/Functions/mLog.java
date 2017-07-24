@@ -320,11 +320,41 @@ public class mLog {
      *                     分隔符会自动忽略<br>顺序无关<br>不可重复
      */
     public static void autoReplaceLog(String replageStyle) {
+        if (DebugUtils.isDebugBuild()) {
+            return;
+        }
+        String version = System.getProperty("java.vm.version");
+        if (Integer.valueOf(version.substring(0, version.indexOf("."))) < 2) {
+           mLog.i("autoReplaceLog() 不支持对Dalvik的修改");
+            return;
+        }
         replageStyle = replageStyle.toLowerCase();
         for (int i = 0; i < replageStyle.length(); i++) {
             String c = Character.toString(replageStyle.charAt(i));
             if (!"widev".contains(c)) continue;
             try {
+                try {
+                    switch (c) {
+                        case "i":
+                            Log.i("初始化", String.format("正在初始化\"Log.%s()\"方法", c));
+                            break;
+                        case "w":
+                            Log.w("初始化", String.format("正在初始化\"Log.%s()\"方法", c));
+                            break;
+                        case "e":
+                            Log.e("初始化", String.format("正在初始化\"Log.%s()\"方法", c));
+                            break;
+                        case "v":
+                            Log.v("初始化", String.format("正在初始化\"Log.%s()\"方法", c));
+                            break;
+                        case "d":
+                            Log.d("初始化", String.format("正在初始化\"Log.%s()\"方法", c));
+                            break;
+                    }
+                } catch (NoSuchMethodError e) {
+                    mLog.e(String.format("\"Log.%s()\"方法初始化失败，请确保autoReplaceLog方法首次运行且运行于Art虚拟机", c));
+
+                }
                 Method m_o = ReflectionUtils.getDeclaredMethod(Log.class, c, String.class, String.class);
                 Method m_n = ReflectionUtils.getDeclaredMethod(mLog.class, c+"_ForReplace", String.class, String.class);
                 Hook.hook(m_o,m_n);
