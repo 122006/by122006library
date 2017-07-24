@@ -326,7 +326,7 @@ public class mLog {
             if (!"widev".contains(c)) continue;
             try {
                 Method m_o = ReflectionUtils.getDeclaredMethod(Log.class, c, String.class, String.class);
-                Method m_n = ReflectionUtils.getDeclaredMethod(mLog2.class, c, String.class, String.class);
+                Method m_n = ReflectionUtils.getDeclaredMethod(mLog.class, c+"_ForReplace", String.class, String.class);
                 Hook.hook(m_o,m_n);
                 try {
                     switch (c) {
@@ -350,7 +350,6 @@ public class mLog {
                     mLog.e(String.format("\"Log.%s()\"方法替换失败", c));
 
                 }
-                mLog.e("cc","vv");
             } catch (Exception e) {
                 e.printStackTrace();
             }
