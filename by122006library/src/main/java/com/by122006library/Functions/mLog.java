@@ -320,7 +320,7 @@ public class mLog {
      *                     分隔符会自动忽略<br>顺序无关<br>不可重复
      */
     public static void autoReplaceLog(String replageStyle) {
-        if (DebugUtils.isDebugBuild()) {
+        if (!DebugUtils.isDebugBuild()) {
             return;
         }
         String version = System.getProperty("java.vm.version");
