@@ -697,23 +697,27 @@ public class mLog {
             str.append("╝");
             str.append(FLAG_NATIVE_METHOD);
         }
-        switch (level) {
-            case Log.INFO:
-                mLog.i(str.toString());
-                break;
-            case Log.VERBOSE:
-                mLog.v(str.toString());
-                break;
-            case Log.DEBUG:
-                mLog.d(str.toString());
-                break;
-            case Log.WARN:
-                mLog.w(str.toString());
-                break;
-            case Log.ERROR:
-                mLog.e(str.toString());
-                break;
+        String[] strs=str.toString().split("\n");
+        for(String s:strs){
+            switch (level) {
+                case Log.INFO:
+                    mLog.i(s);
+                    break;
+                case Log.VERBOSE:
+                    mLog.v(s);
+                    break;
+                case Log.DEBUG:
+                    mLog.d(s);
+                    break;
+                case Log.WARN:
+                    mLog.w(s);
+                    break;
+                case Log.ERROR:
+                    mLog.e(s);
+                    break;
+            }
         }
+
     }
 
     /**

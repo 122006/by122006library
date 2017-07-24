@@ -109,7 +109,7 @@ public class Web {
             }
         }
 
-        mLog.more("连接至网络", list.toArray());
+        mLog.more("连接至网络 "+requster.getAction(), list.toArray());
 
         try {
             URL url = new URL(str_url);

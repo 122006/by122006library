@@ -3,6 +3,7 @@ package com.by122006.modelprojectby122006;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
@@ -98,7 +99,6 @@ public class MainActivity extends BaseActivity {
             data.add(new PinnedHeaderEntity<Object>(item, BaseHeaderAdapter.TYPE_DATA, "开发中"));
         }
         MyAdapter adapter = new MyAdapter(data);
-
         binding.recycer.setAdapter(adapter);
         binding.recycer.setItemAnimator(new DefaultItemAnimator());
         binding.recycer.setHasFixedSize(true);

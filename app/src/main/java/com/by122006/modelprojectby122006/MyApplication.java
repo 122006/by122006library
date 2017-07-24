@@ -70,11 +70,5 @@ public class MyApplication extends Application {
 
     }
 
-    public static void l(String string,String string2){
-        mLog.I("dadsa","xxxxxxxxxxx");
-    }
-    public static void m(String string,String string2){
-        mLog.I("dadsa","mmmmmmmm");
-    }
 
 }
