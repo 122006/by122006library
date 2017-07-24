@@ -100,12 +100,12 @@ public class Web {
         list.add(String.format("%-8s= %s", "TimeOut", requster.getTimeout()));
         list.add(String.format("%-8s= %s", "Encode", requster.getEncode()));
         list.add(String.format("%-8s= %s", "ReStart", requster.getReStartMaxTimes()));
-        list.add("Request parameter :");
+        list.add("======= Request parameter =======");
         if (requster.getData() != null) for (String key : requster.request.keySet()) {
             try {
-                list.add(String.format("r %-8s= %s",key,String.valueOf(requster.request.get(key).substring(0, 30))) );
+                list.add(String.format("%-8s = %s",key,String.valueOf(requster.request.get(key).substring(0, 30))) );
             } catch (Exception e) {
-                list.add(String.format("r %-8s= %s",key,String.valueOf( requster.request.get(key))));
+                list.add(String.format("%-8s = %s",key,String.valueOf( requster.request.get(key))));
             }
         }
 
