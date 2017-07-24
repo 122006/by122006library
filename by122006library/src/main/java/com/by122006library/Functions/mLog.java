@@ -1,5 +1,6 @@
 package com.by122006library.Functions;
 
+import android.graphics.BitmapFactory;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
@@ -36,6 +37,7 @@ public class mLog {
         }
     };
     private static final String FLAG_NATIVE_METHOD = "at java.lang.reflect.Method.invoke(Native Method)";
+    private static final String INVISIBLE =FLAG_NATIVE_METHOD;
     public static String customTagPrefix = "";    // 自定义Tag的前缀，可以是作者名
     public static boolean isSaveLog = false;    // 是否把保存日志到SD卡中
     /**
@@ -121,19 +123,6 @@ public class mLog {
         }
     }
 
-    public static void d(String content, String str) {
-        if (!DebugUtils.isDebugBuild()) {
-            return;
-        }
-
-        String tag = getTag();
-
-        if (customLogger != null) {
-            customLogger.d(tag, content);
-        } else {
-            D(tag, content);
-        }
-    }
 
     public static void d(String content, Throwable e) {
         if (!DebugUtils.isDebugBuild()) {
@@ -216,7 +205,22 @@ public class mLog {
             point(LOG_PATH, tag, e.getMessage());
         }
     }
-
+    public static void d(Object contentObj, Object... data) {
+        if (!DebugUtils.isDebugBuild()) {
+            return;
+        }
+        String content = contentObj.toString();
+        content = String.format(content, data);
+        String tag = getTag();
+        if (customLogger != null) {
+            customLogger.d(tag, content);
+        } else {
+            D(tag, content);
+        }
+        if (isSaveLog) {
+            point(LOG_PATH, tag, content);
+        }
+    }
     public static void i(Object contentObj, Object... data) {
         if (!DebugUtils.isDebugBuild()) {
             return;
@@ -328,7 +332,9 @@ public class mLog {
            mLog.i("autoReplaceLog() 不支持对Dalvik的修改");
             return;
         }
+        mLog.i("正在替换系统Log，替换参数:"+replageStyle);
         replageStyle = replageStyle.toLowerCase();
+
         for (int i = 0; i < replageStyle.length(); i++) {
             String c = Character.toString(replageStyle.charAt(i));
             if (!"widev".contains(c)) continue;
@@ -336,19 +342,19 @@ public class mLog {
                 try {
                     switch (c) {
                         case "i":
-                            Log.i("初始化", String.format("正在初始化\"Log.%s()\"方法", c));
+                            Log.i("初始化", String.format("正在初始化\"Log.%s()\"方法", c)+INVISIBLE);
                             break;
                         case "w":
-                            Log.w("初始化", String.format("正在初始化\"Log.%s()\"方法", c));
+                            Log.w("初始化", String.format("正在初始化\"Log.%s()\"方法", c)+INVISIBLE);
                             break;
                         case "e":
-                            Log.e("初始化", String.format("正在初始化\"Log.%s()\"方法", c));
+                            Log.e("初始化", String.format("正在初始化\"Log.%s()\"方法", c)+INVISIBLE);
                             break;
                         case "v":
-                            Log.v("初始化", String.format("正在初始化\"Log.%s()\"方法", c));
+                            Log.v("初始化", String.format("正在初始化\"Log.%s()\"方法", c)+INVISIBLE);
                             break;
                         case "d":
-                            Log.d("初始化", String.format("正在初始化\"Log.%s()\"方法", c));
+                            Log.d("初始化", String.format("正在初始化\"Log.%s()\"方法", c)+INVISIBLE);
                             break;
                     }
                 } catch (NoSuchMethodError e) {
@@ -361,19 +367,19 @@ public class mLog {
                 try {
                     switch (c) {
                         case "i":
-                            Log.i("如果看到该tag，说明替换失败", String.format("\"Log.%s()\"方法替换成功", c));
+                            Log.i("如果看到该tag，说明替换失败", String.format("\"Log.%s()\"方法替换成功", c)+INVISIBLE);
                             break;
                         case "w":
-                            Log.w("如果看到该tag，说明替换失败", String.format("\"Log.%s()\"方法替换成功", c));
+                            Log.w("如果看到该tag，说明替换失败", String.format("\"Log.%s()\"方法替换成功", c)+INVISIBLE);
                             break;
                         case "e":
-                            Log.e("如果看到该tag，说明替换失败", String.format("\"Log.%s()\"方法替换成功", c));
+                            Log.e("如果看到该tag，说明替换失败", String.format("\"Log.%s()\"方法替换成功", c)+INVISIBLE);
                             break;
                         case "v":
-                            Log.v("如果看到该tag，说明替换失败", String.format("\"Log.%s()\"方法替换成功", c));
+                            Log.v("如果看到该tag，说明替换失败", String.format("\"Log.%s()\"方法替换成功", c)+INVISIBLE);
                             break;
                         case "d":
-                            Log.d("如果看到该tag，说明替换失败", String.format("\"Log.%s()\"方法替换成功", c));
+                            Log.d("如果看到该tag，说明替换失败", String.format("\"Log.%s()\"方法替换成功", c)+INVISIBLE);
                             break;
                     }
                 } catch (NoSuchMethodError e) {

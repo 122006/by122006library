@@ -35,7 +35,7 @@ public class Hook {
         Method backUp = backUp(origin, replace);
         mLog.isNull(backUp);
         sBackups.put( replace.getName(), backUp);
-        mLog.i("put : className=%s , methodName=%s",replace.getDeclaringClass().getName(), origin.getName());
+        mLog.d("put : className=%s , methodName=%s",replace.getDeclaringClass().getName(), origin.getName());
         // 2. replace method
         Memory.memcpy(MethodInspect.getMethodAddress(origin), MethodInspect.getMethodAddress(replace),
                 MethodInspect.getArtMethodSize());
