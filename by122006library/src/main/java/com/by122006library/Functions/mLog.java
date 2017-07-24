@@ -325,7 +325,7 @@ public class mLog {
         }
         String version = System.getProperty("java.vm.version");
         if (Integer.valueOf(version.substring(0, version.indexOf("."))) < 2) {
-           mLog.i("autoReplaceLog() 不支持对Dalvik的修改");
+           mLog.i("autoReplaceLog()不支持对Dalvik的修改");
             return;
         }
         replageStyle = replageStyle.toLowerCase();
