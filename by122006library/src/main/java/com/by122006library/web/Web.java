@@ -97,8 +97,8 @@ public class Web {
         if (requster.getHead() != null) for (String key : requster.getHead().keySet()) {
             list.add(String.format("%-8s= %s", key, requster.getHead().get(key)));
         }
-        list.add(String.format("%-8s= %s", "TimeOut", requster.getTimeout()));
-        list.add(String.format("%-8s= %s", "Encode", requster.getEncode()));
+//        list.add(String.format("%-8s= %s", "TimeOut", requster.getTimeout()));
+//        list.add(String.format("%-8s= %s", "Encode", requster.getEncode()));
         list.add(String.format("%-8s= %s", "ReStart", requster.getReStartMaxTimes()));
         list.add("******** Request parameter ********");
         if (requster.getData() != null) for (String key : requster.request.keySet()) {

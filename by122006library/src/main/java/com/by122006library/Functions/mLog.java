@@ -1,12 +1,10 @@
 package com.by122006library.Functions;
 
-import android.graphics.BitmapFactory;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.by122006library.Enum.mLog2;
 import com.by122006library.Utils.DebugUtils;
 import com.by122006library.Utils.ReflectionUtils;
 import com.me.weishu.epic.Hook;
@@ -703,26 +701,26 @@ public class mLog {
             str.append("╝");
             str.append(FLAG_NATIVE_METHOD);
         }
-        String[] strs=str.toString().split("\n");
-        for(String s:strs){
+//        String[] strs=str.toString().split("\n");
+//        for(String s:strs){
             switch (level) {
                 case Log.INFO:
-                    mLog.i(s);
+                    mLog.i(str.toString());
                     break;
                 case Log.VERBOSE:
-                    mLog.v(s);
+                    mLog.v(str.toString());
                     break;
                 case Log.DEBUG:
-                    mLog.d(s);
+                    mLog.d(str.toString());
                     break;
                 case Log.WARN:
-                    mLog.w(s);
+                    mLog.w(str.toString());
                     break;
                 case Log.ERROR:
-                    mLog.e(s);
+                    mLog.e(str.toString());
                     break;
             }
-        }
+//        }
 
     }
 

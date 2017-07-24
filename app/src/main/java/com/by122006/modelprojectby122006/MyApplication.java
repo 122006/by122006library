@@ -4,14 +4,10 @@ import android.app.Application;
 import android.util.Log;
 
 import com.anupcowkur.reservoir.Reservoir;
-import com.by122006library.Enum.mLog2;
 import com.by122006library.Functions.mLog;
-import com.by122006library.Utils.ReflectionUtils;
 import com.by122006library.View.TopBar;
-import com.me.weishu.epic.Hook;
 
 import java.io.IOException;
-import java.lang.reflect.Method;
 
 /**
  * Created by admin on 2017/6/15.
