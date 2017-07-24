@@ -3,21 +3,17 @@ package com.by122006.modelprojectby122006;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.BitmapFactory;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
-import android.util.Log;
 import android.util.SparseIntArray;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -26,7 +22,6 @@ import com.by122006.modelprojectby122006.databinding.ItemMainActivityListViewSty
 import com.by122006library.Activity.BaseActivity;
 import com.by122006library.Utils.BitmapUtils;
 import com.by122006library.Utils.ReflectionUtils;
-import com.by122006library.Utils.StatusBarUtil;
 import com.by122006library.Utils.ViewUtils;
 import com.by122006library.View.TopBar;
 import com.chad.library.adapter.base.BaseQuickAdapter;
