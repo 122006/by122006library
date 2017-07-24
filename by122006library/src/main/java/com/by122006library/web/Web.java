@@ -20,7 +20,6 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Set;
 
 /**
@@ -81,34 +80,36 @@ public class Web {
         String str_url = requster.getUrl();//附加action
         if (RequestBuilder.getDefaultUrl() == null) throw new MyException("你需要为Url设置一个默认值");
         if (RequestBuilder.getDefaultEncode() == null) throw new MyException("你需要为编码Encode设置一个默认值");
-        if (RequestBuilder.getDefaultHttpStyle() == -1) throw new MyException("你需要为HttpStyle(GET/POST)设置一个默认值");
-        if (requster.getAction() == null || requster.getAction().length() == 0) mLog.e("action真的应该为null么");
+        if (RequestBuilder.getDefaultHttpStyle() == -1)
+            throw new MyException("你需要为HttpStyle(GET/POST)设置一个默认值");
+        if (requster.getAction() == null || requster.getAction().length() == 0)
+            mLog.e("action真的应该为null么");
         if (requster.getHttpStyle() == RequestBuilder.GET) str_url += "?" + requster.getData();
 
         if (requster.getHttpStyle() == RequestBuilder.POST && RequestBuilder.isUrlToken()) {
-            str_url += "?"+RequestBuilder.getTokenKeyName()+"=" + RequestBuilder.getToken();
+            str_url += "?" + RequestBuilder.getTokenKeyName() + "=" + RequestBuilder.getToken();
         }
-        ArrayList<String> list=new ArrayList<String>();
-        list.add(String.format("%-8s= %s", "Action",requster.getAction()));
-        list.add(String.format("%-8s= %s", "Style",requster.getHttpStyle()==RequestBuilder.GET?"Get":"Post"));
-        list.add(String.format("%-8s= %s", "url",requster.getUrl()));
-        list.add(String.format("%-8s= \"%s\"", "  +?",RequestBuilder.getTokenKeyName()+"=" + RequestBuilder.getToken()));
-        if(requster.getHead()!=null)for(String key:requster.getHead().keySet()){
-            list.add(String.format("%-8s= %s", key,requster.getHead().get(key)));
+        ArrayList<String> list = new ArrayList<String>();
+        list.add(String.format("%-8s= %s", "Action", requster.getAction()));
+        list.add(String.format("%-8s= %s", "Style", requster.getHttpStyle() == RequestBuilder.GET ? "Get" : "Post"));
+        list.add(String.format("%-8s= %s", "url", requster.getUrl()));
+        list.add(String.format("%-8s= \"%s\"", "  +?", RequestBuilder.getTokenKeyName() + "=" + RequestBuilder.getToken()));
+        if (requster.getHead() != null) for (String key : requster.getHead().keySet()) {
+            list.add(String.format("%-8s= %s", key, requster.getHead().get(key)));
         }
-        list.add(String.format("%-8s= %s", "TimeOut",requster.getTimeout()));
-        list.add(String.format("%-8s= %s", "Encode",requster.getEncode()));
-        list.add(String.format("%-8s= %s", "ReStart",requster.getReStartMaxTimes()));
+        list.add(String.format("%-8s= %s", "TimeOut", requster.getTimeout()));
+        list.add(String.format("%-8s= %s", "Encode", requster.getEncode()));
+        list.add(String.format("%-8s= %s", "ReStart", requster.getReStartMaxTimes()));
         list.add("Request parameter :");
-        if(requster.getHead()!=null)for(String key:requster.request.keySet()){
+        if (requster.getData() != null) for (String key : requster.request.keySet()) {
             try {
-                list.add(String.format("r %-8s= %s",requster.request.get(key).substring(0,30)));
+                list.add(String.format("r %-8s= %s", requster.request.get(key).substring(0, 30)));
             } catch (Exception e) {
-                list.add(String.format("r %-8s= %s",requster.request.get(key)));
+                list.add(String.format("r %-8s= %s", requster.request.get(key)));
             }
         }
 
-        mLog.more("连接至网址：url=" + str_url, list.toArray());
+        mLog.more("连接至网络", list.toArray());
 
         try {
             URL url = new URL(str_url);
@@ -177,7 +178,7 @@ public class Web {
             }
             mLog.e("网络出错：状态码=" + httpConn.getResponseCode());
 
-            if (RunLogicUtils.getHereRunTimes((requster.getReStartMaxTimes()+2)*requster.timeout) <= requster.getReStartMaxTimes()) {
+            if (RunLogicUtils.getHereRunTimes((requster.getReStartMaxTimes() + 2) * requster.timeout) <= requster.getReStartMaxTimes()) {
                 return doSynchroHttp(requster, callback, vs);
             }
             callback.analyseBack(httpConn.getResponseCode() == 404 ? RESULTSTYLE.Fail_NotFound : RESULTSTYLE
@@ -185,14 +186,14 @@ public class Web {
             if (vs != null) ThreadUtils.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    vs.showError("网络出错且多次尝试重连无效" , ColorStyle.getInitData());
+                    vs.showError("网络出错且多次尝试重连无效", ColorStyle.getInitData());
                 }
             });
             return null;
 
         } catch (final Exception e) {
             mLog.e("网络出错：" + String.valueOf(e));
-            if (RunLogicUtils.getHereRunTimes((requster.getReStartMaxTimes()+2)*requster.timeout) <=  requster.getReStartMaxTimes()) {
+            if (RunLogicUtils.getHereRunTimes((requster.getReStartMaxTimes() + 2) * requster.timeout) <= requster.getReStartMaxTimes()) {
                 return doSynchroHttp(requster, callback, vs);
             }
             if (callback != null) try {
