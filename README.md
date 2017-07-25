@@ -6,7 +6,7 @@
 
 
 * [by122006library](/by122006library/src/main/java/com/by122006library/README.md) 主体库
-* [app](/app) 测试用的库(没啥用)
+* [app](/app) 库的展示程序
 
 #### 就是这样~~
 
