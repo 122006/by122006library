@@ -104,7 +104,7 @@ public abstract class BaseActivity extends Activity implements NoProguard_All {
         try {
             Activity baseActivity = getTopActivity();
             return baseActivity;
-        } catch (MyException e) {
+        } catch (Exception e) {
             return null;
         }
     }
@@ -183,6 +183,7 @@ public abstract class BaseActivity extends Activity implements NoProguard_All {
         try {
             act = list_act.get(list_act.size() - 1);
         } catch (Exception e) {
+            throw new MyException("没有活动的界面");
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
             if (act.isDestroyed()) throw new MyException("顶层窗口不在活动周期");
@@ -805,11 +806,11 @@ public abstract class BaseActivity extends Activity implements NoProguard_All {
     public abstract static class CustomView {
         Class<? extends View> aClass;
 
-        CustomView(Class<? extends View> aClass) {
+        public CustomView(Class<? extends View> aClass) {
             this.aClass = aClass;
         }
 
-        abstract View onCreate(View parent, String name, Context context, AttributeSet attrs);
+        public abstract View onCreate(View parent, String name, Context context, AttributeSet attrs);
     }
 
     public static class IActivityManagerServiceHandler implements InvocationHandler {
