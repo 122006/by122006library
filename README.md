@@ -81,6 +81,20 @@
 	}
 
 
+## Aspectj支持配置
+##### 第一步：请在项目的主 build.gradle 中增加以下依赖:
+
+	buildscript{
+	    dependencies{
+            classpath 'com.hujiang.aspectjx:gradle-android-plugin-aspectjx:1.0.10'
+	    }
+	}
+##### 第二步：请在项目的app模块 build.gradle 的起始部位增加以下代码:
+
+	apply plugin: 'com.hujiang.android-aspectjx'
+
+
+
 >“最新版本”请替换为最新的版本号，最新版本号参见下方标牌绿色部分，如"v1.8.9"
 
 [![](https://jitpack.io/v/122006/by122006library.svg)](https://jitpack.io/#122006/by122006library)
