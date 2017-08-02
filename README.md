@@ -81,11 +81,12 @@
 	}
 
 
-## Aspectj支持配置
+### Aspectj支持配置
 ##### 第一步：请在项目的主 build.gradle 中增加以下依赖:
 
 	buildscript{
 	    dependencies{
+	        ...
             classpath 'com.hujiang.aspectjx:gradle-android-plugin-aspectjx:1.0.10'
 	    }
 	}
