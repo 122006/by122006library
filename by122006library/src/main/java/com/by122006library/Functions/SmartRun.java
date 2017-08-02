@@ -6,6 +6,7 @@ import com.by122006library.Interface.Async;
 import com.by122006library.Interface.BGThread;
 import com.by122006library.Interface.DefaultThread;
 import com.by122006library.Interface.ThreadStyle;
+import com.by122006library.Interface.Trace2;
 import com.by122006library.Interface.UIThread;
 import com.by122006library.MyException;
 import com.by122006library.Utils.StringUtils;
@@ -37,7 +38,6 @@ public abstract class SmartRun {
             staticMap.remove(target);
         }
     }
-
     final public static <T> boolean sPrepare(@Nullable T target, @Nullable Object... parameter) {
 
         StackTraceElement[] stackTraceElement = Thread.currentThread().getStackTrace();
@@ -76,7 +76,7 @@ public abstract class SmartRun {
             Class clazz2 = target.getClass();
             Method[] methods2 = clazz2.getMethods();
             for (Method m : methods2) {
-                if (m.getName().contains("$")) continue;
+//                if (m.getName().contains("$")) continue;
                 for (Method m2 : methods1) {
                     if (!m.getName().equals(m2.getName())) continue;
                     if (m.getParameterTypes().length != m2.getParameterTypes().length) continue;

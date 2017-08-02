@@ -5,4 +5,6 @@ package com.by122006.modelprojectby122006;
  */
 
 public class TiaoShi {
+    String title;
+
 }

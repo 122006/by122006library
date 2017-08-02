@@ -57,6 +57,13 @@
             android:windowSoftInputMode="stateHidden|stateAlwaysHidden">
 
         </activity>
+
+        <activity
+            android:name=".SF_AspectThread"
+            android:windowSoftInputMode="stateHidden|stateAlwaysHidden">
+
+        </activity>
+
     </application>
 
 </manifest>

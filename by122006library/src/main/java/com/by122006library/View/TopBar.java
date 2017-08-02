@@ -31,11 +31,12 @@ public class TopBar {
     static private int defaultTopBarHeightdp = 70;
     TopbarBinding binder;
     BaseActivity act;
-
+    ViewGroup vg;
     public static TopBar createIn(ViewGroup vg) {
         final BaseActivity act = (BaseActivity) vg.getContext();
         SubclassAttribute.with((BaseActivity) act).setFLAG_ACT_NO_TITLE(false);
         TopBar topBar = new TopBar();
+        topBar.vg=vg;
         topBar.binder = DataBindingUtil.inflate(act.getLayoutInflater(), R.layout.topbar, null, false);
         topBar.act = act;
         vg.setLayoutParams(new LinearLayout.LayoutParams(-1, ViewUtils.dip2px(defaultTopBarHeightdp)));
@@ -55,6 +56,11 @@ public class TopBar {
         vg.addView(topBar.binder.getRoot());
         return topBar;
     }
+
+    public void setBackgroundColor(int color) {
+        vg.setBackgroundColor(color);
+    }
+
 
     public static int getDefaultTopBarHeightdp() {
         return defaultTopBarHeightdp;

@@ -94,7 +94,7 @@ public class SF_SmartRun extends SF {
 
     @Override
     public String[] getFuncitonTags() {
-        return new String[]{"核心", "原创", "常用","框架", "智能", "黑科技", "代码修复", "注解", "堆栈回调", "一行代码"};
+        return new String[]{"核心", "原创", "常用","框架", "智能", "代码修复", "注解", "堆栈回调", "一行代码"};
     }
 
     @Override

@@ -99,7 +99,7 @@ public class SF_SmartRun2 extends SF {
 
     @Override
     public String getFuncitonDescribe() {
-        return "类似于1版。\n缺点：只能在非匿名类方法使用，和1版部分冲突，不能使用AS热更新和分包技术\n但是技术含量是真的高。。。";
+        return "类似于1版。\n缺点：只能在非匿名类方法使用，和1版部分冲突，不能使用AS热更新和分包技术";
     }
 
     @Override

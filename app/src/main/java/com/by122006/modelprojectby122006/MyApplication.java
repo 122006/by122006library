@@ -50,7 +50,7 @@ public class MyApplication extends Application {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        mLog.autoReplaceLog("widve");
+//        mLog.autoReplaceLog("widve");
 //        com.by122006.modelprojectby122006.SmartRun2Mapping.doMapping();
 //        com.by122006library.Activity.SmartRun2Mapping.doMapping();
 //        AppRunSpeed.setSpeed(2);

@@ -41,8 +41,9 @@ import java.util.List;
 public class MainActivity extends BaseActivity {
     static public Class<?>[] class1 = new Class[]{SV_ViewsReplace.class, SV_SlideSpinner.class, SV_PullDownTopbarMenu.class};
     static public Class<?>[] class2 = new Class[]{SF_SmartRun.class, SF_mLog.class, SF_CycleTask.class, SF_AttBinder.class};
-    static public Class<?>[] class3 = new Class[]{};
-    static public Class<?>[] class4 = new Class[]{SF_SmartRun2.class};
+    static public Class<?>[] class3 = new Class[]{SF_AspectThread.class};
+    static public Class<?>[] class4 = new Class[]{};
+    static public Class<?>[] class5 = new Class[]{SF_SmartRun2.class};
 
 
     public String name = "by122006库 演示";
@@ -73,6 +74,7 @@ public class MainActivity extends BaseActivity {
 //        }
 //        getWindow().getDecorView().setSystemUiVisibility( View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN|View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
 //        StatusBarUtil.setStatusBarColor(this,R.color.black);
+//        Log.i("",)
         setContentView(R.layout.activity_main);
         binding.setAct(this);
         binding.recycer.setLayoutManager(new LinearLayoutManager(this));
@@ -85,12 +87,16 @@ public class MainActivity extends BaseActivity {
         for (Object item : class2) {
             data.add(new PinnedHeaderEntity<Object>(item, BaseHeaderAdapter.TYPE_DATA, "原创功能"));
         }
-        data.add(new PinnedHeaderEntity<>(null, BaseHeaderAdapter.TYPE_HEADER, "第三方"));
+        data.add(new PinnedHeaderEntity<>(null, BaseHeaderAdapter.TYPE_HEADER, "拓展项目"));
         for (Object item : class3) {
-            data.add(new PinnedHeaderEntity<Object>(item, BaseHeaderAdapter.TYPE_DATA, "第三方"));
+            data.add(new PinnedHeaderEntity<Object>(item, BaseHeaderAdapter.TYPE_DATA, "拓展项目"));
+        }
+        data.add(new PinnedHeaderEntity<>(null, BaseHeaderAdapter.TYPE_HEADER, "第三方展示"));
+        for (Object item : class4) {
+            data.add(new PinnedHeaderEntity<Object>(item, BaseHeaderAdapter.TYPE_DATA, "第三方展示"));
         }
         data.add(new PinnedHeaderEntity<>(null, BaseHeaderAdapter.TYPE_HEADER, "开发中"));
-        for (Object item : class4) {
+        for (Object item : class5) {
             data.add(new PinnedHeaderEntity<Object>(item, BaseHeaderAdapter.TYPE_DATA, "开发中"));
         }
         MyAdapter adapter = new MyAdapter(data);
@@ -209,7 +215,6 @@ public class MainActivity extends BaseActivity {
 
         class ViewVH extends RecyclerView.ViewHolder {
             ItemMainActivityListViewStyleBinding binding;
-
             public ViewVH(ItemMainActivityListViewStyleBinding binding) {
                 super((View) binding.getRoot().getParent());
                 this.binding = binding;
