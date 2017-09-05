@@ -1,13 +1,9 @@
 package com.by122006library.View;
 
 import android.app.Activity;
-import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
-import android.os.Build;
-import android.support.annotation.RequiresApi;
 import android.support.v7.widget.CardView;
-import android.support.v7.widget.LinearLayoutCompat;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,10 +20,6 @@ import android.widget.TextView;
 import com.by122006library.Functions.mLog;
 import com.by122006library.R;
 import com.by122006library.Utils.MathUtils;
-import com.by122006library.Utils.ReflectionUtils;
-
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 
 import me.grantland.widget.AutofitTextView;
 

@@ -2,19 +2,15 @@ package com.by122006library.web;
 
 
 import android.support.annotation.IntDef;
-import android.view.SurfaceHolder;
 
 import com.by122006library.Functions.mLog;
-import com.by122006library.MyException;
 import com.by122006library.web.AnalysisOut.AnalysisOut;
-import com.by122006library.web.CallBack.WEBBaseCallBack;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 /**

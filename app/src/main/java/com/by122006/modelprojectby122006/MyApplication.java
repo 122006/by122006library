@@ -4,7 +4,6 @@ import android.app.Application;
 import android.util.Log;
 
 import com.anupcowkur.reservoir.Reservoir;
-import com.by122006library.Functions.mLog;
 import com.by122006library.View.TopBar;
 
 import java.io.IOException;

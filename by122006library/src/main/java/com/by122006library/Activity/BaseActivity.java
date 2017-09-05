@@ -48,10 +48,10 @@ import android.widget.TextView;
 
 import com.by122006.annotation.Attribute;
 import com.by122006.annotation.Subclass;
+import com.by122006library.Functions.mLog;
 import com.by122006library.SubclassAttribute;
 import com.by122006library.Functions.CycleTask.CycleTask;
 import com.by122006library.Functions.SmartRun;
-import com.by122006library.Functions.mLog;
 import com.by122006library.Interface.NoProguard_All;
 import com.by122006library.Interface.SpecialMethod;
 import com.by122006library.Interface.UIThread;

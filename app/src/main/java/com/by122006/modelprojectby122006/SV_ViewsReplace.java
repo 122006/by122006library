@@ -9,7 +9,6 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.by122006library.Functions.ViewsReplace;
-import com.by122006library.Functions.mLog;
 import com.by122006library.Utils.ViewUtils;
 
 import java.util.ArrayList;

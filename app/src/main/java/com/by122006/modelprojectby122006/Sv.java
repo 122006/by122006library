@@ -10,7 +10,6 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.SparseIntArray;
 import android.util.TypedValue;
-import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -32,7 +31,6 @@ import com.by122006library.Utils.ReflectionUtils;
 import com.by122006library.Utils.ViewUtils;
 import com.by122006library.View.PullDownTopbarMenu;
 import com.by122006library.View.SlideSpinner;
-import com.by122006library.View.TopBar;
 import com.by122006library.View.mToast;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
@@ -47,7 +45,6 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 
 /**

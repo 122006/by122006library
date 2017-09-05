@@ -227,7 +227,7 @@ public abstract class CycleTask {
             list.remove(this);
             setState(TaskState.Unregister);
         }else{
-            if(log)mLog.e("不能注销循环任务 注销位置："+mLog.getCallerLocation());
+            if(log) mLog.e("不能注销循环任务 注销位置："+mLog.getCallerLocation());
         }
 //        if (list.size() == 0) destroyTaskThread();
     }

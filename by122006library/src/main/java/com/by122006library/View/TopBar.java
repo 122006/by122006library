@@ -16,7 +16,6 @@ import com.by122006library.Functions.AttBinder.AttChemotactic;
 import com.by122006library.Functions.AttBinder.AttProgressListener;
 import com.by122006library.Functions.AttBinder.MainAtt;
 import com.by122006library.Functions.AttBinder.ViewAtt;
-import com.by122006library.Functions.mLog;
 import com.by122006library.R;
 import com.by122006library.SubclassAttribute;
 import com.by122006library.Utils.ViewUtils;

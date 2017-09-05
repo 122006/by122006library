@@ -3,7 +3,6 @@ package com.by122006library.Functions.AttBinder;
 import android.support.annotation.CallSuper;
 import android.support.annotation.FloatRange;
 
-import com.by122006library.Functions.mLog;
 import com.by122006library.Utils.RunLogicUtils;
 
 import java.util.ArrayList;

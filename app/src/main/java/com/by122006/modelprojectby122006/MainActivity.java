@@ -20,6 +20,7 @@ import android.widget.TextView;
 import com.by122006.modelprojectby122006.databinding.ActivityMainBinding;
 import com.by122006.modelprojectby122006.databinding.ItemMainActivityListViewStyleBinding;
 import com.by122006library.Activity.BaseActivity;
+import com.by122006library.Functions.ViewIntroduce;
 import com.by122006library.Utils.BitmapUtils;
 import com.by122006library.Utils.ReflectionUtils;
 import com.by122006library.Utils.ViewUtils;
@@ -65,6 +66,7 @@ public class MainActivity extends BaseActivity {
         }
         return false;
     }
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 //        setMiuiStatusBarDarkMode(this,true);
@@ -120,6 +122,8 @@ public class MainActivity extends BaseActivity {
                 Class clazz = (Class) ((PinnedHeaderEntity<Object>) adapter.getData().get(position)).getData();
                 if (clazz == null) return;
                 startActivity(new Intent(MainActivity.this, clazz));
+
+
             }
         });
 

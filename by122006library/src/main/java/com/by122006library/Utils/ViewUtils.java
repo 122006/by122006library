@@ -207,7 +207,7 @@ public class ViewUtils {
 
         paint.setStyle(Paint.Style.FILL);
         Rect rect = new Rect();
-        v.getDrawingRect(rect);
+        v.getGlobalVisibleRect(rect);
         final int r = (rect.height() + rect.width()) / 2;
         Bitmap mask = null;
         if (roundRect) {
@@ -218,8 +218,8 @@ public class ViewUtils {
             int padding = 4;
             mask = Bitmap.createBitmap(rect.width(), rect.height(), Bitmap.Config.ARGB_8888);
             Canvas cc = new Canvas(mask);
-            rect.set(rect.left - padding, rect.top - padding, rect.right + padding, rect.bottom + padding);
-            cc.drawRect(rect, paint);
+            Rect rect2=new Rect(0,0, rect.width()+padding*2, rect.height()+padding*2);
+            cc.drawRect(rect2, paint);
         }
 
         Bitmap bitmap2 = Bitmap.createBitmap(wh[0], wh[1], Bitmap.Config.ARGB_8888);
@@ -238,11 +238,19 @@ public class ViewUtils {
         paint = new Paint();
         paint.setColor(Color.WHITE);
         paint.setTextSize(50);
-        int x = (int) v.getX(), y = (int) v.getY();
-        if (x + v.getWidth() / 2 > wh[0] / 2) x -= 200;
-        else x += 200;
-        if (y + v.getHeight() / 2 > wh[1] / 2) y -= 200;
-        else y += 200;
+        int x = rect.left;
+        int y = rect.top;
+        if(x + v.getWidth() / 2 > wh[0] / 2) {
+            x -= 100;
+        } else {
+            x += 100+v.getWidth();
+        }
+
+        if(y + v.getHeight() / 2 > wh[1] / 2) {
+            y -= 100;
+        } else {
+            y += 100+ v.getHeight();
+        }
         canvas.drawText(str, x, y, paint);
         iv.setImageBitmap(rootbitmap);
         iv.setAlpha(0.8f);
@@ -296,8 +304,8 @@ public class ViewUtils {
             int padding = 4;
             mask = Bitmap.createBitmap(rect.width(), rect.height(), Bitmap.Config.ARGB_8888);
             Canvas cc = new Canvas(mask);
-            rect.set(rect.left - padding, rect.top - padding, rect.right + padding, rect.bottom + padding);
-            cc.drawRect(rect, paint);
+            Rect rect2=new Rect(0,0, rect.width()+padding*2, rect.height()+padding*2);
+            cc.drawRect(rect2, paint);
         }
 
         Bitmap bitmap2 = Bitmap.createBitmap(wh[0], wh[1], Bitmap.Config.ARGB_8888);
@@ -317,10 +325,10 @@ public class ViewUtils {
         paint.setColor(Color.WHITE);
         paint.setTextSize(50);
         int x = (int) rect.left, y = (int) rect.top;
-        if (x + rect.width() / 2 > wh[0] / 2) x -= 200;
-        else x += 200;
-        if (y + rect.height() / 2 > wh[1] / 2) y -= 200;
-        else y += 200;
+        if (x + rect.width() / 2 > wh[0] / 2) x -= 100;
+        else x += 100;
+        if (y + rect.height() / 2 > wh[1] / 2) y -= 100;
+        else y += 100;
         canvas.drawText(str, x, y, paint);
         iv.setImageBitmap(rootbitmap);
         iv.setAlpha(0.8f);

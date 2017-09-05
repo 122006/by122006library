@@ -1,6 +1,5 @@
 package com.by122006.modelprojectby122006;
 
-import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
@@ -10,7 +9,6 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
-import com.by122006library.Functions.mLog;
 import com.by122006library.Utils.ViewUtils;
 import com.by122006library.View.SlideSpinner;
 

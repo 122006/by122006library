@@ -4,7 +4,6 @@ import android.support.annotation.FloatRange;
 
 import com.by122006library.Functions.CycleTask.CycleTask;
 import com.by122006library.Functions.mLog;
-import com.by122006library.Utils.RunLogicUtils;
 
 import java.util.ArrayList;
 

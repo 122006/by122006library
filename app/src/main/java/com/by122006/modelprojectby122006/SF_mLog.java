@@ -3,7 +3,6 @@ package com.by122006.modelprojectby122006;
 import android.graphics.Color;
 import android.view.View;
 
-import com.by122006library.Functions.SmartRun;
 import com.by122006library.Functions.mLog;
 
 import java.util.ArrayList;

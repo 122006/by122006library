@@ -3,6 +3,8 @@ package com.by122006.modelprojectby122006;
 import android.graphics.Color;
 import android.view.View;
 
+import com.by122006library.web.Web;
+
 import java.util.ArrayList;
 
 /**

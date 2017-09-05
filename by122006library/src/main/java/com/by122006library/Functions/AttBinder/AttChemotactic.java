@@ -1,9 +1,7 @@
 package com.by122006library.Functions.AttBinder;
 
 import com.by122006library.Functions.CycleTask.CycleTask;
-import com.by122006library.Functions.mLog;
 import com.by122006library.Interface.UIThread;
-import com.by122006library.MyException;
 
 import static com.by122006library.Functions.CycleTask.CycleTask.ImmediatelyRun;
 

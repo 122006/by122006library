@@ -2,8 +2,6 @@ package com.by122006library.Utils;
 
 import android.support.annotation.Nullable;
 
-import com.by122006.annotation.Attribute;
-import com.by122006.annotation.Subclass;
 import com.by122006library.Functions.mLog;
 
 import java.lang.reflect.Field;

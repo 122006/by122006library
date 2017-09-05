@@ -1,15 +1,6 @@
 package com.by122006library.Functions.AttBinder;
 
-import android.graphics.drawable.Drawable;
-import android.os.Build;
-import android.support.annotation.CallSuper;
 import android.support.annotation.FloatRange;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.LinearLayout;
-
-import com.by122006library.Functions.mLog;
-import com.by122006library.Utils.RunLogicUtils;
 
 /**
  * Created by admin on 2017/5/15.

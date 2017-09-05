@@ -1,7 +1,5 @@
 package com.me.weishu.epic;
 import android.os.Build;
-import android.util.Log;
-import android.util.Pair;
 
 import com.by122006library.Functions.mLog;
 
