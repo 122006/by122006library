@@ -11,11 +11,7 @@ import com.by122006library.Utils.ReflectionUtils;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Scanner;
 
 /**
  * 经验排序Map
@@ -130,7 +126,7 @@ public class ExpMap<S, E> {
                     control.clear();
                     if(re.size()>maxDataNum){
                         try {
-                            Method method=ReflectionUtils.getMethod(re,"removeRange",int.class,int.class);
+                            Method method= ReflectionUtils.getMethod(re,"removeRange",int.class,int.class);
                             method.invoke(re,maxDataNum,re.size());
                         } catch (NoSuchMethodException e) {
                             e.printStackTrace();

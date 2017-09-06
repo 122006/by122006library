@@ -30,7 +30,12 @@ public class ViewIntroduce {
     Activity context;
     ShapeStyle shapeStyle;
     private int[] wh;
-
+    public static ViewIntroduce create(Activity context){
+        return new ViewIntroduce(context);
+    }
+    public static ViewIntroduce create(View v){
+        return new ViewIntroduce(v);
+    }
     public PopupWindow.OnDismissListener getOnDismissListener() {
         return onDismissListener;
     }
