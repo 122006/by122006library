@@ -20,7 +20,6 @@ import android.widget.TextView;
 import com.by122006.modelprojectby122006.databinding.ActivityMainBinding;
 import com.by122006.modelprojectby122006.databinding.ItemMainActivityListViewStyleBinding;
 import com.by122006library.Activity.BaseActivity;
-import com.by122006library.Functions.ViewIntroduce;
 import com.by122006library.Utils.BitmapUtils;
 import com.by122006library.Utils.ReflectionUtils;
 import com.by122006library.Utils.ViewUtils;

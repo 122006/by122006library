@@ -1,4 +1,4 @@
-package com.by122006library.Functions;
+package com.by122006library.Functions.ViewIntroduce;
 
 import android.app.Activity;
 import android.graphics.Bitmap;
@@ -17,6 +17,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
 
+import com.by122006library.Functions.mLog;
 import com.by122006library.Utils.ViewUtils;
 
 /**
