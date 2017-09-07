@@ -175,9 +175,10 @@ public class ViewIntroduce {
         return popupWindow;
     }
     private float alpha=0.8f;
+    private int textMaxWidthPerWindow=3;
 
     public void drawText(Canvas canvas,Rect mask,String str){
-        int width=Math.max(wh[0]/3,mask.width());
+        int width=Math.max(wh[0]/textMaxWidthPerWindow,mask.width());
         Paint paint = new Paint();
         paint.setColor(Color.WHITE);
         paint.setTextSize(50);
@@ -207,6 +208,15 @@ public class ViewIntroduce {
 
     public ViewIntroduce setAlpha(float alpha) {
         this.alpha = alpha;
+        return this;
+    }
+
+    public int getTextMaxWidthPerWindow() {
+        return textMaxWidthPerWindow;
+    }
+
+    public ViewIntroduce setTextMaxWidthPerWindow(int textMaxWidthPerWindow) {
+        this.textMaxWidthPerWindow = textMaxWidthPerWindow;
         return this;
     }
 
