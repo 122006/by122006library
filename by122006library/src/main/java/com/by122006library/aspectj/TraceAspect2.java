@@ -2,7 +2,6 @@ package com.by122006library.aspectj;
 
 import com.by122006library.Functions.mLog;
 import com.by122006library.Utils.StopWatch2;
-import com.safframework.tony.common.utils.Preconditions;
 
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -36,10 +35,6 @@ public class TraceAspect2 {
         stopWatch.start();
         Object result = joinPoint.proceed();
         stopWatch.stop();
-
-        if (Preconditions.isBlank(className)) {
-            className = "Anonymous class";
-        }
 
         mLog.i(buildLogMessage(methodName, stopWatch.getTotalTimeMillis()));
 

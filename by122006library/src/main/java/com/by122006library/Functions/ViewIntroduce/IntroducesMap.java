@@ -11,7 +11,16 @@ import java.util.Collections;
  */
 
 public class IntroducesMap {
-    ArrayList<ViewIntroduce> map;
+    public ArrayList<ViewIntroduce> getMap() {
+        return map;
+    }
+
+    public IntroducesMap setMap(ArrayList<ViewIntroduce> map) {
+        this.map = map;
+        return this;
+    }
+
+    private ArrayList<ViewIntroduce> map;
     public IntroducesMap(ViewIntroduce... introduces){
         map=new ArrayList<>();
         Collections.addAll(map,introduces);
@@ -27,10 +36,11 @@ public class IntroducesMap {
             map.get(i).setOnDismissListener(new PopupWindow.OnDismissListener() {
                 @Override
                 public void onDismiss() {
-                    map.get(fi).show();
+                    map.get(fi+1).show();
                 }
             });
         }
+        map.get(0).show();
 
     }
 
