@@ -194,7 +194,7 @@ public class ViewIntroduce {
         if(mask.centerY()>wh[1]/2)
             y= mask.top-staticLayout2.getHeight()-padding*3;else y=  mask.bottom+padding*3;
 
-        if(mask.centerX()<wh[0]/2)
+        if(mask.centerX()<=wh[0]/2)
             x=mask.left;else x=mask.right+padding*3;
             canvas.translate(x, y);
         staticLayout2.draw(canvas);
