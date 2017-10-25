@@ -12,6 +12,7 @@ import android.graphics.RectF;
 import android.text.Layout;
 import android.text.StaticLayout;
 import android.text.TextPaint;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;
@@ -25,7 +26,7 @@ import com.by122006library.Utils.ViewUtils;
  */
 
 public class ViewIntroduce {
-    String str;
+    String str="";
     Rect rect;
     Activity context;
     ShapeStyle shapeStyle;
@@ -61,6 +62,16 @@ public class ViewIntroduce {
     }
 
     public ViewIntroduce setStr(String str) {
+        this.str = str;
+        return this;
+    }
+
+    /**
+     * the replace of getStr()
+     * @param str
+     * @return
+     */
+    public ViewIntroduce setText(String str) {
         this.str = str;
         return this;
     }
@@ -123,12 +134,40 @@ public class ViewIntroduce {
     }
 
     public int padding = 4;
+
+    public int getTextSize() {
+        return textSize;
+    }
+
+    public ViewIntroduce setTextSize(int textSize) {
+        this.textSize = textSize;
+        return this;
+    }
+
+    public int getBgColor() {
+        return bgColor;
+    }
+
+    public ViewIntroduce setBgColor(int bgColor) {
+        this.bgColor = bgColor;
+        return this;
+    }
+
+    public int getTextColor() {
+        return textColor;
+    }
+
+    public ViewIntroduce setTextColor(int textColor) {
+        this.textColor = textColor;
+        return this;
+    }
+
     public PopupWindow show() {
         final PopupWindow popupWindow = new PopupWindow();
         popupWindow.setOutsideTouchable(true);
         popupWindow.update();
-        popupWindow.setWidth(-2);
-        popupWindow.setHeight(-2);
+        popupWindow.setWidth(-1);
+        popupWindow.setHeight(-1);
         popupWindow.setFocusable(true);
         final ImageView iv = new ImageView(context);
         if(wh==null)wh = ViewUtils.getWindowWH((Activity) context);
@@ -146,7 +185,7 @@ public class ViewIntroduce {
         Bitmap bitmap2 = Bitmap.createBitmap(wh[0], wh[1], Bitmap.Config.ARGB_8888);
         Canvas cc = new Canvas(bitmap2);
         paint.setStyle(Paint.Style.FILL);
-        paint.setColor(Color.BLACK);
+        paint.setColor(bgColor);
         cc.drawRect(new Rect(0, 0, wh[0], wh[1]), paint);
         int sc = canvas.saveLayer(0, 0, wh[0], wh[1], null, Canvas.ALL_SAVE_FLAG);
         canvas.drawBitmap(bitmap2, 0, 0, paint);
@@ -160,6 +199,7 @@ public class ViewIntroduce {
         iv.setAlpha(alpha);
 //        iv.setBackgroundColor(Color.BLACK);
         iv.setClickable(true);
+
         iv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -176,12 +216,14 @@ public class ViewIntroduce {
     }
     private float alpha=0.8f;
     private int textMaxWidthPerWindow=3;
-
+    public int textSize=50;
+    public int bgColor=Color.BLACK;
+    public int textColor=Color.WHITE;
     public void drawText(Canvas canvas,Rect mask,String str){
         int width=Math.max(wh[0]/textMaxWidthPerWindow,mask.width());
         Paint paint = new Paint();
-        paint.setColor(Color.WHITE);
-        paint.setTextSize(50);
+        paint.setColor(textColor);
+        paint.setTextSize(textSize);
         if(mask.centerX()>wh[0]/2){
             paint.setTextAlign(Paint.Align.RIGHT);
         }else{

@@ -63,7 +63,11 @@
             android:windowSoftInputMode="stateHidden|stateAlwaysHidden">
 
         </activity>
+        <activity
+            android:name=".SF_ViewIntroduce"
+            android:windowSoftInputMode="stateHidden|stateAlwaysHidden">
 
+        </activity>
     </application>
 
 </manifest>

@@ -40,7 +40,7 @@ import java.util.List;
  */
 public class MainActivity extends BaseActivity {
     static public Class<?>[] class1 = new Class[]{SV_ViewsReplace.class, SV_SlideSpinner.class, SV_PullDownTopbarMenu.class};
-    static public Class<?>[] class2 = new Class[]{SF_SmartRun.class, SF_mLog.class, SF_CycleTask.class, SF_AttBinder.class};
+    static public Class<?>[] class2 = new Class[]{SF_SmartRun.class, SF_mLog.class, SF_CycleTask.class, SF_AttBinder.class,SF_ViewIntroduce.class};
     static public Class<?>[] class3 = new Class[]{SF_AspectThread.class};
     static public Class<?>[] class4 = new Class[]{};
     static public Class<?>[] class5 = new Class[]{SF_SmartRun2.class};
@@ -125,6 +125,8 @@ public class MainActivity extends BaseActivity {
 
             }
         });
+
+
 
     }
 

@@ -1,5 +1,6 @@
 package com.by122006library.Functions.ViewIntroduce;
 
+import android.view.View;
 import android.widget.PopupWindow;
 
 import java.util.ArrayList;
@@ -29,8 +30,8 @@ public class IntroducesMap {
         Collections.addAll(map,introduces);
         return this;
     }
-    public void show(){
-        if (map.isEmpty()) return;
+    public IntroducesMap show(){
+        if (map.isEmpty()) return this;
         for(int i=0;i<map.size()-1;i++){
             final int fi=i;
             map.get(i).setOnDismissListener(new PopupWindow.OnDismissListener() {
@@ -41,7 +42,11 @@ public class IntroducesMap {
             });
         }
         map.get(0).show();
+        return this;
 
+    }
+    public static IntroducesMap create(ViewIntroduce... introduces){
+        return new IntroducesMap(introduces);
     }
 
 }

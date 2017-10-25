@@ -73,7 +73,7 @@ public abstract class SmartRun {
                 if (!ifIgnore)
                     smartRun.methodList.add(m);
             }
-            Class clazz2 = target.getClass();
+            Class clazz2 = target instanceof Class? (Class) target :target.getClass();
             Method[] methods2 = clazz2.getMethods();
             for (Method m : methods2) {
 //                if (m.getName().contains("$")) continue;
@@ -126,7 +126,7 @@ public abstract class SmartRun {
                         }
                     }
                     if (ifConflict)
-                        mLog.e("不确定方法警告:SmartRun所在运行类(" + target.getClass().getName() + ")含有：与SmartRun本身的同名同参数冲突方法("
+                        mLog.e("不确定方法警告:SmartRun所在运行类(" +( target instanceof Class? (Class) target :target.getClass()).getName() + ")含有：与SmartRun本身的同名同参数冲突方法("
                                 + m.getName() + ")，请重命名并解决冲突");
                 }
                 smartRun.methodList.add(m);
