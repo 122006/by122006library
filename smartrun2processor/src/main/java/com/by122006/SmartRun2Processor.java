@@ -52,9 +52,9 @@ public class SmartRun2Processor extends javax.annotation.processing.AbstractProc
     }
 
     ArrayList<ClassName> all = new ArrayList<>();
-    private Filer mFiler; //æ–‡ä»¶ç›¸å…³å·¥å…·ç±»
-    private Elements mElementUtils; //å…ƒç´ ç›¸å…³çš„å·¥å…·ç±»
-    private Messager mMessager; //æ—¥å¿—ç›¸å…³çš„å·¥å…·ç±»
+    private Filer mFiler; //ÎÄ¼şÏà¹Ø¹¤¾ßÀà
+    private Elements mElementUtils; //ÔªËØÏà¹ØµÄ¹¤¾ßÀà
+    private Messager mMessager; //ÈÕÖ¾Ïà¹ØµÄ¹¤¾ßÀà
 
     //    }
     public static String toLowerCaseFirstOne(String s) {
@@ -64,7 +64,7 @@ public class SmartRun2Processor extends javax.annotation.processing.AbstractProc
             return (new StringBuilder()).append(Character.toLowerCase(s.charAt(0))).append(s.substring(1)).toString();
     }
 
-    //é¦–å­—æ¯è½¬å¤§å†™
+    //Ê××ÖÄ¸×ª´óĞ´
     public static String toUpperCaseFirstOne(String s) {
         if (Character.isUpperCase(s.charAt(0)))
             return s;
@@ -73,7 +73,7 @@ public class SmartRun2Processor extends javax.annotation.processing.AbstractProc
     }
 
     /**
-     * å¤„ç†å™¨çš„åˆå§‹åŒ–æ–¹æ³•ï¼Œå¯ä»¥è·å–ç›¸å…³çš„å·¥å…·ç±»
+     * ´¦ÀíÆ÷µÄ³õÊ¼»¯·½·¨£¬¿ÉÒÔ»ñÈ¡Ïà¹ØµÄ¹¤¾ßÀà
      */
     @Override
     public synchronized void init(ProcessingEnvironment processingEnv) {
@@ -90,7 +90,7 @@ public class SmartRun2Processor extends javax.annotation.processing.AbstractProc
 
         MethodSpec.Builder methodSpec = MethodSpec.methodBuilder(eMethod.nMethodName)
                 .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
-                .addJavadoc("åŸå§‹æ‰€åœ¨ç±»åï¼š$N<br>åŸå§‹æ–¹æ³•åï¼š$N", eMethod.oClassName, eMethod.oMethodName)
+                .addJavadoc("Ô­Ê¼ËùÔÚÀàÃû£º$N<br>Ô­Ê¼·½·¨Ãû£º$N", eMethod.oClassName, eMethod.oMethodName)
                 .returns(void.class);
         methodSpec.addStatement("final Object obj = this");
         List<? extends VariableElement> elements = (List<? extends VariableElement>) ((ExecutableElement) element).getParameters();
@@ -118,7 +118,7 @@ public class SmartRun2Processor extends javax.annotation.processing.AbstractProc
 
         methodSpec.addStatement("$N manager = $N.getInstance()", cThreadManager, cThreadManager)
                 .addStatement("$N.i($S,$S)", "android.util.Log", getClass().getSimpleName(), element.getSimpleName()
-                        + "() æ–¹æ³•è¿è¡ŒæˆåŠŸï¼")
+                        + "() ·½·¨ÔËĞĞ³É¹¦£¡")
                 .beginControlFlow("if ( !manager.check( $S ) )", eMethod.threadStyle)
                 .addStatement("$N.callOrigin( this$N )", cHook, ps)
                 .addStatement("return" + (returnVoid ? "" : " null"))
@@ -143,7 +143,7 @@ public class SmartRun2Processor extends javax.annotation.processing.AbstractProc
     }
 
     /**
-     * å¤„ç†å™¨çš„ä¸»æ–¹æ³•ï¼Œç”¨äºæ‰«æå¤„ç†æ³¨è§£ï¼Œç”Ÿæˆjavaæ–‡ä»¶
+     * ´¦ÀíÆ÷µÄÖ÷·½·¨£¬ÓÃÓÚÉ¨Ãè´¦Àí×¢½â£¬Éú³ÉjavaÎÄ¼ş
      */
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
@@ -152,9 +152,9 @@ public class SmartRun2Processor extends javax.annotation.processing.AbstractProc
         TypeSpec.Builder builder = TypeSpec.classBuilder("SmartRun2Methods");
         builder.addModifiers(Modifier.PUBLIC);
         builder.addSuperinterface(getClassName("com.by122006library.Interface.NoProguard_All"));
-        note("å‡†å¤‡æ ¹æ®æ³¨è§£ç”Ÿæˆè‡ªåŠ¨æ„å»ºç±»");
+        note("×¼±¸¸ù¾İ×¢½âÉú³É×Ô¶¯¹¹½¨Àà");
 
-        //å¤„ç†è¢«æ³¨è§£çš„å…ƒç´ 
+        //´¦Àí±»×¢½âµÄÔªËØ
         ArrayList<EMethod> eMethods = new ArrayList<>();
 
         for (Object element : roundEnv.getElementsAnnotatedWith(UIThread.class)) {
@@ -201,10 +201,10 @@ public class SmartRun2Processor extends javax.annotation.processing.AbstractProc
             note(e.getMessage());
         }
 
-        note("å‡†å¤‡ç”Ÿæˆæ˜ å°„ç±»");
+        note("×¼±¸Éú³ÉÓ³ÉäÀà");
         TypeSpec.Builder mappingJava = TypeSpec.classBuilder("SmartRun2Mapping")
                 .addModifiers(Modifier.PUBLIC);
-        mappingJava.addJavadoc("æ–¹æ³•çš„å¯¹åº”æ˜ å°„ç±»");
+        mappingJava.addJavadoc("·½·¨µÄ¶ÔÓ¦Ó³ÉäÀà");
         MethodSpec.Builder methodSpec = MethodSpec.methodBuilder("replace").addModifiers(Modifier.PRIVATE, Modifier
                 .STATIC, Modifier.FINAL);
         methodSpec.addStatement("Class dClass = SmartRun2Methods.class");
@@ -280,7 +280,7 @@ public class SmartRun2Processor extends javax.annotation.processing.AbstractProc
     }
 
     /**
-     * æŒ‡å®šå“ªäº›æ³¨è§£åº”è¯¥è¢«æ³¨è§£å¤„ç†å™¨æ³¨å†Œ
+     * Ö¸¶¨ÄÄĞ©×¢½âÓ¦¸Ã±»×¢½â´¦ÀíÆ÷×¢²á
      */
     @Override
     public Set<String> getSupportedAnnotationTypes() {
@@ -292,7 +292,7 @@ public class SmartRun2Processor extends javax.annotation.processing.AbstractProc
     }
 
     /**
-     * ç”¨æ¥æŒ‡å®šä½ ä½¿ç”¨çš„ java ç‰ˆæœ¬
+     * ÓÃÀ´Ö¸¶¨ÄãÊ¹ÓÃµÄ java °æ±¾
      */
     @Override
     public SourceVersion getSupportedSourceVersion() {
@@ -302,12 +302,12 @@ public class SmartRun2Processor extends javax.annotation.processing.AbstractProc
     private boolean isValid(Class<? extends Annotation> annotationClass, String targetThing, Element element) {
         boolean isVaild = true;
 
-        //è·å–å˜é‡çš„æ‰€åœ¨çš„çˆ¶å…ƒç´ ï¼Œè‚¯èƒ½æ˜¯ç±»ã€æ¥å£ã€æšä¸¾
+        //»ñÈ¡±äÁ¿µÄËùÔÚµÄ¸¸ÔªËØ£¬¿ÏÄÜÊÇÀà¡¢½Ó¿Ú¡¢Ã¶¾Ù
         TypeElement enclosingElement = (TypeElement) element.getEnclosingElement();
-        //çˆ¶å…ƒç´ çš„å…¨é™å®šå
+        //¸¸ÔªËØµÄÈ«ÏŞ¶¨Ãû
         String qualifiedName = enclosingElement.getQualifiedName().toString();
 
-        // æ‰€åœ¨çš„ç±»ä¸èƒ½æ˜¯privateæˆ–staticä¿®é¥°
+        // ËùÔÚµÄÀà²»ÄÜÊÇprivate»òstaticĞŞÊÎ
         Set<Modifier> modifiers = element.getModifiers();
         if (modifiers.contains(PRIVATE) || modifiers.contains(STATIC)) {
             error(element, "@%s %s must not be private or static. (%s.%s)",
@@ -316,7 +316,7 @@ public class SmartRun2Processor extends javax.annotation.processing.AbstractProc
             isVaild = false;
         }
 
-        // çˆ¶å…ƒç´ å¿…é¡»æ˜¯ç±»ï¼Œè€Œä¸èƒ½æ˜¯æ¥å£æˆ–æšä¸¾
+        // ¸¸ÔªËØ±ØĞëÊÇÀà£¬¶ø²»ÄÜÊÇ½Ó¿Ú»òÃ¶¾Ù
         if (enclosingElement.getKind() != ElementKind.CLASS) {
             error(enclosingElement, "@%s %s may only be contained in classes. (%s.%s)",
                     annotationClass.getSimpleName(), targetThing, enclosingElement.getQualifiedName(),
@@ -324,13 +324,13 @@ public class SmartRun2Processor extends javax.annotation.processing.AbstractProc
             isVaild = false;
         }
 
-        //ä¸èƒ½åœ¨Androidæ¡†æ¶å±‚æ³¨è§£
+        //²»ÄÜÔÚAndroid¿ò¼Ü²ã×¢½â
         if (qualifiedName.startsWith("android.")) {
             error(element, "@%s-annotated class incorrectly in Android framework package. (%s)",
                     annotationClass.getSimpleName(), qualifiedName);
             return false;
         }
-        //ä¸èƒ½åœ¨javaæ¡†æ¶å±‚æ³¨è§£
+        //²»ÄÜÔÚjava¿ò¼Ü²ã×¢½â
         if (qualifiedName.startsWith("java.")) {
             error(element, "@%s-annotated class incorrectly in Java framework package. (%s)",
                     annotationClass.getSimpleName(), qualifiedName);
@@ -351,27 +351,27 @@ public class SmartRun2Processor extends javax.annotation.processing.AbstractProc
 
     private class EMethod {
         /**
-         * æ–°æ–¹æ³•æ‰€åœ¨æ•´ä½“æ ‡å·id
+         * ĞÂ·½·¨ËùÔÚÕûÌå±êºÅid
          */
         int index;
         /**
-         * åŸæ–¹æ³•å
+         * Ô­·½·¨Ãû
          */
         String oMethodName;
         /**
-         * æ›¿æ¢åçš„æ–¹æ³•å
+         * Ìæ»»ºóµÄ·½·¨Ãû
          */
         String nMethodName;
 
         /**
-         * è¿è¡Œçº¿ç¨‹ç±»å‹
+         * ÔËĞĞÏß³ÌÀàĞÍ
          */
         String threadStyle;
 
         Element element;
 
         /**
-         * åŸæ–¹æ³•æ‰€åœ¨çš„ç±»å
+         * Ô­·½·¨ËùÔÚµÄÀàÃû
          */
         String oClassName;
 

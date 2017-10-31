@@ -13,6 +13,9 @@ import org.json.JSONObject;
  */
 
 public class JSONAnalysisOut extends AnalysisOut {
+    static {
+        mLog.setFileOutLog();
+    }
 
     @Override
     public JSONObject analysis(WEBBaseCallBack callback, String out) throws MyException {
