@@ -183,8 +183,9 @@ public abstract class BaseActivity extends Activity implements NoProguard_All {
         try {
             act = list_act.get(list_act.size() - 1);
         } catch (Exception e) {
+            return null;
         }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+        if (act!=null&&Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
             if (act.isDestroyed()) throw new MyException("顶层窗口不在活动周期");
         }
         return act;
@@ -196,8 +197,9 @@ public abstract class BaseActivity extends Activity implements NoProguard_All {
         try {
             act = act_out_list.get(act_out_list.size() - 1);
         } catch (Exception e) {
+            return null;
         }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+        if (act!=null&&Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
             if (act.isDestroyed()) throw new MyException("顶层窗口不在活动周期");
         }
         return act;
