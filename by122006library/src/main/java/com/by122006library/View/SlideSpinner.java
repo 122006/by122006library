@@ -274,6 +274,7 @@ public class SlideSpinner extends PopupWindow {
                 int cH=((Activity)v.getContext()).getWindowManager().getDefaultDisplay().getHeight()-xy[1]-v.getHeight();
                 cMax=cH/itemHeight;
                 setHeight(itemHeight*Math.min(cMax,maxShowCount));
+                setFocusable(true);
                 layout.setMinimumHeight(itemHeight*data.length);
                 layout.setOnClickListener(new View.OnClickListener() {
                     @Override

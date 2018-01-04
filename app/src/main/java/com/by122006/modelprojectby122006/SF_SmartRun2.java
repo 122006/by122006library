@@ -15,8 +15,10 @@ public class SF_SmartRun2 extends SF {
     boolean FLAG_ACT_FULLSCREEN = false;
     boolean FLAG_ACT_NO_TITLE = false;
 
+
     @Override
     public ArrayList<SMethod> specialMethods() {
+
         ArrayList<SMethod> list = new ArrayList<SMethod>();
         SMethod sMethod = SMethod.debug();
         sMethod.setDescrite("调用UI线程使用范例");
@@ -32,6 +34,7 @@ public class SF_SmartRun2 extends SF {
 
             }
         });
+
         list.add(sMethod);
         sMethod = SMethod.debug();
         sMethod.setDescrite("调用后台线程使用范例");
@@ -99,7 +102,8 @@ public class SF_SmartRun2 extends SF {
 
     @Override
     public String getFuncitonDescribe() {
-        return "类似于1版。\n缺点：只能在非匿名类方法使用，和1版部分冲突，不能使用AS热更新和分包技术";
+        return "类似于1版。\n运行时动态替换方法内存地址\n缺点：只能在非匿名类方法使用，和1版部分冲突，不能使用AS热更新和分包技术";
+
     }
 
     @Override

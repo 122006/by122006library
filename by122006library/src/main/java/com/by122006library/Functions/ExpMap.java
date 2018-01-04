@@ -42,31 +42,35 @@ public class ExpMap<S, E> {
         init(maxDataNum);
     }
 
-    private void init(int maxDataNum) {
+    private ExpMap init(int maxDataNum) {
         stopSort();
         this.maxDataNum = maxDataNum;
         int listNum = (int) (maxDataNum / 0.8);
         if (listNum <= 0) listNum = maxDataNum;
         control = new ArrayList<>(listNum);
         data = new HashMap<>(listNum);
+        return this;
     }
 
-    public void clear() {
+    public ExpMap clear() {
         stopSort();
         control.clear();
         data.clear();
         CycleTask.unRegister(this);
+        return this;
     }
 
-    public void put(S key, E value) {
+    public ExpMap put(S key, E value) {
         put(key, value, Weight.Normal);
+        return this;
     }
 
-    public void put(S key, E value, Weight weight) {
+    public ExpMap put(S key, E value, Weight weight) {
         put(key, value, weight.getIndex());
+        return this;
     }
 
-    public void put(S key, E value, int weight) {
+    public ExpMap put(S key, E value, int weight) {
         stopSort();
         if (data.containsKey(key)) {
             for(C c:control){
@@ -78,17 +82,19 @@ public class ExpMap<S, E> {
             data.put(key, value);
             control.add(c);
         }
+        return this;
     }
 
     public boolean containsKey(S key){
         return data.containsKey(key);
     }
-    public void remove(S key){
+    public ExpMap remove(S key){
         data.remove(key);
         for(C c:control){
             control.remove(c);
-            return;
+            return this;
         }
+        return this;
     }
 
 
@@ -113,7 +119,7 @@ public class ExpMap<S, E> {
     /**
      * 申请进行排序，将在数组空闲时进行排序
      */
-    private void applySort(){
+    private ExpMap<S, E> applySort(){
         Flag_StopSort=false;
 //        Flag_needSort=true;
         new DelayTask(200) {
@@ -158,6 +164,7 @@ public class ExpMap<S, E> {
             }
 
         }.setLog(false).register(this,DelayTask.SINGLETASK_COVER);
+        return this;
     }
 
 
@@ -165,8 +172,9 @@ public class ExpMap<S, E> {
     /**
      * 立即停止当前排序,需要在元素变化时调用该方法
      */
-    private void stopSort(){
+    private ExpMap<S, E> stopSort(){
         Flag_StopSort=true;
+        return this;
     }
 
 
@@ -174,9 +182,10 @@ public class ExpMap<S, E> {
         return putWeight;
     }
 
-    public void setPutWeight(int putWeight) {
+    public ExpMap<S, E> setPutWeight(int putWeight) {
         applySort();
         this.putWeight = putWeight;
+        return this;
     }
 
 

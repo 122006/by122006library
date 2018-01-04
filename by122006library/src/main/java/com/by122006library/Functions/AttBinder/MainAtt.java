@@ -1,5 +1,6 @@
 package com.by122006library.Functions.AttBinder;
 
+import android.annotation.SuppressLint;
 import android.support.annotation.FloatRange;
 
 /**
@@ -37,6 +38,7 @@ public abstract class MainAtt extends Att {
     @Override
     public abstract void setOutSideListener() ;
 
+    @SuppressLint("MissingSuperCall")
     @Override
     public void beBinded()  {
 

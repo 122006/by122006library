@@ -102,6 +102,9 @@ public class SF_AspectThread extends SF {
                 println("Step 2 : ", Color.RED);
                 println("  请在项目的app模块的build.gradle的起始部位增加以下代码");
                 println("  apply plugin: 'com.hujiang.android-aspectjx'");
+//                println("Step 3 : ", Color.RED);
+//                println("  请在项目的app模块增加以下依赖");
+//                println("   compile 'com.safframework:saf-aop:1.1.3'");
             }
         });
         list.add(sMethod);
@@ -147,7 +150,7 @@ public class SF_AspectThread extends SF {
 
     @Override
     public String getFuncitonDescribe() {
-        return "注释任何方法上，可以使方法运行于不同的线程\n不使用反射，不会对运行性能有任何影响";
+        return "注释任何方法上，可以使方法运行于不同的线程\n使用aspect在编译时对代码进行注入\n不使用反射，不会对运行性能有任何影响";
     }
 
     @Override

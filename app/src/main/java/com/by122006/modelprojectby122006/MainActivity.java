@@ -9,6 +9,7 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.util.Log;
 import android.util.SparseIntArray;
 import android.view.Gravity;
 import android.view.View;
@@ -20,8 +21,13 @@ import android.widget.TextView;
 import com.by122006.modelprojectby122006.databinding.ActivityMainBinding;
 import com.by122006.modelprojectby122006.databinding.ItemMainActivityListViewStyleBinding;
 import com.by122006library.Activity.BaseActivity;
+import com.by122006library.Interface.BGThread;
+import com.by122006library.Interface.Trace2;
+import com.by122006library.Interface.UIThread;
+import com.by122006library.ThreadManager;
 import com.by122006library.Utils.BitmapUtils;
 import com.by122006library.Utils.ReflectionUtils;
+import com.by122006library.Utils.ThreadUtils;
 import com.by122006library.Utils.ViewUtils;
 import com.by122006library.View.TopBar;
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -40,8 +46,8 @@ import java.util.List;
  */
 public class MainActivity extends BaseActivity {
     static public Class<?>[] class1 = new Class[]{SV_ViewsReplace.class, SV_SlideSpinner.class, SV_PullDownTopbarMenu.class};
-    static public Class<?>[] class2 = new Class[]{SF_SmartRun.class, SF_mLog.class, SF_CycleTask.class, SF_AttBinder.class,SF_ViewIntroduce.class};
-    static public Class<?>[] class3 = new Class[]{SF_AspectThread.class};
+    static public Class<?>[] class2 = new Class[]{SF_SmartRun.class, SF_mLog.class, SF_CycleTask.class, SF_AttBinder.class, SF_ViewIntroduce.class};
+    static public Class<?>[] class3 = new Class[]{SF_AspectThread.class,SF_ASMThread.class};
     static public Class<?>[] class4 = new Class[]{};
     static public Class<?>[] class5 = new Class[]{SF_SmartRun2.class};
 
@@ -50,8 +56,9 @@ public class MainActivity extends BaseActivity {
     boolean FLAG_ACT_FULLSCREEN = false;
     boolean FLAG_ACT_NO_TITLE = false;
     ActivityMainBinding binding = null;
+
     public static boolean setMiuiStatusBarDarkMode(Activity activity, boolean darkmode) {
-        Class<? extends Window> clazz =  activity.getWindow().getClass();
+        Class<? extends Window> clazz = activity.getWindow().getClass();
         try {
             int darkModeFlag = 0;
             Class<?> layoutParams = Class.forName("android.view.MiuiWindowManager$LayoutParams");
@@ -125,11 +132,18 @@ public class MainActivity extends BaseActivity {
 
             }
         });
-
-
+        test_static("test","sxs");
 
     }
 
+    @BGThread
+    public  void test(String value1, String value2) {
+        if(ThreadUtils.isUIThread()) Log.i("asm : "+value1,value2);else Log.e("asm error: "+value1,value2);
+    }
+    @BGThread
+    public static void test_static(String value1, String value2) {
+        if(ThreadUtils.isUIThread()) Log.i("asm : "+value1,value2);else Log.e("asm error: "+value1,value2);
+    }
 
     class MyAdapter extends BaseHeaderAdapter<PinnedHeaderEntity<Object>> {
         private SparseIntArray mRandomHeights;
@@ -220,6 +234,7 @@ public class MainActivity extends BaseActivity {
 
         class ViewVH extends RecyclerView.ViewHolder {
             ItemMainActivityListViewStyleBinding binding;
+
             public ViewVH(ItemMainActivityListViewStyleBinding binding) {
                 super((View) binding.getRoot().getParent());
                 this.binding = binding;
@@ -229,6 +244,7 @@ public class MainActivity extends BaseActivity {
 
 
     }
+
 
 }
 

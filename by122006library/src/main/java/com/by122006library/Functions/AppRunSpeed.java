@@ -1,9 +1,12 @@
 package com.by122006library.Functions;
 
+import android.content.Context;
+
 import com.by122006library.Utils.ReflectionUtils;
 import com.me.weishu.epic.Hook;
 
 import java.lang.reflect.Method;
+import java.util.ResourceBundle;
 
 /**
  * 软件运行速度
@@ -11,37 +14,47 @@ import java.lang.reflect.Method;
  */
 
 public class AppRunSpeed {
-    private static float speed;
+    private static long LastNowTime;
+    /**
+     * 2^n 0:1 1:2 2:4 4:8
+     */
+    private static int TimeSpeedMove;
+    private static long LastNowTrueTime;
+    /**
+     * 是否启用加速
+     */
+    private static boolean FasterGame;
 
-    final private void AppRunSpeed(){
-
+    public synchronized static long getTime() {
+        int TimeSpeedMove=0;
+        TimeSpeedMove = Math.max(1, AppRunSpeed.TimeSpeedMove);
+        if(!FasterGame) TimeSpeedMove=0;
+        if (LastNowTime == 0l) {
+            LastNowTime = System.currentTimeMillis();
+            LastNowTrueTime=LastNowTime;
+        } else {
+            long dur = (System.currentTimeMillis() - LastNowTrueTime);
+            int pdur = (int) (dur << TimeSpeedMove);
+            if (pdur == 0) return LastNowTime;
+            else{
+                LastNowTrueTime=System.currentTimeMillis();
+                LastNowTime = LastNowTime + pdur;}
+        }
+        return LastNowTime;
     }
-    public static float getSpeed() {
-        return speed;
-    }
-
-    public static void setSpeed(float appRunSpeed) {
-        speed = appRunSpeed;
-        startTime=System.currentTimeMillis();
-        try {
-            Method method= ReflectionUtils.getMethod(AppRunSpeed.class,"currentTimeMillis");
-            Method method2= ReflectionUtils.getMethod(System.class,"currentTimeMillis");
-            Hook.hook(method2,method);
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
+    public static long getChangedTime(long time) {
+        int TimeSpeedMove=0;
+        TimeSpeedMove = Math.max(1, AppRunSpeed.TimeSpeedMove);
+        if(!FasterGame) TimeSpeedMove=0;
+        if (LastNowTime == 0l) {
+            return time;
+        } else {
+            return time >> TimeSpeedMove;
         }
     }
-    public static long  startTime;
-    public static  long currentTimeMillis(){
-        mLog.mark();
-        try {
-            long nL=0l;
-            long oL= (Long) Hook.callOrigin(System.class);
-            nL= (long) ((oL-AppRunSpeed.startTime)* AppRunSpeed.getSpeed()+oL);
-            return nL;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return startTime;
+
+    public static void setTimeSpeedMove(Context context, int timeSpeedMove) {
+        getTime();
+        TimeSpeedMove = timeSpeedMove;
     }
 }

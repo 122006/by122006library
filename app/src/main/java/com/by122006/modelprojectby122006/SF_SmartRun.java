@@ -99,7 +99,7 @@ public class SF_SmartRun extends SF {
 
     @Override
     public String getFuncitonDescribe() {
-        return "库核心内容，帮助使用者快捷切换方法运行线程。\n低学习使用时间成本，易用性远高于同类三方库\n同时具有一定代码自维护能力减少debug次数";
+        return "库核心内容，帮助使用者快捷切换方法运行线程。\n重载入对应方法\n低学习使用时间成本，易用性远高于同类三方库\n同时具有一定代码自维护能力减少debug次数";
     }
 
     @Override
