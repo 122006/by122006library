@@ -1,7 +1,9 @@
 package com.by122006library.Utils;
 
 import android.app.Activity;
+import android.os.Handler;
 import android.os.Looper;
+import android.os.Message;
 
 import com.by122006library.Activity.BaseActivity;
 import com.by122006library.Interface.ThreadStyle;
@@ -40,8 +42,33 @@ public class ThreadUtils {
     private static UiThreadAct uiThreadAct = new UiThreadAct();
 
     public static void runOnUiThread(Runnable runnable) throws MyException {
-        uiThreadAct.runUITask(runnable);
-
+//        uiThreadAct.runUITask(runnable);
+        UiHandle.run(runnable);
+    }
+    protected static class UiHandle extends Handler {
+        static UiHandle handle;
+        UiHandle() {
+            super(Looper.getMainLooper());
+        }
+        protected static UiHandle getHandler(){
+            if (handle == null) {
+                synchronized (UiHandle.class) {
+                    if (handle == null) {
+                        handle = new UiHandle();
+                    }
+                }
+            }
+            return handle;
+        }
+        @Override
+        public void handleMessage(Message msg) {
+            ((Runnable)msg.obj).run();
+        }
+        public static void run(Runnable runnable){
+            Message message=new Message();
+            message.obj=runnable;
+            getHandler().sendMessage(message);
+        }
     }
 
     public static boolean isUIThread() {

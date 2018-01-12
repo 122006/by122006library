@@ -41,7 +41,7 @@ public class TopBar {
         vg.setLayoutParams(new LinearLayout.LayoutParams(-1, ViewUtils.dip2px(defaultTopBarHeightdp)));
         topBar.binder.getRoot().setLayoutParams(new LinearLayout.LayoutParams(-1, ViewUtils.dip2px
                 (defaultTopBarHeightdp)));
-        topBar.setLeftButton((BaseActivity.list_act != null && BaseActivity.list_act.indexOf(act) == 0 ? "退出" : "返回")
+        topBar.setLeftButton(  "返回"
                 , new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {

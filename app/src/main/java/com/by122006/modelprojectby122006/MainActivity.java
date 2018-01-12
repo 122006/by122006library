@@ -21,9 +21,11 @@ import android.widget.TextView;
 import com.by122006.modelprojectby122006.databinding.ActivityMainBinding;
 import com.by122006.modelprojectby122006.databinding.ItemMainActivityListViewStyleBinding;
 import com.by122006library.Activity.BaseActivity;
+import com.by122006library.Functions.mLog;
 import com.by122006library.Interface.BGThread;
 import com.by122006library.Interface.Trace2;
 import com.by122006library.Interface.UIThread;
+import com.by122006library.MyException;
 import com.by122006library.ThreadManager;
 import com.by122006library.Utils.BitmapUtils;
 import com.by122006library.Utils.ReflectionUtils;
@@ -133,6 +135,22 @@ public class MainActivity extends BaseActivity {
             }
         });
         test_static("test","sxs");
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    ThreadUtils.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mLog.i("ThreadUtils.isUIThread() = "+ThreadUtils.isUIThread());
+                        }
+                    });
+                } catch (MyException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
 
     }
 

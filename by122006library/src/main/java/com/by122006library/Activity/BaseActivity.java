@@ -76,9 +76,9 @@ import java.util.List;
 @Subclass(att = {@Attribute(name = "FLAG_ACT_FULLSCREEN", type = boolean.class, defaultValue = "false"),
         @Attribute(name = "FLAG_ACT_NO_TITLE", type = boolean.class, defaultValue = "true")})
 public abstract class BaseActivity extends Activity implements NoProguard_All {
-    public static ArrayList<BaseActivity> list_act = new ArrayList<BaseActivity>();
+//    public static ArrayList<BaseActivity> list_act = new ArrayList<BaseActivity>();
     public static HashMap<String, CustomView> customViewHashMap = new HashMap<>();
-    private static ArrayList<Activity> act_out_list;
+//    private static ArrayList<Activity> act_out_list;
     public boolean canRotate;
     /*
      * 程序的已运行次数<p>
@@ -179,23 +179,22 @@ public abstract class BaseActivity extends Activity implements NoProguard_All {
      */
     @SpecialMethod
     public static BaseActivity getTopBaseActivity() throws MyException {
-        BaseActivity act = null;
         try {
-            act = list_act.get(list_act.size() - 1);
+            BaseActivity act = (BaseActivity) ThreadUtils.getThisAct();
+            if (act==null) {
+                throw new MyException("顶层窗口不在活动周期");
+            }
+            return act;
         } catch (Exception e) {
             return null;
         }
-        if (act!=null&&Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            if (act.isDestroyed()) throw new MyException("顶层窗口不在活动周期");
-        }
-        return act;
     }
 
     public static Activity getTopOutActivity() throws MyException {
         if(ThreadUtils.getThisAct()!=null) return ThreadUtils.getThisAct();
         Activity act = null;
         try {
-            act = act_out_list.get(act_out_list.size() - 1);
+            act = ThreadUtils.getThisAct();
         } catch (Exception e) {
             return null;
         }
@@ -320,12 +319,11 @@ public abstract class BaseActivity extends Activity implements NoProguard_All {
      * @param application
      */
     public static void bindActList(Application application) {
-        act_out_list = new ArrayList<>();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
             application.registerActivityLifecycleCallbacks(new Application.ActivityLifecycleCallbacks() {
                 @Override
                 public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
-
+                    ThreadUtils.setThisAct(activity);
                 }
 
                 @Override
@@ -336,12 +334,11 @@ public abstract class BaseActivity extends Activity implements NoProguard_All {
                 @Override
                 public void onActivityResumed(Activity activity) {
                     ThreadUtils.setThisAct(activity);
-                    act_out_list.add(activity);
                 }
 
                 @Override
                 public void onActivityPaused(Activity activity) {
-                    act_out_list.remove(activity);
+
                 }
 
                 @Override
@@ -442,8 +439,7 @@ public abstract class BaseActivity extends Activity implements NoProguard_All {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         runcount++;
-        list_act.add(this);
-
+        ThreadUtils.setThisAct(this);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         if ( SubclassAttribute.with(this).getFLAG_ACT_FULLSCREEN())
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
@@ -592,7 +588,6 @@ public abstract class BaseActivity extends Activity implements NoProguard_All {
     public void onDestroy() {
         super.onDestroy();
         mLog.i(this.getClass().getName()+" onDestroy()");
-        list_act.remove(this);
         needTouchView.clear();
         needTouchView = null;
         CycleTask.unRegister(this);
@@ -611,11 +606,6 @@ public abstract class BaseActivity extends Activity implements NoProguard_All {
      * 安全退出程序<p> 会关闭所有activity并杀死进程
      */
     public void exit() {
-        for (Activity activity : list_act) {
-            if (null != activity) {
-                activity.finish();
-            }
-        }
         //杀死该应用进程
         Process.killProcess(Process.myPid());
         Paint p = new Paint();
