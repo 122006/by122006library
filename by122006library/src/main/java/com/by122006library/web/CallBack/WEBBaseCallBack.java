@@ -19,22 +19,83 @@ import java.util.ArrayList;
  * Created by admin on 2016/12/15.
  */
 
-public abstract class WEBBaseCallBack {
-    static {
-        mLog.setFileOutLog();
-    }
+public class WEBBaseCallBack implements OnSuccess, OnFail, OnError {
     /**
      * 默认的过滤方法
      */
     public static ArrayList<MatchCheck> defaultMatchCheckList;
+
+    static {
+        mLog.setFileOutLog();
+    }
+
     /**
      * 特殊的过滤方法
      */
     public ArrayList<MatchCheck> currentMatchCheckList;
+    OnSuccess onSuccess;
+    OnFail onFail;
+    OnError onError;
 
+
+    /**
+     * 无参构造方法，请重写onSuccess、onFail、onError方法
+     */
     public WEBBaseCallBack() {
         if (defaultMatchCheckList == null) init();
+        this.onSuccess=new OnSuccess() {
+            @Override
+            public void onSuccess(String data) {
+
+            }
+        };
+        this.onError=new OnError() {
+            @Override
+            public void onError(String data, Web.RESULTSTYLE resultstyle) {
+
+            }
+        };
+        this.onFail=new OnFail() {
+            @Override
+            public void onFail(@Nullable String data) {
+
+            }
+        };
     }
+    public WEBBaseCallBack(OnSuccess onSuccess) {
+        if (defaultMatchCheckList == null) init();
+        this.onSuccess=onSuccess;
+        this.onError=new OnError() {
+            @Override
+            public void onError(String data, Web.RESULTSTYLE resultstyle) {
+
+            }
+        };
+        this.onFail=new OnFail() {
+            @Override
+            public void onFail(@Nullable String data) {
+
+            }
+        };
+    }
+    public WEBBaseCallBack(OnSuccess onSuccess, OnError onError) {
+        if (defaultMatchCheckList == null) init();
+        this.onSuccess=onSuccess;
+        this.onError=onError;
+        this.onFail=new OnFail() {
+            @Override
+            public void onFail(@Nullable String data) {
+
+            }
+        };
+    }
+    public WEBBaseCallBack(OnSuccess onSuccess, OnError onError,OnFail onFail) {
+        if (defaultMatchCheckList == null) init();
+        this.onSuccess=onSuccess;
+        this.onError=onError;
+        this.onFail=onFail;
+    }
+
 
     public static void registerDefaultMatchCheck(MatchCheck matchCheck) {
         if (defaultMatchCheckList == null) defaultMatchCheckList = new ArrayList<>();
@@ -47,20 +108,20 @@ public abstract class WEBBaseCallBack {
     @CallSuper
     public void init() {
         registerDefaultMatchCheck(new MatchCheck() {
-            public boolean match(WEBBaseCallBack clazz,Web.RESULTSTYLE resultstyle, @Nullable String data, @Nullable Object obj) {
+            public boolean match(WEBBaseCallBack clazz, Web.RESULTSTYLE resultstyle, @Nullable String data, @Nullable Object obj) {
                 return resultstyle == Web.RESULTSTYLE.Success;
             }
 
-            public void action(WEBBaseCallBack clazz,Web.RESULTSTYLE resultstyle, @Nullable String data, @Nullable Object obj) {
+            public void action(WEBBaseCallBack clazz, Web.RESULTSTYLE resultstyle, @Nullable String data, @Nullable Object obj) {
                 clazz.onSuccess(data);
             }
         });
         registerDefaultMatchCheck(new MatchCheck() {
-            public boolean match(WEBBaseCallBack clazz,Web.RESULTSTYLE resultstyle, @Nullable String data, @Nullable Object obj) {
+            public boolean match(WEBBaseCallBack clazz, Web.RESULTSTYLE resultstyle, @Nullable String data, @Nullable Object obj) {
                 return resultstyle == Web.RESULTSTYLE.Fail_WebException;
             }
 
-            public void action(WEBBaseCallBack clazz,Web.RESULTSTYLE resultstyle, @Nullable String data, @Nullable Object obj) throws
+            public void action(WEBBaseCallBack clazz, Web.RESULTSTYLE resultstyle, @Nullable String data, @Nullable Object obj) throws
                     MyException {
 
                 try {
@@ -70,29 +131,29 @@ public abstract class WEBBaseCallBack {
                             (new CustomDialog.Builder(BaseActivity.optContext())).setMessage("网络错误,请检查网络设置").setTitle("网络错误").show();
                         }
                     });
-                }catch (Exception e){
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
                 clazz.onError(data, resultstyle);
             }
         });
         registerDefaultMatchCheck(new MatchCheck() {
-            public boolean match(WEBBaseCallBack clazz,Web.RESULTSTYLE resultstyle, @Nullable String data, @Nullable Object obj) {
+            public boolean match(WEBBaseCallBack clazz, Web.RESULTSTYLE resultstyle, @Nullable String data, @Nullable Object obj) {
                 return resultstyle == Web.RESULTSTYLE.Fail_NotFound;
             }
 
-            public void action(WEBBaseCallBack clazz,Web.RESULTSTYLE resultstyle, @Nullable String data, @Nullable Object obj) throws
+            public void action(WEBBaseCallBack clazz, Web.RESULTSTYLE resultstyle, @Nullable String data, @Nullable Object obj) throws
                     MyException {
                 (new CustomDialog.Builder(BaseActivity.getContext())).setMessage("链接不正确或服务器异常").setTitle("网络错误").show();
                 clazz.onError(data, resultstyle);
             }
         });
         registerDefaultMatchCheck(new MatchCheck() {
-            public boolean match(WEBBaseCallBack clazz,Web.RESULTSTYLE resultstyle, @Nullable String data, @Nullable Object obj) {
+            public boolean match(WEBBaseCallBack clazz, Web.RESULTSTYLE resultstyle, @Nullable String data, @Nullable Object obj) {
                 return resultstyle == Web.RESULTSTYLE.Fail_ServiceRefuse;
             }
 
-            public void action(WEBBaseCallBack clazz,Web.RESULTSTYLE resultstyle, @Nullable String data, @Nullable Object obj) throws
+            public void action(WEBBaseCallBack clazz, Web.RESULTSTYLE resultstyle, @Nullable String data, @Nullable Object obj) throws
                     MyException {
                 clazz.onFail(data);
             }
@@ -110,16 +171,16 @@ public abstract class WEBBaseCallBack {
     public void analyseBack(Web.RESULTSTYLE resultstyle, String data, Object obj) throws MyException {
         if (currentMatchCheckList != null) {
             for (MatchCheck matchCheck : (ArrayList<MatchCheck>) currentMatchCheckList.clone()) {
-                if (matchCheck.match(this,resultstyle, data, obj)) {
-                    matchCheck.action(this,resultstyle, data, obj);
+                if (matchCheck.match(this, resultstyle, data, obj)) {
+                    matchCheck.action(this, resultstyle, data, obj);
                     return;
                 }
             }
         } else {
             if (defaultMatchCheckList == null) return;
             for (MatchCheck matchCheck : (ArrayList<MatchCheck>) defaultMatchCheckList.clone()) {
-                if (matchCheck.match(this,resultstyle, data, obj)) {
-                    matchCheck.action(this,resultstyle, data, obj);
+                if (matchCheck.match(this, resultstyle, data, obj)) {
+                    matchCheck.action(this, resultstyle, data, obj);
                     return;
                 }
             }
@@ -127,36 +188,29 @@ public abstract class WEBBaseCallBack {
         mLog.e("一个没有被任何拦截器处理的返回！");
     }
 
-    /**
-     * 业务成功
-     *
-     * @param data 返回的数据
-     */
-    public abstract void onSuccess(String data);
+    @Override
+    public void onSuccess(String data) {
+        if (onSuccess!=null)onSuccess.onSuccess(data);
+    }
 
-    /**
-     * 网络原因造成的失败
-     *
-     * @param data        返回的数据
-     * @param resultstyle 错误类型
-     */
-    public abstract void onError(String data, Web.RESULTSTYLE resultstyle);
+    @Override
+    public void onError(String data, Web.RESULTSTYLE resultstyle) {
+        if (onError!=null)onError.onError(data,resultstyle);
+    }
 
-    /**
-     * 服务器上返回失败
-     *
-     * @param data 返回的数据
-     */
-    public abstract void onFail(@Nullable String data);
+    @Override
+    public void onFail(@Nullable String data) {
+        if (onFail!=null)onFail.onFail(data);
+    }
 
 
     /**
      * 规则匹配类
      */
     public abstract static class MatchCheck {
-        public abstract boolean match(WEBBaseCallBack clazz,Web.RESULTSTYLE resultstyle, @Nullable String data, @Nullable Object obj);
+        public abstract boolean match(WEBBaseCallBack clazz, Web.RESULTSTYLE resultstyle, @Nullable String data, @Nullable Object obj);
 
-        public abstract void action(WEBBaseCallBack clazz,Web.RESULTSTYLE resultstyle, @Nullable String data, @Nullable Object obj) throws
+        public abstract void action(WEBBaseCallBack clazz, Web.RESULTSTYLE resultstyle, @Nullable String data, @Nullable Object obj) throws
                 MyException;
 
         public int getCode(@Nullable JSONObject json) {

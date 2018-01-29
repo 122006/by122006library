@@ -115,7 +115,7 @@ public abstract class CycleTask {
                 return;
             }
             if (item.tag == null) continue;
-            if (item.tag.equals(tag)) {
+            if (item.tag==tag||item.tag.equals(tag)) {
                 list.remove(item);
             }
 
@@ -126,7 +126,7 @@ public abstract class CycleTask {
         ArrayList<CycleTask> list = new ArrayList<CycleTask>();
         for (CycleTask item : (ArrayList<CycleTask>) list.clone()) {
             if (item.tag == null) continue;
-            if (item.tag.equals(tag)) {
+            if (item.tag==tag||item.tag.equals(tag)) {
                 list.add(item);
             }
 
@@ -227,7 +227,7 @@ public abstract class CycleTask {
             list.remove(this);
             setState(TaskState.Unregister);
         }else{
-            if(log) mLog.e("不能注销循环任务 注销位置："+mLog.getCallerLocation());
+            if(log) mLog.e("不能注销循环任务 注销位置："+mLog.getCallerLocation()+"\n该任务不存在！");
         }
 //        if (list.size() == 0) destroyTaskThread();
     }

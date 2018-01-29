@@ -1,6 +1,7 @@
 package com.by122006library.web.CallBack;
 
 import android.support.annotation.CallSuper;
+import android.support.annotation.Nullable;
 
 import com.by122006library.Functions.mLog;
 import com.by122006library.MyException;
@@ -13,12 +14,32 @@ import org.json.JSONObject;
  * Created by admin on 2016/12/15.
  */
 
-public abstract class JSONCallBack extends WEBBaseCallBack {
+public class JSONCallBack extends WEBBaseCallBack implements JSONData_OnSuccess{
     static {
         mLog.setFileOutLog();
     }
+
+    /**
+     * 无参构造方法，请重写onSuccess（JSONObject）、onFail、onError方法
+     */
     public JSONCallBack(){
-        super();
+        if (defaultMatchCheckList == null) init();
+    }
+    public JSONCallBack(JSONData_OnSuccess onSuccess,OnFail onFail,OnError onError){
+        if (defaultMatchCheckList == null) init();
+        this.jsonData_onSuccess=onSuccess;
+        this.onError=new OnError() {
+            @Override
+            public void onError(String data, Web.RESULTSTYLE resultstyle) {
+
+            }
+        };
+        this.onFail=new OnFail() {
+            @Override
+            public void onFail(@Nullable String data) {
+
+            }
+        };
 
     }
     public void init() {
@@ -26,6 +47,7 @@ public abstract class JSONCallBack extends WEBBaseCallBack {
 
 
     }
+    JSONData_OnSuccess jsonData_onSuccess;
 
     @Override
     @CallSuper
@@ -43,6 +65,9 @@ public abstract class JSONCallBack extends WEBBaseCallBack {
             onError(data, Web.RESULTSTYLE.Fail_ServiceRefuse);
         }
     }
-    public abstract void onSuccess(JSONObject json);
 
+    @Override
+    public void onSuccess(JSONObject data) {
+        if (jsonData_onSuccess!=null)jsonData_onSuccess.onSuccess(data);
+    }
 }
