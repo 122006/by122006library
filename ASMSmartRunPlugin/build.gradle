@@ -1,0 +1,28 @@
+apply plugin: 'java-library'
+apply plugin: 'groovy'
+apply plugin: 'maven'
+
+repositories {
+    jcenter()
+}
+
+group = 'com.by122006.library'
+version = '1.0.0'
+
+dependencies {
+    compile gradleApi()
+    compile 'com.android.tools.build:gradle:2.3.3'
+    compile 'org.ow2.asm:asm:5.0.3'
+    compile 'org.ow2.asm:asm-commons:5.0.3'
+}
+
+group='com.by122006.asmsmartrunplugin'
+version='1.0.0'
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            repository(url: uri('../repo'))
+        }
+    }
+}
