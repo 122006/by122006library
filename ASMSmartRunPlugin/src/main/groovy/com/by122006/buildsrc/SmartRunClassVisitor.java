@@ -121,7 +121,7 @@ public class SmartRunClassVisitor extends ClassVisitor {
                 System.out.println(packageClassName);
                 System.out.println("Flag_Static:"+Flag_Static);
                 ov.visitCode();
-                ov.visitMethodInsn(Opcodes.INVOKESTATIC, "com/by122006library/Utils/ThreadUtils", "isUIThread", "()Z", false);
+                ov.visitMethodInsn(Opcodes.INVOKESTATIC, "com/by122006library/Utils/ThreadUtils", "is"+style+"Thread", "()Z", false);
                 Label l0 = new Label();
                 ov.visitJumpInsn(Opcodes.IFEQ, l0);
                 if (!Flag_Static)
