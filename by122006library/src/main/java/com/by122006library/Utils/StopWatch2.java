@@ -5,6 +5,7 @@ package com.by122006library.Utils;
 /**
  * 重写Tony Shen 的StopWatch2类<p>
  * （原有时间为私有且不能使用反射故重写整个类不适用继承）<p>
+ * 他好像已经改掉了= = 2018/1/31<p>
  * Created by 122006 on 2017/8/1.
  */
 

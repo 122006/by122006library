@@ -35,10 +35,12 @@ public class ThreadUtils {
      *
      * @param uiThreadAct
      */
+    @Deprecated
     public static void setUiThreadAct(UiThreadAct uiThreadAct) {
         ThreadUtils.uiThreadAct = uiThreadAct;
     }
 
+    @Deprecated
     private static UiThreadAct uiThreadAct = new UiThreadAct();
 
     public static void runOnUiThread(Runnable runnable) throws MyException {
@@ -104,7 +106,7 @@ public class ThreadUtils {
         }
         return null;
     }
-
+    @Deprecated
     public static class UiThreadAct {
         public void runUITask(Runnable runnable) {
             Activity activity = thisAct;

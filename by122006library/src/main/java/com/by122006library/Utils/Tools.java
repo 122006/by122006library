@@ -31,6 +31,7 @@ import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 
+@Deprecated
 public class Tools {
 
 

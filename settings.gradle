@@ -1,1 +1,1 @@
-include ':app', ':smartrun2processor',':by122006library', ':BuildSrc'
+include ':app', ':smartrun2processor',':by122006library', ':ASMSmartRunPlugin'

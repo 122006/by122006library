@@ -4,6 +4,8 @@ import com.by122006library.Utils.ThreadUtils;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.concurrent.Callable;
+import java.util.concurrent.FutureTask;
 
 /**
  * Created by admin on 2017/7/7.
@@ -32,6 +34,16 @@ public class ThreadManager {
         if (ThreadUtils.isBGThread() && str.toLowerCase().contains("bg")) return true;
         if (ThreadUtils.isUIThread() && str.toLowerCase().contains("ui")) return true;
         if (ThreadUtils.isBGThread() && str.toLowerCase().contains("async")) return true;
+
+        FutureTask<String> Futask = new FutureTask<String>(new Callable<String>(){
+            @Override
+            public String call() throws Exception {
+                return null;
+            }
+        });
+        Thread t = new Thread(Futask);
+
+
         return false;
     }
 
