@@ -23,7 +23,7 @@ public class ASM_SmartRunPluginImp extends Transform implements Plugin<Project> 
     */
 
 
-        println "================自定义插件成功！=========="
+        println "================SmartRun插件加载成功！=========="
         def android = project.extensions.findByType(AppExtension)
         android.registerTransform(this)
     }
@@ -52,7 +52,7 @@ public class ASM_SmartRunPluginImp extends Transform implements Plugin<Project> 
     @Override
     void transform(Context context, Collection<TransformInput> inputs, Collection<TransformInput> referencedInputs,
                    TransformOutputProvider outputProvider, boolean isIncremental) throws IOException, TransformException, InterruptedException {
-        System.out.println("===============com.by122006.buildsrc.ASM_SmartRunPluginImp visit start===============");
+        System.out.println("===============ASMSmartRunPluginImp visit start===============");
         //遍历inputs里的TransformInput
 //        println isIncremental
         inputs.each { TransformInput input ->println input.toString()}
@@ -117,7 +117,7 @@ public class ASM_SmartRunPluginImp extends Transform implements Plugin<Project> 
             }
 
         }
-        println '//===============com.by122006.buildsrc.ASM_SmartRunPluginImp visit end===============//'
+        println '//===============ASMSmartRunPluginImp visit end===============//'
 
     }
 }
