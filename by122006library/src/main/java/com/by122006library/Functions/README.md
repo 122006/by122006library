@@ -73,6 +73,8 @@
 ## [SmartRun 智能运行线程类](SmartRun.java)
 > * 甚至比`AsyncTask`更小的学习成本，更简洁直观的代码结构，0回调，需要关心的只有逻辑
 
+> * 请使用ASMSmartRunPlugin
+
 * 基础使用方法
 
     >这里调用一个当前线程的任务作为示例

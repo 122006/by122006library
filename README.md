@@ -20,13 +20,11 @@
 
   仅列举少量重要独立功能，更多工具类、细节功能请自行尝试或查阅相关MD文件
 
-1. [SmartRun 智能线程](/by122006library/src/main/java/com/by122006library/Functions/SmartRun.java) （推荐级数：★★★★★）    [ReadMe.md](/by122006library/src/main/java/com/by122006library/Functions/README.md)
+1. [SmartRun 智能线程切换](/ASMSmartRunPlugin/src/main/groovy/com/by122006/buildsrc/SmartRunClassVisitor.java) （推荐级数：★★★★★）    [ReadMe.md](/by122006library/src/main/java/com/by122006library/Functions/README.md)
 
-    依赖注入框架，可以便捷地指定方法所运行的线程(后台，UI)，优化代码层次节省开发时间使开发者更加专注于逻辑层次
-
-    ps:利用堆栈进行方法退栈调用以达到转化线程类型的原理。
+    编译时处理插件，可以便捷地指定方法所运行的线程(后台，UI)，优化代码层次节省开发时间使开发者更加专注于逻辑层次
     
-    ps2:现在推荐使用ASMSmartRunPlugin进行线程切换
+    ps:和同类功能相比，不需要修改方法名、类名，不需要额外代码，不需要大量编译时间
 
 2. [CycleTask 循环任务](/by122006library/src/main/java/com/by122006library/Functions/CycleTask/CycleTask.java) &
    [DelayTask 延迟任务](/by122006library/src/main/java/com/by122006library/Functions/CycleTask/DelayTask.java)（推荐级数：★★★★★）

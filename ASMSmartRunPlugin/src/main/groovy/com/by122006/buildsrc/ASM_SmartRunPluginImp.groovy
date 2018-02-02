@@ -53,6 +53,7 @@ public class ASM_SmartRunPluginImp extends Transform implements Plugin<Project> 
     void transform(Context context, Collection<TransformInput> inputs, Collection<TransformInput> referencedInputs,
                    TransformOutputProvider outputProvider, boolean isIncremental) throws IOException, TransformException, InterruptedException {
         System.out.println("===============ASMSmartRunPluginImp visit start===============");
+        long startTime=System.currentTimeMillis()
         //遍历inputs里的TransformInput
 //        println isIncremental
         inputs.each { TransformInput input ->println input.toString()}
@@ -117,7 +118,9 @@ public class ASM_SmartRunPluginImp extends Transform implements Plugin<Project> 
             }
 
         }
-        println '//===============ASMSmartRunPluginImp visit end===============//'
+        long time=startTime-System.currentTimeMillis();
+        println '//===============ASMSmartRunPluginImp visit end== '+time+'ms' +
+                ' =======//'
 
     }
 }

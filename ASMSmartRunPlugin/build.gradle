@@ -6,9 +6,6 @@ repositories {
     jcenter()
 }
 
-group = 'com.by122006.library'
-version = '1.0.0'
-
 dependencies {
     compile gradleApi()
     compile 'com.android.tools.build:gradle:2.3.3'
@@ -16,7 +13,7 @@ dependencies {
     compile 'org.ow2.asm:asm-commons:5.0.3'
 }
 
-group='com.by122006.asmsmartrunplugin'
+group='com.github.122006.by122006library'
 version='1.0.0'
 
 uploadArchives {

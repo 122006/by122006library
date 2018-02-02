@@ -137,16 +137,19 @@ public class MainActivity extends BaseActivity {
 
             }
         });
-        test_static("test","sxs");
-
+        test("test","sxs");
+        test_static("test_static","sxs");
         new Thread(new Runnable() {
             @Override
+            @UIThread
             public void run() {
                 try {
+                    mLog.i("in BGThread = "+ThreadUtils.getThreadStytle().toString());
                     ThreadUtils.runOnUiThread(new Runnable() {
                         @Override
+                        @BGThread
                         public void run() {
-                            mLog.i("ThreadUtils.isUIThread() = "+ThreadUtils.isUIThread());
+                            mLog.i("in UIThread = "+ThreadUtils.getThreadStytle().toString());
                         }
                     });
                 } catch (MyException e) {
@@ -159,11 +162,11 @@ public class MainActivity extends BaseActivity {
 
     @BGThread
     public  void test(String value1, String value2) {
-        if(ThreadUtils.isUIThread()) Log.i("asm : "+value1,value2);else Log.e("asm error: "+value1,value2);
+        mLog.i("ThreadUtils.Thread() = "+ThreadUtils.getThreadStytle().toString());
     }
     @BGThread
     public static void test_static(String value1, String value2) {
-        if(ThreadUtils.isUIThread()) Log.i("asm : "+value1,value2);else Log.e("asm error: "+value1,value2);
+        mLog.i("ThreadUtils.Thread() = "+ThreadUtils.getThreadStytle().toString());
     }
 
     class MyAdapter extends BaseHeaderAdapter<PinnedHeaderEntity<Object>> {

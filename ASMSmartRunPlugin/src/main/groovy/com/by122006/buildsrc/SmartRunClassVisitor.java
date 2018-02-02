@@ -8,9 +8,7 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.AdviceAdapter;
-import org.objectweb.asm.commons.Method;
 
-import java.security.Signature;
 import java.util.ArrayList;
 
 public class SmartRunClassVisitor extends ClassVisitor {
@@ -82,7 +80,7 @@ public class SmartRunClassVisitor extends ClassVisitor {
         String signature;
         String[] exceptions;
         MethodVisitor ov;
-        boolean Flag_Static=false;
+        boolean Flag_Static = false;
 
         protected MyAdviceAdapter(int i, MethodVisitor methodVisitor, int access, String name, String desc, String signature,
                                   String[] exceptions) {
@@ -92,7 +90,7 @@ public class SmartRunClassVisitor extends ClassVisitor {
             this.access = access;
             this.signature = signature;
             this.exceptions = exceptions;
-            Flag_Static= (access & ACC_STATIC) != 0;
+            Flag_Static = (access & ACC_STATIC) != 0;
         }
 
         @Override
@@ -119,20 +117,20 @@ public class SmartRunClassVisitor extends ClassVisitor {
                 String style = annotation.toLowerCase().contains("uithread") ? "UI" : "BG";
                 int num = desc.split(";").length - 1;
                 System.out.println(packageClassName);
-                System.out.println("Flag_Static:"+Flag_Static);
+                System.out.println("Flag_Static:" + Flag_Static);
                 ov.visitCode();
-                ov.visitMethodInsn(Opcodes.INVOKESTATIC, "com/by122006library/Utils/ThreadUtils", "is"+style+"Thread", "()Z", false);
+                ov.visitMethodInsn(Opcodes.INVOKESTATIC, "com/by122006library/Utils/ThreadUtils", "is" + style + "Thread", "()Z", false);
                 Label l0 = new Label();
                 ov.visitJumpInsn(Opcodes.IFEQ, l0);
                 if (!Flag_Static)
                     ov.visitVarInsn(Opcodes.ALOAD, 0);
                 for (int i = 0; i < num; i++) {
-                    ov.visitVarInsn(Opcodes.ALOAD, Flag_Static?i:i + 1);
+                    ov.visitVarInsn(Opcodes.ALOAD, Flag_Static ? i : i + 1);
                 }
                 if (Flag_Static) {
                     ov.visitMethodInsn(Opcodes.INVOKESTATIC, packageClassName, name + "$SmartRun_" + style, desc, false);
                 } else
-                ov.visitMethodInsn(Opcodes.INVOKEVIRTUAL, packageClassName, name + "$SmartRun_" + style, desc, false);
+                    ov.visitMethodInsn(Opcodes.INVOKEVIRTUAL, packageClassName, name + "$SmartRun_" + style, desc, false);
                 Label l1 = new Label();
                 ov.visitJumpInsn(Opcodes.GOTO, l1);
                 ov.visitLabel(l0);
@@ -140,18 +138,20 @@ public class SmartRunClassVisitor extends ClassVisitor {
                 ov.visitMethodInsn(Opcodes.INVOKESTATIC, "com/by122006library/ThreadManager", "getInstance", "()Lcom/by122006library/ThreadManager;", false);
 
                 if (Flag_Static) {
-                    ov.visitLdcInsn(Type.getType("L"+packageClassName+";"));
+                    ov.visitLdcInsn(Type.getType("L" + packageClassName + ";"));
                 } else
                     ov.visitVarInsn(Opcodes.ALOAD, 0);
                 ov.visitLdcInsn(name);
                 ov.visitIntInsn(Opcodes.SIPUSH, num);
                 ov.visitTypeInsn(Opcodes.ANEWARRAY, "java/lang/Object");
-                ov.visitInsn(Opcodes.DUP);
-                for (int i = 0; i < num; i++) {
-                    ov.visitIntInsn(Opcodes.SIPUSH, i);
-                    ov.visitVarInsn(Opcodes.ALOAD, Flag_Static ? i : i + 1);
-                    ov.visitInsn(Opcodes.AASTORE);
-                    if (i != num - 1) ov.visitInsn(Opcodes.DUP);
+                if (num > 0) {
+                    ov.visitInsn(Opcodes.DUP);
+                    for (int i = 0; i < num; i++) {
+                        ov.visitIntInsn(Opcodes.SIPUSH, i);
+                        ov.visitVarInsn(Opcodes.ALOAD, Flag_Static ? i : i + 1);
+                        ov.visitInsn(Opcodes.AASTORE);
+                        if (i != num - 1) ov.visitInsn(Opcodes.DUP);
+                    }
                 }
                 ov.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "com/by122006library/ThreadManager", "post" + style + "Thread", "(Ljava/lang/Object;Ljava/lang/String;[Ljava/lang/Object;)V", false);
 

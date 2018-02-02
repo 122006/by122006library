@@ -2,7 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/ASMSmartRunPlugin/BuildSrc.iml" filepath="$PROJECT_DIR$/ASMSmartRunPlugin/BuildSrc.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ASMSmartRunPlugin/ASMSmartRunPlugin.iml" filepath="$PROJECT_DIR$/ASMSmartRunPlugin/ASMSmartRunPlugin.iml" />
+      <module fileurl="file://E:\android\ModelProjectBy122006\ASMSmartRunPlugin\BuildSrc.iml" filepath="E:\android\ModelProjectBy122006\ASMSmartRunPlugin\BuildSrc.iml" />
       <module fileurl="file://$PROJECT_DIR$/ModelProjectBy122006.iml" filepath="$PROJECT_DIR$/ModelProjectBy122006.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/by122006library/by122006library.iml" filepath="$PROJECT_DIR$/by122006library/by122006library.iml" />

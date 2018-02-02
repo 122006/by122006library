@@ -6,6 +6,7 @@ import android.os.Looper;
 import android.os.Message;
 
 import com.by122006library.Activity.BaseActivity;
+import com.by122006library.Functions.mLog;
 import com.by122006library.Interface.ThreadStyle;
 import com.by122006library.MyException;
 

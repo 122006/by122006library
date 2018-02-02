@@ -1,6 +1,7 @@
 apply plugin: 'com.android.application'
 //apply plugin: 'com.hujiang.android-aspectjx'
-//apply plugin: 'smartrun'
+apply plugin: 'smartrun'
+
 android {
     compileSdkVersion 26
     buildToolsVersion "26.0.0"

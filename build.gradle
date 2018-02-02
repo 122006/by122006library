@@ -1,11 +1,12 @@
 //Top-levelbuildfilewhereyoucanaddconfigurationoptionscommontoallsub-projects/modules.
 buildscript {
     repositories {
+        maven {
+            url uri('/repo')
+        }
         jcenter()
         mavenLocal()
-//        maven {
-//            url uri('/repo')
-//        }
+//        maven { url "https://jitpack.io" }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:2.3.3'
@@ -16,7 +17,9 @@ buildscript {
 //        classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
         classpath 'com.hujiang.aspectjx:gradle-android-plugin-aspectjx:1.0.10'
-//        classpath 'com.by122006.asmsmartrunplugin:ASMSmartRunPlugin:1.0.0'
+//        classpath 'com.github.122006.by122006library:ASMSmartRunPlugin:2.0.1'
+        classpath 'com.github.122006.by122006library:ASMSmartRunPlugin:1.0.0'
+
     }
 }
 allprojects {
@@ -24,9 +27,7 @@ allprojects {
         maven { url "https://jitpack.io" }
         jcenter()
         mavenCentral()
-        maven {
-            url uri('../repo')
-        }
+
     }
 }
 

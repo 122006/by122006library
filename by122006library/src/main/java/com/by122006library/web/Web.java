@@ -169,10 +169,7 @@ public class Web {
                         }
                     });
                 }
-
                 return jsonObject;
-
-
             }
             mLog.e("网络出错：状态码=" + httpConn.getResponseCode());
 
