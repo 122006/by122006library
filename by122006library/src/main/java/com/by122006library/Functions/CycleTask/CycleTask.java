@@ -65,7 +65,9 @@ public abstract class CycleTask {
 
     private boolean log = true;
     volatile private TaskState state = TaskState.Create;
-
+    static {
+        mLog.setClassOutLog();
+    }
     /**
      * @param delayTime 首次延迟时间
      * @param cycleTime 每次循环时间

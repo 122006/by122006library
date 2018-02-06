@@ -71,6 +71,8 @@
 
 
 ## [SmartRun 智能运行线程类](SmartRun.java)
+> * 已经废弃，请使用 [ASM_SmartRunPluginImp 线程调度插件](../ASMSmartRunPlugin/src/main/groovy/com/by122006/buildsrc/ASM_SmartRunPluginImp.groovy)
+
 > * 甚至比`AsyncTask`更小的学习成本，更简洁直观的代码结构，0回调，需要关心的只有逻辑
 
 > * 请使用ASMSmartRunPlugin

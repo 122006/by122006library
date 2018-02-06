@@ -1,5 +1,7 @@
 package com.by122006library;
 
+import android.util.Log;
+
 import com.by122006library.Utils.ThreadUtils;
 
 import java.lang.reflect.InvocationTargetException;
@@ -61,12 +63,13 @@ public class ThreadManager {
 
     public void postUIThread(final Object obj, final String methodName, final Object... objects) {
         try {
+            Class clazz = (obj instanceof Class) ? ((Class) obj) : obj.getClass();
+            final Method[] methods = clazz.getMethods();
             ThreadUtils.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     try {
-                        Class clazz = (obj instanceof Class) ? ((Class) obj) : obj.getClass();
-                        Method[] methods = clazz.getMethods();
+
                         for (Method method : methods) {
                             if (!method.getName().equals(methodName)) continue;
                             try {
@@ -99,7 +102,6 @@ public class ThreadManager {
                     Method[] methods = clazz.getMethods();
                     for (Method method : methods) {
                         if (!method.getName().equals(methodName)) continue;
-
                         try {
                             method.invoke(obj, objects);
                             break;

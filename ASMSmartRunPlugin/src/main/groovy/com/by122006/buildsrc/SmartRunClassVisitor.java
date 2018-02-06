@@ -110,6 +110,20 @@ public class SmartRunClassVisitor extends ClassVisitor {
             return super.visitAnnotation(s, b);
         }
 
+        @Override
+        public void visitMethodInsn(int i, String s, String s1, String s2, boolean b) {
+            if(!name.contains("$SmartRun_") && i==Opcodes.INVOKESTATIC&&s.equals("com/by122006library/Utils/ThreadUtils")&&(s1.equals("toUiThread")||s1.equals("toBgThread"))&&!annotation.toLowerCase().contains("thread")){
+                System.out.println("!!!!method code : " + s1);
+                System.out.println(String.format("access=%d,name=%s,desc=%s,signature=%s", access, name, desc, signature));
+
+                String style = s1.toLowerCase().contains("ui") ? "UI" : "BG";
+                ov = mv;
+                mv = cv.visitMethod(access, name + "$SmartRun_" + style, desc, signature, exceptions);
+            }
+            super.visitMethodInsn(i, s, s1, s2, b);
+
+
+        }
 
         @Override
         public void visitEnd() {

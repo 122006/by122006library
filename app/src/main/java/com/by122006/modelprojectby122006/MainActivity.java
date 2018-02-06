@@ -159,9 +159,9 @@ public class MainActivity extends BaseActivity {
         }).start();
 
     }
-
-    @BGThread
     public  void test(String value1, String value2) {
+
+        ThreadUtils.toBgThread();
         mLog.i("ThreadUtils.Thread() = "+ThreadUtils.getThreadStytle().toString());
     }
     @BGThread

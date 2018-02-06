@@ -47,6 +47,7 @@ public class ViewsReplace {
     }
 
     protected void setFrom(View from) {
+        if (from==null) return;
         this.from = from;
         params = from.getLayoutParams();
         if(params!=null){

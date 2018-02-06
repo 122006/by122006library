@@ -83,6 +83,24 @@ public class ThreadUtils {
         return Looper.myLooper() != Looper.getMainLooper();
     }
 
+    /**
+     * 该方法用于标记调用方法运行于主线程中<p>
+     * 没有实际调用意义，无论是否会调用均会生效<p>
+     *
+     */
+    public static void toUiThread(){
+
+    }
+
+    /**
+     * 该方法用于标记调用方法运行于后台线程中<p>
+     * 没有实际调用意义，无论是否会调用均会生效<p>
+     *
+     */
+    public static void toBgThread(){
+
+    }
+
     public static ThreadStyle.Style getThreadStytle() {
         return isUIThread() ? ThreadStyle.Style.UI : ThreadStyle.Style.BG;
     }

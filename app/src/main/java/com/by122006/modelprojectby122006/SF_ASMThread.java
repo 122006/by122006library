@@ -45,19 +45,7 @@ public class SF_ASMThread extends SF {
         });
         list.add(sMethod);
 
-        sMethod = SMethod.debug();
-        sMethod.setDescrite("框架相关");
-        sMethod.setListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                println("\n===========框架相关============");
-                println("切换UI线程及当前线程判断需要本框架支持，如果非框架使用，需要完成框架的外部Application注册。");
-                println("当然，你现在也可以设置ThreadUtils的thisAct为当前Activity，进行自行维护");
 
-
-            }
-        });
-        list.add(sMethod);
 
 //            sMethod = SMethod.debug();
 //        sMethod.setDescrite("ASM使用方法");
@@ -101,7 +89,7 @@ public class SF_ASMThread extends SF {
 
     @Override
     public String getFunctionEnName() {
-        return "ASMThread";
+        return "ASM_SmartRunPluginImp";
     }
 
     @Override
