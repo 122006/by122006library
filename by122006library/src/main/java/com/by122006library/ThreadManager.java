@@ -49,7 +49,7 @@ public class ThreadManager {
         return false;
     }
 
-    public void postUIThread(Runnable runnable) {
+    public static void postUIThread(Runnable runnable) {
         try {
             ThreadUtils.runOnUiThread(runnable);
         } catch (MyException e) {
@@ -57,7 +57,7 @@ public class ThreadManager {
         }
     }
 
-    public void postBGThread(Runnable runnable) {
+    public static void postBGThread(Runnable runnable) {
         new Thread(runnable).start();
     }
 

@@ -72,11 +72,12 @@ public class ASM_SmartRunPluginImp extends Transform implements Plugin<Project> 
                                 def name = file.name
                                 //这里进行我们的处理 TODO
                                 if (name.endsWith(".class") && !name.startsWith("R\$") &&
-                                        !"R.class".equals(name) && !"BuildConfig.class".equals(name)) {
+                                        !"R.class".equals(name) && !"BuildConfig.class".equals(name)&& !name.contains("R\$SmartRun_")) {
                                     ClassReader classReader = new ClassReader(file.bytes)
-                                    ClassWriter classWriter = new ClassWriter(classReader, ClassWriter.COMPUTE_MAXS)
+                                    ClassWriter classWriter = new ClassWriter(classReader, ClassWriter.COMPUTE_FRAMES)
                                     def className = name.split(".class")[0]
                                     ClassVisitor cv = new SmartRunClassVisitor(className,classWriter);
+                                    cv.setFile(file)
                                     cv.setPackageClassName(classReader.getClassName())
                                     classReader.accept(cv, EXPAND_FRAMES)
 

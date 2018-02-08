@@ -688,7 +688,7 @@ public abstract class SV extends FunctionActivity implements NoProguard_All {
 
         abstract String observer();
 
-        @UIThread
+//        @UIThread
         public void update(String str) {
             if(SmartRun.sPrepare(this,str)) return;
             v.setText(str);

@@ -9,7 +9,6 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
-import android.util.Log;
 import android.util.SparseIntArray;
 import android.view.Gravity;
 import android.view.View;
@@ -23,22 +22,16 @@ import com.by122006.modelprojectby122006.databinding.ItemMainActivityListViewSty
 import com.by122006library.Activity.BaseActivity;
 import com.by122006library.Functions.mLog;
 import com.by122006library.Interface.BGThread;
-import com.by122006library.Interface.Trace2;
 import com.by122006library.Interface.UIThread;
-import com.by122006library.MyException;
-import com.by122006library.ThreadManager;
 import com.by122006library.Utils.BitmapUtils;
 import com.by122006library.Utils.ReflectionUtils;
 import com.by122006library.Utils.ThreadUtils;
 import com.by122006library.Utils.ViewUtils;
 import com.by122006library.View.TopBar;
-import com.by122006library.web.CallBack.JSONCallBack;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.fynn.fluidlayout.FluidLayout;
 import com.oushangfeng.pinnedsectionitemdecoration.PinnedHeaderItemDecoration;
-
-import org.json.JSONObject;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -52,7 +45,7 @@ import java.util.List;
 public class MainActivity extends BaseActivity {
     static public Class<?>[] class1 = new Class[]{SV_ViewsReplace.class, SV_SlideSpinner.class, SV_PullDownTopbarMenu.class};
     static public Class<?>[] class2 = new Class[]{SF_SmartRun.class, SF_mLog.class, SF_CycleTask.class, SF_AttBinder.class, SF_ViewIntroduce.class};
-    static public Class<?>[] class3 = new Class[]{SF_AspectThread.class,SF_ASMThread.class};
+    static public Class<?>[] class3 = new Class[]{SF_AspectThread.class, SF_ASMThread.class};
     static public Class<?>[] class4 = new Class[]{};
     static public Class<?>[] class5 = new Class[]{SF_SmartRun2.class};
 
@@ -76,6 +69,13 @@ public class MainActivity extends BaseActivity {
             e.printStackTrace();
         }
         return false;
+    }
+
+    @BGThread
+    public static long test_static(String value1, int value2) {
+        mLog.i("ThreadUtils.Thread() = " + ThreadUtils.getThreadStytle().toString());
+
+        return 20l;
     }
 
     public void onCreate(Bundle savedInstanceState) {
@@ -137,36 +137,32 @@ public class MainActivity extends BaseActivity {
 
             }
         });
-        test("test","sxs");
-        test_static("test_static","sxs");
+        mLog.i(test_static("test", 1));
+        mLog.i(test());
         new Thread(new Runnable() {
-            @Override
             @UIThread
+            @Override
             public void run() {
-                try {
-                    mLog.i("in BGThread = "+ThreadUtils.getThreadStytle().toString());
-                    ThreadUtils.runOnUiThread(new Runnable() {
-                        @Override
-                        @BGThread
-                        public void run() {
-                            mLog.i("in UIThread = "+ThreadUtils.getThreadStytle().toString());
-                        }
-                    });
-                } catch (MyException e) {
-                    e.printStackTrace();
-                }
+                mLog.i(test());
             }
         }).start();
 
     }
-    public  void test(String value1, String value2) {
 
-        ThreadUtils.toBgThread();
-        mLog.i("ThreadUtils.Thread() = "+ThreadUtils.getThreadStytle().toString());
-    }
     @BGThread
-    public static void test_static(String value1, String value2) {
-        mLog.i("ThreadUtils.Thread() = "+ThreadUtils.getThreadStytle().toString());
+    public String test() {
+
+//        ThreadUtils.toBgThread();
+        mLog.i("ThreadUtils.Thread() = " + ThreadUtils.getThreadStytle().toString());
+        return "test";
+    }
+
+    @UIThread
+    public String ui(String value1, int value2) {
+
+//        ThreadUtils.toBgThread();
+        mLog.i("ThreadUtils.Thread() = " + ThreadUtils.getThreadStytle().toString());
+        return "UIThread";
     }
 
     class MyAdapter extends BaseHeaderAdapter<PinnedHeaderEntity<Object>> {
