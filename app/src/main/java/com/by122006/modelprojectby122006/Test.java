@@ -27,6 +27,7 @@ public class Test implements Runnable {
         this.o1=o1;
         this.o2=o2;
         this.o3=o3;
+        if (countDownLatch==null)
         countDownLatch =new CountDownLatch(1);
         ThreadManager.postUIThread(this);
         try {
@@ -53,6 +54,7 @@ public class Test implements Runnable {
 
                 public void run() {
 //                    MainActivity.test_static(o0, o1);
+                    if (countDownLatch!=null)
                     countDownLatch.countDown();
                 }
 

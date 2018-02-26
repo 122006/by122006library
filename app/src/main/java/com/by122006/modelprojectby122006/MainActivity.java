@@ -39,6 +39,11 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.by122006library.Interface.BGThread.Async;
+import static com.by122006library.Interface.BGThread.Skip;
+import static com.by122006library.Interface.BGThread.Wait;
+
+
 /**
  * by122006<p> </>
  */
@@ -71,11 +76,10 @@ public class MainActivity extends BaseActivity {
         return false;
     }
 
-    @BGThread
-    public static long test_static(String value1, int value2) {
+//    @BGThread
+    public static void test_static(String value1, int value2) {
         mLog.i("ThreadUtils.Thread() = " + ThreadUtils.getThreadStytle().toString());
 
-        return 20l;
     }
 
     public void onCreate(Bundle savedInstanceState) {
@@ -137,27 +141,27 @@ public class MainActivity extends BaseActivity {
 
             }
         });
-        mLog.i(test_static("test", 1));
-        mLog.i(test());
-        new Thread(new Runnable() {
-            @UIThread
-            @Override
-            public void run() {
-                mLog.i(test());
-            }
-        }).start();
+//        test_static("test", 1);
+        test("xx",2);
+//        mLog.i(test());
+//        new Thread(new Runnable() {
+//            @UIThread
+//            @Override
+//            public void run() {
+//                test();
+//            }
+//        }).start();
 
     }
-
-    @BGThread
-    public String test() {
+    @BGThread(Style = Async, OutTime = 2000, Result = Skip)
+    public static String test(String value1, int value2) {
 
 //        ThreadUtils.toBgThread();
         mLog.i("ThreadUtils.Thread() = " + ThreadUtils.getThreadStytle().toString());
-        return "test";
+        return "sada";
     }
 
-    @UIThread
+//    @UIThread
     public String ui(String value1, int value2) {
 
 //        ThreadUtils.toBgThread();
