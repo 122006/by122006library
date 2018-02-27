@@ -36,5 +36,7 @@ dependencies {
     compile 'com.oushangfeng:PinnedSectionItemDecoration:1.2.4'
 //    compile 'com.safframework:saf-aop:1.1.3'
     compile 'me.weishu:epic:0.1.2@aar'
+//    compile 'com.by122006.SmartRunPlugin:Utils:1.0.0'
+    compile 'com.github.122006.ASM_SmartRunPluginImp:Utils:b59a21804e'
 
 }

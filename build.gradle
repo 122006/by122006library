@@ -2,7 +2,7 @@
 buildscript {
     repositories {
 //        maven {
-//            url uri('/repo')
+//            url uri('../repo')
 //        }
         jcenter()
         mavenLocal()
@@ -18,7 +18,8 @@ buildscript {
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
         classpath 'com.hujiang.aspectjx:gradle-android-plugin-aspectjx:1.0.10'
 //        classpath 'com.github.122006.by122006library:ASMSmartRunPlugin:2.0.1'
-        classpath 'com.github.122006.by122006library:ASMSmartRunPlugin:2.0.1'
+//        classpath 'com.by122006.SmartRunPlugin:ASMPlugin:1.0.0'
+        classpath 'com.github.122006.ASM_SmartRunPluginImp:ASMPlugin:b59a21804e'
 
     }
 }
