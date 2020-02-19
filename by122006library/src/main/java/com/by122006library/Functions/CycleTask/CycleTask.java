@@ -256,7 +256,7 @@ public abstract class CycleTask {
      * 注册该定时器
      *
      * @param tag  定时器的依附对象
-     * @param flag 1 :SINGLETASK 如果tag不唯一则不生效<p>2 :SINGLETASK_COVER 一定生效且覆盖同名tag事件<p>-1 :非单例模式
+     * @param flag 1 :SINGLETASK 如果tag存在则不生效<p>2 :SINGLETASK_COVER 一定生效且覆盖同名tag事件<p>-1 :非单例模式
      * @return
      */
     public CycleTask register(Object tag, int flag) {
@@ -264,14 +264,14 @@ public abstract class CycleTask {
             boolean ifhave = false;
             for (CycleTask cycleTask : (ArrayList<CycleTask>) CycleTask.list.clone()) {
                 if (cycleTask == null) continue;
-                if (cycleTask.equals(tag)) ifhave = true;
+                if (cycleTask.tag!=null&&cycleTask.tag.equals(tag)) ifhave = true;
             }
 
             if (ifhave) {
                 if (flag == SINGLETASK) return this;
                 else {
                     for (CycleTask cycleTask : (ArrayList<CycleTask>) CycleTask.list.clone()) {
-                        if (cycleTask.equals(tag)) list.remove(cycleTask);
+                        if (cycleTask.tag!=null&&cycleTask.tag.equals(tag)) cycleTask.unRegister();
                     }
                 }
             }

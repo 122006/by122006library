@@ -4,6 +4,7 @@ package com.by122006.modelprojectby122006;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.UiThread;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -81,6 +82,10 @@ public class MainActivity extends BaseActivity {
         mLog.i("ThreadUtils.Thread() = " + ThreadUtils.getThreadStytle().toString());
 
     }
+    @UiThread
+    public static void showPackView(View v) {
+
+    }
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -92,6 +97,7 @@ public class MainActivity extends BaseActivity {
 //        getWindow().getDecorView().setSystemUiVisibility( View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN|View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
 //        StatusBarUtil.setStatusBarColor(this,R.color.black);
 //        Log.i("",)
+//        getWindowManager().
         setContentView(R.layout.activity_main);
         binding.setAct(this);
         binding.recycer.setLayoutManager(new LinearLayoutManager(this));
@@ -143,6 +149,14 @@ public class MainActivity extends BaseActivity {
         });
 //        test_static("test", 1);
         test("xx",2);
+
+        Test2 a= new Test2() {
+            @Override
+            public void interfaceTest() {
+                mLog.i("ThreadUtils.Thread() = " + ThreadUtils.getThreadStytle().toString());
+            }
+        };
+        a.interfaceTest();
 //        mLog.i(test());
 //        new Thread(new Runnable() {
 //            @UIThread
@@ -155,14 +169,21 @@ public class MainActivity extends BaseActivity {
     }
     @BGThread(Style = Async, OutTime = 2000, Result = Skip)
     public static String test(String value1, int value2) {
-
 //        ThreadUtils.toBgThread();
         mLog.i("ThreadUtils.Thread() = " + ThreadUtils.getThreadStytle().toString());
         return "sada";
     }
 
-//    @UIThread
-    public String ui(String value1, int value2) {
+
+    @BGThread
+    public String ui( int value2,String value1) {
+
+//        ThreadUtils.toBgThread();
+        mLog.i("ThreadUtils.Thread() = " + ThreadUtils.getThreadStytle().toString());
+        return "UIThread";
+    }
+    @BGThread
+    public String ui( boolean value2,String value1) {
 
 //        ThreadUtils.toBgThread();
         mLog.i("ThreadUtils.Thread() = " + ThreadUtils.getThreadStytle().toString());

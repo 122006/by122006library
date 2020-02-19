@@ -1,6 +1,8 @@
 package com.by122006.modelprojectby122006;
 
+import android.app.Activity;
 import android.app.Application;
+import android.os.Bundle;
 import android.util.Log;
 
 import com.anupcowkur.reservoir.Reservoir;
@@ -19,6 +21,7 @@ public class MyApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+
         try {
             Reservoir.init(this, 512 * 1024);
         } catch (IOException e) {

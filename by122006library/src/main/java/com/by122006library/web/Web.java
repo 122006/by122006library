@@ -40,7 +40,7 @@ public class Web {
      * @param requster 请求包装类
      * @param callback 回调类 为空不回调
      */
-    public static JSONObject doAsnyHttp(final RequestBuilder requster, @Nullable final WEBBaseCallBack callback,
+    public static JSONObject doAsyncHttp(final RequestBuilder requster, @Nullable final WEBBaseCallBack callback,
                                         @Nullable
                                         final WebViewShow vs) {
         new Thread(new Runnable() {

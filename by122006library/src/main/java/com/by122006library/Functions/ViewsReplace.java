@@ -137,7 +137,7 @@ public class ViewsReplace {
             att1.setReverse();
             ViewAtt att2 = new ViewAtt(to, ViewAtt.AttStyle.Alpha, 1, 0);
 //        att2.logProgress("to");
-            time = new TimeAtt((long) (durTime)) {
+            time = new TimeAtt( durTime) {
                 @Override
                 @UIThread
                 public void remove() {

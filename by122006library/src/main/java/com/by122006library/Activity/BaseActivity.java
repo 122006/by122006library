@@ -31,6 +31,7 @@ import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
 import android.support.v4.view.LayoutInflaterCompat;
 import android.support.v4.view.LayoutInflaterFactory;
+import android.text.Html;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -406,24 +407,19 @@ public abstract class BaseActivity extends Activity implements NoProguard_All {
      */
     public static void hookActivityManagerService() throws Throwable {
         Class<?> activityManagerNativeClass = Class.forName("android.app.ActivityManagerNative");
-        //4.0以后，ActivityManagerNative有gDefault单例来进行保存，这个代码中一看就知道了
         Field gDefaultField = activityManagerNativeClass.getDeclaredField("gDefault");
         gDefaultField.setAccessible(true);
         Object gDefault = gDefaultField.get(null);
 
         Class<?> singleton = Class.forName("android.util.Singleton");
-        //mInstance其实就是真正的一个对象
         Field mInstance = singleton.getDeclaredField("mInstance");
         mInstance.setAccessible(true);
 
-        //真正的对象，就是干活的对象啦,其实就是ActivityManagerProxy而已啦
         Object originalIActivityManager = mInstance.get(gDefault);
 
-        //通过动态代理生成一个接口的对象
         Class<?> iActivityManagerInterface = Class.forName("android.app.IActivityManager");
         Object object = Proxy.newProxyInstance(iActivityManagerInterface.getClassLoader(),
                 new Class[]{iActivityManagerInterface}, new IActivityManagerServiceHandler(originalIActivityManager));
-        //这里偷梁换柱，替换为我们自己的对象进行干活就好了
         mInstance.set(gDefault, object);
         mLog.i("By122006Library注入主程序成功");
     }
@@ -450,6 +446,7 @@ public abstract class BaseActivity extends Activity implements NoProguard_All {
                     WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         }
         LayoutInflaterCompat.setFactory(getLayoutInflater(), new MyLayoutFactory());
+        new TextView(this).setText(Html.fromHtml(""));
         super.onCreate(savedInstanceState);
         if (canRotate) {
             mScreenOrientationEventListener = new OrientationEventListener(this) {

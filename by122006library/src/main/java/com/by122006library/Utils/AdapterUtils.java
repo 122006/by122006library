@@ -9,7 +9,6 @@ import android.widget.Adapter;
  */
 
 public class AdapterUtils {
-
     public static void updateAllShowRows(AbsListView listView) {
         if (listView != null) {
             Adapter adapter = listView.getAdapter();
@@ -28,8 +27,8 @@ public class AdapterUtils {
             for (int i = start, j = listView.getLastVisiblePosition(); i <= j; i++)
                 if (id == i) {
                     View view = listView.getChildAt(i - start);
-                    View newView=adapter.getView(i, view, listView);
-                    if(newView==view) break;
+                    View newView = adapter.getView(i, view, listView);
+                    if (newView == view) break;
                     listView.removeView(view);
                     listView.addView(newView, i - start);
                     break;

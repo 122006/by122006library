@@ -3,9 +3,11 @@ package com.by122006library.web;
 
 import android.support.annotation.IntDef;
 
+import com.alibaba.fastjson.JSON;
 import com.by122006library.Functions.mLog;
 import com.by122006library.web.AnalysisOut.AnalysisOut;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -25,7 +27,7 @@ public class RequestBuilder {
     private static String defaultEncode = "UTF-8";
     private static String defaultUrl;
     private static int defaultHttpStyle = 1;
-    public HashMap<String, String> request;
+    public HashMap<String, Object> request;
     public AnalysisOut analysisOut;
     public AnalysisOut defaultAnalysisOut;
     int timeout = 20 * 1000;
@@ -146,22 +148,7 @@ public class RequestBuilder {
     }
 
     public RequestBuilder addAtt(String key, Object value) {
-        request.put(key, value==null?"null":value.toString());
-        return this;
-    }
-
-    public RequestBuilder addAtt(String key, float value) {
-        request.put(key, value + "");
-        return this;
-    }
-
-    public RequestBuilder addAtt(String key, int value) {
-        request.put(key, value + "");
-        return this;
-    }
-
-    public RequestBuilder addAtt(String key, boolean value) {
-        request.put(key, value + "");
+        request.put(key, value);
         return this;
     }
 
@@ -170,7 +157,7 @@ public class RequestBuilder {
         if (token != null&&!request.keySet().contains(getTokenKeyName())) data +=
                 getTokenKeyName() + "=" + token;
         for (String key : request.keySet()) {
-            String value = request.get(key);
+            String value = String.valueOf(request.get(key));
             if (data.length() != 0) {
                 data += "&";
             }
@@ -187,7 +174,7 @@ public class RequestBuilder {
             e.printStackTrace();
         }
         for (String key : request.keySet()) {
-            String value = request.get(key);
+            Object value =  request.get(key);
             try {
                 json.put(key, value);
             } catch (JSONException e) {
